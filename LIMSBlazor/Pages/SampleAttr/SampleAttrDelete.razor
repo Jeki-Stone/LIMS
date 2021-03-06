@@ -1,0 +1,54 @@
+﻿@using LIMSBlazor.Data
+@page "/sample/sampleattrdelete/{SampleId:int}/{AttrId:int}"
+@inject ISampleAttrService SampleAttrService
+@inject ISampleService SampleService
+@inject IAttrService AttrService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить атрибут испытания из базы данных" DeleteWarning="Вы уверены что хотите удалить этот атрибут испытания? Данные нельзя будет вернуть!" Model="@sampleattr" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table class="editform">
+        <tr>
+            <td>Id испытания:</td>
+            <td>@sampleattr.SampleId</td>
+        </tr>
+        <tr>
+            <td>Атребут:</td>
+            <td>@attrs?.Where(x => x.Id == sampleattr.AttrId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Значение:</td>
+            <td>@sampleattr.Value</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty  object
+        SampleAttr sampleattr = new SampleAttr();
+
+        IEnumerable<Sample> samples;
+        IEnumerable<Attr> attrs;
+
+        [Parameter]
+        public int SampleId { get; set; }
+        [Parameter]
+        public int AttrId { get; set; }
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            sampleattr = await SampleAttrService.SampleAttr_GetOne(SampleId, AttrId);
+            samples = await SampleService.SampleList();
+            attrs = await AttrService.AttrList();
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await SampleAttrService.SampleAttrDelete(SampleId, AttrId);
+            NavigationManager.NavigateTo("/sample/sampleattrlist/" + SampleId);
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/sample/sampleattrlist/" + SampleId);
+        } }

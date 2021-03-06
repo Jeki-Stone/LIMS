@@ -1,0 +1,65 @@
+﻿@using LIMSBlazor.Data
+@page "/sampletype/sampletypeanalyticallist/{SampleTypeId:int}"
+@inject ISampleTypeAnalyticalService SampleTypeAnalyticalService
+@inject ISampleTypeService SampleTypeService
+@inject IAnalyticalServService AnalyticalServService
+
+<DataView PageTitle="Список аналитических сервисов типа испытания" UrlAdd=@UrlSampleTypeId UrlBack="/sampletypelist" UrlAddText="Добавить новый аналитический сервис типа испытания" UrlBackText="Вернуться к списку типов испытаний">
+    <Header>
+        <tr>
+            <th style="text-align:center">#</th>
+            <th>Тип образца:</th>
+            <th>Аналитический сервис:</th>
+        </tr>
+    </Header>
+    <Rows>
+        @if (sampletypeanalyticals == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
+        }
+        else
+        {
+            @foreach (var sampletypeanalytical in sampletypeanalyticals)
+            {
+                if (sampletypeanalytical.SampleTypeId == SampleTypeId)
+                {
+                    <tr>
+                        <td style="text-align:center">
+                            <a href="/sampletype/sampletypeanalyticaladdedit/@sampletypeanalytical.SampleTypeId/@sampletypeanalytical.AnalyticalServiceId">
+                                <img src="../images/iEdit.png" width="20" height="20" />
+                            </a>
+                            &nbsp
+                            <a href="/sampletype/sampletypeanalyticaldelete/@sampletypeanalytical.SampleTypeId/@sampletypeanalytical.AnalyticalServiceId">
+                                <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                            </a>
+                        </td>
+                        <td>@sampletypes.Where(x => x.Id == sampletypeanalytical.SampleTypeId).FirstOrDefault()?.Name</td>
+                        <td>@analyticalservs.Where(x => x.Id == sampletypeanalytical.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+
+                    </tr>
+                }
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    IEnumerable<SampleTypeAnalytical> sampletypeanalyticals;
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<AnalyticalServ> analyticalservs;
+
+    [Parameter]
+    public int SampleTypeId { get; set; }
+    [Parameter]
+    public string UrlSampleTypeId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        sampletypeanalyticals = await SampleTypeAnalyticalService.SampleTypeAnalyticalList();
+        sampletypes = await SampleTypeService.SampleTypeList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        UrlSampleTypeId = "/sampletype/sampletypeanalyticaladdedit/" + SampleTypeId;
+    }
+}

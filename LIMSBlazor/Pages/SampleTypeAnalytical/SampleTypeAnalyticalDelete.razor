@@ -1,0 +1,48 @@
+﻿@using LIMSBlazor.Data
+@page "/sampletype/sampletypeanalyticaldelete/{SampleTypeId:int}/{AnalyticalServiceId:int}"
+@inject ISampleTypeAnalyticalService SampleTypeAnalyticalService
+@inject ISampleTypeService SampleTypeService
+@inject IAnalyticalServService AnalyticalServService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить аналитический сервис типа испытания" DeleteWarning="Вы уверены что хотите удалить этот аналитический сервис типа испытания? Данные нельзя будет вернуть!" Model="@sampletypeanalytical" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Тип образца:</td>
+            <td>@sampletypes?.Where(x => x.Id == sampletypeanalytical.SampleTypeId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>@analyticalservs?.Where(x => x.Id == sampletypeanalytical.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code { // Create a new, empty object
+    SampleTypeAnalytical sampletypeanalytical = new SampleTypeAnalytical();
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<AnalyticalServ> analyticalservs;
+
+    [Parameter]
+    public int SampleTypeId { get; set; }
+    [Parameter]
+    public int AnalyticalServiceId { get; set; }
+
+    //Executes on page open..
+    protected override async Task OnInitializedAsync()
+    {
+        sampletypeanalytical = await SampleTypeAnalyticalService.SampleTypeAnalytical_GetOne(SampleTypeId, AnalyticalServiceId);
+        sampletypes = await SampleTypeService.SampleTypeList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+    }
+
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await SampleTypeAnalyticalService.SampleTypeAnalyticalDelete(SampleTypeId, AnalyticalServiceId);
+        NavigationManager.NavigateTo("/sampletype/sampletypeanalyticallist/" + SampleTypeId);
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/sampletype/sampletypeanalyticallist/" + SampleTypeId);
+    } }

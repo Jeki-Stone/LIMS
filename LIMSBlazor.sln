@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIMSBlazor", "LIMSBlazor\LIMSBlazor.csproj", "{7DECAAB2-EDE4-496A-B2E0-F7BC1FEE88FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DECAAB2-EDE4-496A-B2E0-F7BC1FEE88FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DECAAB2-EDE4-496A-B2E0-F7BC1FEE88FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DECAAB2-EDE4-496A-B2E0-F7BC1FEE88FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DECAAB2-EDE4-496A-B2E0-F7BC1FEE88FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5D0A700A-5FF1-4F2D-BB0D-531355972B73}
+	EndGlobalSection
+EndGlobal

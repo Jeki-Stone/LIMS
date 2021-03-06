@@ -1,0 +1,41 @@
+﻿@using LIMSBlazor.Data
+@page "/roledelete/{id:int}"
+@inject IRoleService RoleService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить роль из базы данных" DeleteWarning="Вы уверены что хотите удалить эту роль? Данные нельзя будет вернуть!" Model="@role" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Название:</td>
+            <td>@role.Name</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@role.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty object
+        Role role = new Role();
+
+        [Parameter]
+        public int id { get; set; }
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            role = await RoleService.Role_GetOne(id);
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await RoleService.RoleDelete(id);
+            NavigationManager.NavigateTo("/rolelist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/rolelist");
+        } }

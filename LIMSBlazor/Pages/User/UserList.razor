@@ -1,0 +1,58 @@
+﻿@using LIMSBlazor.Data
+@page "/userlist"
+@inject IUserService UserService
+
+<DataView PageTitle="Список Пользователей" UrlAdd="/useraddedit" UrlAddText="Добавить нового Пользователя">
+    <Header>
+        <tr>
+            <td style="text-align:center">#</td>
+            <td>Id пользователя</td>
+            <td>Имя пользователя</td>
+            <td>Полное имя пользователя</td>
+            <td>Номер телефона пользователя</td>
+            <td>Пароль</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (users == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" width="50" height="50" />
+            </p>
+        }
+        else
+        {
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        <a href="useraddedit/@user.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="userdelete/@user.Id">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="/userlist/userrolelist/@user.Id">
+                            <img src="../images/downArrow.png" title="Add" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@user.Id</td>
+                    <td>@user.Name</td>
+                    <td>@user.FullName</td>
+                    <td>@user.PhoneNumber</td>
+                    <td>@user.Password</td>
+                </tr>
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    IEnumerable<User> users;
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserService.UserList();
+    }
+}

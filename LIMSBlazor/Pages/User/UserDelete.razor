@@ -1,0 +1,48 @@
+﻿@using LIMSBlazor.Data
+@page "/userdelete/{id:int}"
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить пользователя из базы данных" DeleteWarning="Вы уверены что хотите удалить этого Пользователя? Данные нельзя будет вернуть!" Model="@user" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Имя Пользователя:</td>
+            <td>@user.Name</td>
+        </tr>
+        <tr>
+            <td>Полное имя Пользователя:</td>
+            <td>@user.FullName</td>
+        </tr>
+        <tr>
+            <td>Номер телефона Пользователя:</td>
+            <td>@user.PhoneNumber</td>
+        </tr>
+        <tr>
+            <td>Пароль:</td>
+            <td>@user.Password</td>
+        </tr>
+    </table>
+</DataEdit>
+
+    @code { // Create a new, empty object
+        User user = new User();
+
+        [Parameter]
+        public int id { get; set; }
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            user = await UserService.User_GetOne(id);
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await UserService.UserDelete(id);
+            NavigationManager.NavigateTo("/userlist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/userlist");
+        } }

@@ -1,0 +1,36 @@
+﻿<h2>@PageTitle</h2>
+<div class="btn-group" role="group" aria-label="Basic example">
+    <a href="@UrlAdd" class="btn btn-secondary" >@UrlAddText</a>
+    @if (UrlBack != null && UrlBackText != null)
+    {
+        <a href="@UrlBack" class="btn btn-secondary">@UrlBackText</a>
+    }
+</div>
+<div class="row">
+</div>
+    <div class="row">
+        <table class="table table-striped table-sm table-bordered">
+            <thead class="font-weight-bold">@Header</thead>
+            <tbody>@Rows</tbody>
+        </table>
+    </div>
+
+    @code {
+
+        [Parameter]
+        public string PageTitle { get; set; }
+        [Parameter]
+        public string UrlAdd { get; set; }
+        [Parameter]
+        public string UrlAddText { get; set; }
+        [Parameter]
+        public string? UrlBack { get; set; }
+        [Parameter]
+        public string? UrlBackText { get; set; }
+        [Parameter]
+        public RenderFragment Header { get; set; }
+        [Parameter]
+        public RenderFragment Rows { get; set; }
+
+    }
+

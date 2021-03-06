@@ -1,0 +1,64 @@
+﻿@using LIMSBlazor.Data
+@page "/instrumentdelete/{id:int}"
+@inject IInstrumentService InstrumentService
+@inject ILabService LabService
+@inject IInstrumTypeService InstrumTypeService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить оборудование" DeleteWarning="Вы уверены что хотите удалить это оборудование? Данные нельзя будет вернуть!" Model="@instrument" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Название:</td>
+            <td>@instrument.Name</td>
+        </tr>
+        <tr>
+            <td>Тип оборудования:</td>
+            <td>@instrumtypes?.Where(x => x.Id == instrument.InstrumentTypeId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Серийный номер:</td>
+            <td>@instrument.SerialNumber</td>
+        </tr>
+        <tr>
+            <td>Статус:</td>
+            <td>@instrument.Status</td>
+        </tr>
+        <tr>
+            <td>Лаборатория:</td>
+            <td>@labs?.Where(x => x.Id == instrument.LabId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@instrument.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty  object
+        Instrument instrument = new Instrument();
+
+        [Parameter]
+        public int id { get; set; }
+
+        IEnumerable<InstrumType> instrumtypes;
+        IEnumerable<Lab> labs;
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            instrument = await InstrumentService.Instrument_GetOne(id);
+            instrumtypes = await InstrumTypeService.InstrumTypeList();
+            labs = await LabService.LabList();
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await InstrumentService.InstrumentDelete(id);
+            NavigationManager.NavigateTo("/instrumentlist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/instrumentlist");
+        } }

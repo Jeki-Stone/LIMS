@@ -1,0 +1,41 @@
+﻿@using LIMSBlazor.Data
+@page "/categorydelete/{id:int}"
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить категорию аналитических сервисов из базы данных" DeleteWarning="Вы уверены что хотите удалить эту категорию аналитических сервисов? Данные нельзя будет вернуть!" Model="@category" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table class="editform">
+        <tr>
+            <td>Наименование:</td>
+            <td>@category.Name</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@category.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty object
+        Category category = new Category();
+
+        [Parameter]
+        public int id { get; set; }
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            category = await CategoryService.Category_GetOne(id);
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await CategoryService.CategoryDelete(id);
+            NavigationManager.NavigateTo("/categorylist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/categorylist");
+        } }

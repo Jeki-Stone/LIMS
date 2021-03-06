@@ -1,0 +1,45 @@
+﻿@using LIMSBlazor.Data
+@page "/samplespecdelete/{id:int}"
+@inject ISampleSpecService SampleSpecService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить спецификацию из базы данных" DeleteWarning="Вы уверены что хотите удалить эту спецификацию из базы данных? Данные нельзя будет вернуть!" Model="@samplespec" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Наименование:</td>
+            <td>@samplespec.Name</td>
+        </tr>
+        <tr>
+            <td>Версия:</td>
+            <td>@samplespec.Version</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@samplespec.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty object
+        SampleSpec samplespec = new SampleSpec();
+
+        [Parameter]
+        public int id { get; set; }
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            samplespec = await SampleSpecService.SampleSpec_GetOne(id);
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await SampleSpecService.SampleSpecDelete(id);
+            NavigationManager.NavigateTo("/samplespeclist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/samplespeclist");
+        } }

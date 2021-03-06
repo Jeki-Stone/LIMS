@@ -1,0 +1,66 @@
+﻿@using LIMSBlazor.Data
+@page "/samplespecaddedit"
+@page "/samplespecaddedit/{id:int}"
+@inject ISampleSpecService SampleSpecService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@samplespec" BtnSaveText="@buttontext" OnValidSubmit="@SampleSpecSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Наименование:</td>
+            <td><input type="text" @bind="samplespec.Name" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Версия:</td>
+            <td><input type="text" @bind="samplespec.Version" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="samplespec.Description"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+    @code {
+        // Create a new, empty object
+        SampleSpec samplespec = new SampleSpec();
+
+        [Parameter]
+        public int id { get; set; }
+
+        // Set default page title and button text
+        public string pagetitle = "Добавить новую спецификацию";
+        public string buttontext = "Добавить";
+
+        //Executes on page open, set defaults on page.
+        protected override async Task OnInitializedAsync()
+        {
+            // ============ If the passed-in id is zero, assume new data.
+            if (id != 0)
+            {
+                samplespec = await SampleSpecService.SampleSpec_GetOne(id);
+                // Change page title and button text since this is an edit.
+                pagetitle = "Изменить данные спецификации";
+                buttontext = "Изменить";
+            }
+        }
+
+        protected async Task SampleSpecSave()
+        {
+            if (samplespec.Id == 0)
+            {
+                // Insert if id is zero.
+                await SampleSpecService.SampleSpecInsert(samplespec);
+            }
+            else
+            {
+                // Update is id > 0
+                await SampleSpecService.SampleSpecUpdate(samplespec);
+            }
+            NavigationManager.NavigateTo("/samplespeclist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/samplespeclist");
+        }
+    }

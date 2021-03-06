@@ -1,0 +1,41 @@
+﻿@using LIMSBlazor.Data
+@page "/attrdelete/{id:int}"
+@inject IAttrService AttrService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить аттрибут из базы данных" DeleteWarning="Вы уверены что хотите удалить этот аттрибут из базы данных? Данные нельзя будет вернуть!" Model="@attr" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table class="editform">
+        <tr>
+            <td>Наименование:</td>
+            <td>@attr.Name</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@attr.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty object
+        Attr attr = new Attr();
+
+        [Parameter]
+        public int id { get; set; }
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            attr = await AttrService.Attr_GetOne(id);
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await AttrService.AttrDelete(id);
+            NavigationManager.NavigateTo("/attrlist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/attrlist");
+        } }

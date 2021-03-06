@@ -1,0 +1,45 @@
+﻿@using LIMSBlazor.Data
+@page "/instrumtypedelete/{id:int}"
+@inject IInstrumTypeService InstrumTypeService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить тип оборудования из базы данных" DeleteWarning="Вы уверены что хотите удалить этот тип оборудования из базы данных? Данные нельзя будет вернуть!" Model="@instrumtype" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Id Типа:</td>
+            <td>@instrumtype.Id</td>
+        </tr>
+        <tr>
+            <td>Наименование Типа:</td>
+            <td>@instrumtype.Name</td>
+        </tr>
+        <tr>
+            <td>Описание Типа:</td>
+            <td>@instrumtype.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty object
+                InstrumType instrumtype = new InstrumType();
+
+                [Parameter]
+                public int id { get; set; }
+
+                //Executes on page open..
+                protected override async Task OnInitializedAsync()
+                {
+                    instrumtype = await InstrumTypeService.InstrumType_GetOne(id);
+                }
+
+                protected async Task Delete()
+                {
+                    // Insert if id is zero.
+                    await InstrumTypeService.InstrumTypeDelete(id);
+                    NavigationManager.NavigateTo("/instrumtypelist");
+                }
+                void Cancel()
+                {
+                    NavigationManager.NavigateTo("/instrumtypelist");
+                } }

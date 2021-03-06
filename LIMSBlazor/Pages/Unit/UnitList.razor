@@ -1,0 +1,52 @@
+﻿@using LIMSBlazor.Data
+@page "/unitlist"
+@inject IUnitService UnitService
+
+<DataView PageTitle="Список Ед. измерения" UrlAdd="/unitaddedit" UrlAddText="Добавить новую Ед. измерения">
+    <Header>
+        <tr>
+            <td style="text-align:center">#</td>
+            <td>Id клиента</td>
+            <td>Наименование</td>
+            <td>Скаляция</td>
+            <td>Базовая Ед.</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (units == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" width="50" height="50" />
+            </p>
+        }
+        else
+        {
+            @foreach (var unit in units)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        <a href="unitaddedit/@unit.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="unitdelete/@unit.Id">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@unit.Id</td>
+                    <td>@unit.Name</td>
+                    <td>@unit.Scale</td>
+                    <td>@unit.BaseUnitId</td>
+                </tr>
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    IEnumerable<Unit> units;
+    protected override async Task OnInitializedAsync()
+    {
+        units = await UnitService.UnitList();
+    }
+}

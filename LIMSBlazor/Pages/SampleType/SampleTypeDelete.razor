@@ -1,0 +1,40 @@
+﻿@using LIMSBlazor.Data
+@page "/sampletypedelete/{id:int}"
+@inject ISampleTypeService SampleTypeService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить тип испытания из базы данных" DeleteWarning="Вы уверены что хотите удалить этот тип испытания из базы данных? Данные нельзя будет вернуть!" Model="@sampletype" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table class="editform">
+        <tr>
+            <td>Наименование:</td>
+            <td>@sampletype.Name</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@sampletype.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+    @code { // Create a new, empty object
+        SampleType sampletype = new SampleType();
+
+        [Parameter]
+        public int id { get; set; }
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            sampletype = await SampleTypeService.SampleType_GetOne(id);
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await SampleTypeService.SampleTypeDelete(id);
+            NavigationManager.NavigateTo("/sampletypelist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/sampletypelist");
+        } }

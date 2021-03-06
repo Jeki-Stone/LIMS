@@ -1,0 +1,50 @@
+﻿@using LIMSBlazor.Data
+@page "/instrumtype/instrumtypeanalyticdelete/{InstrumentTypeId:int}/{AnalyticalServiceId:int}"
+@inject IInstrumTypeAnalyticService InstrumTypeAnalyticService
+@inject IInstrumTypeService InstrumTypeService
+@inject IAnalyticalServService AnalyticalServService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить аналитический сервис типа" DeleteWarning="Вы уверены что хотите удалить этот аналитический сервис типа? Данные нельзя будет вернуть!" Model="@instrumtypeanalitic" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table class="editform">
+        <tr>
+            <td>Тип оборудования:</td>
+            <td>@instrumtypes?.Where(x => x.Id == instrumtypeanalitic.InstrumentTypeId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>@analyticalservs?.Where(x => x.Id == instrumtypeanalitic.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty  object
+        InstrumTypeAnalytic instrumtypeanalitic = new InstrumTypeAnalytic();
+
+        [Parameter]
+        public int InstrumentTypeId { get; set; }
+        [Parameter]
+        public int AnalyticalServiceId { get; set; }
+
+        IEnumerable<InstrumType> instrumtypes;
+        IEnumerable<AnalyticalServ> analyticalservs;
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            instrumtypeanalitic = await InstrumTypeAnalyticService.InstrumTypeAnalytic_GetOne(InstrumentTypeId, AnalyticalServiceId);
+            instrumtypes = await InstrumTypeService.InstrumTypeList();
+            analyticalservs = await AnalyticalServService.AnalyticalServList();
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await InstrumTypeAnalyticService.InstrumTypeAnalyticDelete(InstrumentTypeId, AnalyticalServiceId);
+            NavigationManager.NavigateTo("/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+        } }

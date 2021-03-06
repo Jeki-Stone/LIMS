@@ -1,0 +1,84 @@
+﻿@using LIMSBlazor.Data
+@page "/sampletype/sampletypeanalyticaladdedit/{SampleTypeId:int}"
+@page "/sampletype/sampletypeanalyticaladdedit/{SampleTypeId:int}/{AnalyticalServiceId:int}"
+@inject ISampleTypeAnalyticalService SampleTypeAnalyticalService
+@inject ISampleTypeService SampleTypeService
+@inject IAnalyticalServService AnalyticalServService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@sampletypeanalytical" BtnSaveText="@buttontext" OnValidSubmit="@SampleTypeAnalyticalSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Тип образца:</td>
+            <td>@sampletypes?.Where(x => x.Id == SampleTypeId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>
+                <select @bind="sampletypeanalytical.AnalyticalServiceId" class="form-control" required>
+                    @if (analyticalservs != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in analyticalservs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+    </table>
+</DataEdit>
+
+    @code {
+        // Create a new, empty object
+        SampleTypeAnalytical sampletypeanalytical = new SampleTypeAnalytical();
+
+        IEnumerable<SampleType> sampletypes;
+        IEnumerable<AnalyticalServ> analyticalservs;
+
+        [Parameter]
+        public int SampleTypeId { get; set; }
+        [Parameter]
+        public int AnalyticalServiceId { get; set; }
+
+        // Set default page title and button text
+        public string pagetitle = "Добавить новый аналитический сервис типа испытания";
+        public string buttontext = "Добавить";
+
+        //Executes on page open, set defaults on page.
+        protected override async Task OnInitializedAsync()
+        {
+            sampletypes = await SampleTypeService.SampleTypeList();
+            analyticalservs = await AnalyticalServService.AnalyticalServList();
+            // ============ If the passed-in id is zero, assume new data.
+            if ((SampleTypeId != 0) & (AnalyticalServiceId != 0))
+            {
+                sampletypeanalytical = await SampleTypeAnalyticalService.SampleTypeAnalytical_GetOne(SampleTypeId, AnalyticalServiceId);
+                // Change page title and button text since this is an edit.
+
+                pagetitle = "Изменить данные аналитического сервиса типа испытания";
+                buttontext = "Изменить";
+            }
+        }
+
+        protected async Task SampleTypeAnalyticalSave()
+        {
+            if ((sampletypeanalytical.SampleTypeId != 0) & (sampletypeanalytical.AnalyticalServiceId != 0))
+            {
+                // Update is id > 0
+                sampletypeanalytical.OldAnalyticalServiceId = AnalyticalServiceId;
+                await SampleTypeAnalyticalService.SampleTypeAnalyticalUpdate(sampletypeanalytical);                
+            }
+            else
+            {
+                // Insert if id is zero.
+                await SampleTypeAnalyticalService.SampleTypeAnalyticalInsert(sampletypeanalytical, SampleTypeId);
+            }
+            NavigationManager.NavigateTo("/sampletype/sampletypeanalyticallist/" + SampleTypeId);
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/sampletype/sampletypeanalyticallist/" + SampleTypeId);
+        }
+    }

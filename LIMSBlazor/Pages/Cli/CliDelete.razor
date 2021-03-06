@@ -1,0 +1,49 @@
+﻿@using LIMSBlazor.Data
+@page "/clidelete/{id:int}"
+@inject ICliService CliService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить клиента из базы данных" DeleteWarning="Вы уверены что хотите удалить этого клиента? Данные нельзя будет вернуть!" Model="@cli" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table class="editform">
+        <tr>
+            <td>Имя Клиетна:</td>
+            <td>@cli.Name</td>
+        </tr>
+        <tr>
+            <td>Полное имя Клиента:</td>
+            <td>@cli.FullName</td>
+        </tr>
+        <tr>
+            <td>Номер телефона Клиента:</td>
+            <td>@cli.PhoneNumber</td>
+        </tr>
+        <tr>
+            <td>Организация:</td>
+            <td>@cli.Organization</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty object
+        Cli cli = new Cli();
+
+        [Parameter]
+        public int id { get; set; }
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            cli = await CliService.Cli_GetOne(id);
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await CliService.CliDelete(id);
+            NavigationManager.NavigateTo("/clilist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/clilist");
+        } }

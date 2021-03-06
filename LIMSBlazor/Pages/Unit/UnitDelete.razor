@@ -1,0 +1,45 @@
+﻿@using LIMSBlazor.Data
+@page "/unitdelete/{id:int}"
+@inject IUnitService UnitService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить Ед. измерения из базы данных" DeleteWarning="Вы уверены что хотите удалить эту Ед.измерения из базы данных? Данные нельзя будет вернуть!" Model="@unit" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Наименование:</td>
+            <td>@unit.Name</td>
+        </tr>
+        <tr>
+            <td>Скаляция:</td>
+            <td>@unit.Scale</td>
+        </tr>
+        <tr>
+            <td>Базовая Ед.:</td>
+            <td>@unit.BaseUnitId</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+    @code { // Create a new, empty object
+        Unit unit = new Unit();
+
+        [Parameter]
+        public int id { get; set; }
+
+        //Executes on page open..
+        protected override async Task OnInitializedAsync()
+        {
+            unit = await UnitService.Unit_GetOne(id);
+        }
+
+        protected async Task Delete()
+        {
+            // Insert if id is zero.
+            await UnitService.UnitDelete(id);
+            NavigationManager.NavigateTo("/unitlist");
+        }
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("/unitlist");
+        } }
