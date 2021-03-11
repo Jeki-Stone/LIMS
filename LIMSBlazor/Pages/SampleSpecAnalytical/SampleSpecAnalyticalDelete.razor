@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/samplespecanalyticaldelete/{SampleSpecId:int}/{AnalyticalServiceId:int}"
+@page "/config/samplespecanalyticaldelete/{SampleSpecId:int}/{AnalyticalServiceId:int}"
 @inject ISampleSpecAnalyticalService SampleSpecAnalyticalService
 @inject ISampleSpecService SampleSpecService
 @inject IAnalyticalServService AnalyticalServService
@@ -50,9 +50,9 @@
         {
             // Insert if id is zero.
             await SampleSpecAnalyticalService.SampleSpecAnalyticalDelete(SampleSpecId, AnalyticalServiceId);
-            NavigationManager.NavigateTo("/samplespecanalyticallist");
+            NavigationManager.NavigateTo("config/samplespecanalyticallist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/samplespecanalyticallist");
+            NavigationManager.NavigateTo("config/samplespecanalyticallist");
         } }

@@ -1,8 +1,8 @@
 ﻿@using LIMSBlazor.Data
-@page "/rolelist"
+@page "/config/rolelist"
 @inject IRoleService RoleService
 
-<DataView PageTitle="Список ролей" UrlAdd="/roleaddedit" UrlAddText="Добавить новую роль">
+<DataView PageTitle="Список ролей" UrlAdd="/config/roleaddedit" UrlAddText="Добавить новую роль">
     <Header>
         <tr>
             <td style="text-align:center">#</td>
@@ -24,11 +24,11 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="roleaddedit/@role.Id">
+                        <a href="/config/roleaddedit/@role.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="roledelete/@role.Id">
+                        <a href="/config/roledelete/@role.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>

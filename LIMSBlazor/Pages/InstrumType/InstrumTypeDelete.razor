@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/instrumtypedelete/{id:int}"
+@page "/config/instrumtypedelete/{id:int}"
 @inject IInstrumTypeService InstrumTypeService
 @inject NavigationManager NavigationManager
 
@@ -37,9 +37,9 @@
                 {
                     // Insert if id is zero.
                     await InstrumTypeService.InstrumTypeDelete(id);
-                    NavigationManager.NavigateTo("/instrumtypelist");
+                    NavigationManager.NavigateTo("/config/instrumtypelist");
                 }
                 void Cancel()
                 {
-                    NavigationManager.NavigateTo("/instrumtypelist");
+                    NavigationManager.NavigateTo("/config/instrumtypelist");
                 } }

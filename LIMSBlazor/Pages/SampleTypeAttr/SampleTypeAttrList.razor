@@ -1,10 +1,10 @@
 ﻿@using LIMSBlazor.Data
-@page "/sampletype/sampletypeattrlist/{SampleTypeId:int}"
+@page "/config/sampletype/sampletypeattrlist/{SampleTypeId:int}"
 @inject ISampleTypeAttrService SampleTypeAttrService
 @inject ISampleTypeService SampleTypeService
 @inject IAttrService AttrService
 
-<DataView PageTitle="Список атрибутов типа испытаний" UrlAdd=@UrlSampleTypeId UrlBack="/sampletypelist" UrlAddText="Добавить атрибут типу испытаний" UrlBackText="Вернуться к списку типов испытаний">
+<DataView PageTitle="Список атрибутов типа испытаний" UrlAdd=@UrlSampleTypeId UrlBack="config/sampletypelist" UrlAddText="Добавить атрибут типу испытаний" UrlBackText="Вернуться к списку типов испытаний">
     <Header>
         <tr>
             <th style="text-align:center">#</th>
@@ -27,11 +27,11 @@
                 {
                     <tr>
                         <td>
-                            <a href="/sampletype/sampletypeattraddedit/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
+                            <a href="/config/sampletype/sampletypeattraddedit/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
                                 <img src="../images/iEdit.png" width="20" height="20" />
                             </a>
                             &nbsp
-                            <a href="/sampletype/sampletypeattrdelete/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
+                            <a href="/config/sampletype/sampletypeattrdelete/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
                                 <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                             </a>
                         </td>
@@ -59,6 +59,6 @@
         sampletypeattrs = await SampleTypeAttrService.SampleTypeAttrList();
         sampletypes = await SampleTypeService.SampleTypeList();
         attrs = await AttrService.AttrList();
-        UrlSampleTypeId = "/sampletype/sampletypeattraddedit/" + SampleTypeId;
+        UrlSampleTypeId = "/config/sampletype/sampletypeattraddedit/" + SampleTypeId;
     }
 }

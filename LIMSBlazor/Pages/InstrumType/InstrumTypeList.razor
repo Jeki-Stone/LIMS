@@ -1,8 +1,8 @@
 ﻿@using LIMSBlazor.Data
-@page "/instrumtypelist"
+@page "/config/instrumtypelist"
 @inject IInstrumTypeService InstrumTypeService
 
-<DataView PageTitle="Список типов оборудования" UrlAdd="/instrumtypeaddedit" UrlAddText="Добавить новый тип оборудования">
+<DataView PageTitle="Список типов оборудования" UrlAdd="/config/instrumtypeaddedit" UrlAddText="Добавить новый тип оборудования">
     <Header>
         <tr>
             <td style="text-align:center">#</td>
@@ -24,15 +24,15 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="instrumtypeaddedit/@instrumtype.Id">
+                        <a href="/config/instrumtypeaddedit/@instrumtype.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="instrumtypedelete/@instrumtype.Id">
+                        <a href="/config/instrumtypedelete/@instrumtype.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="/instrumtype/instrumtypeanalyticlist/@instrumtype.Id">
+                        <a href="/config/instrumtype/instrumtypeanalyticlist/@instrumtype.Id">
                             <img src="../images/downArrow.png" title="Add" width="20" height="20" />
                         </a>
                     </td>

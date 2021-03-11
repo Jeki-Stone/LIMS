@@ -1,8 +1,8 @@
 ﻿@using LIMSBlazor.Data
-@page "/loclist"
+@page "/config/loclist"
 @inject ILocService LocService
 
-<DataView PageTitle="Список места взятия пробы" UrlAdd="/locaddedit" UrlAddText="Добавить новое место взятия пробы" >
+<DataView PageTitle="Список места взятия пробы" UrlAdd="config/locaddedit" UrlAddText="Добавить новое место взятия пробы" >
     <Header>
         <tr>
             <td style="text-align:center">#</td>
@@ -24,11 +24,11 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="locaddedit/@loc.Id">
+                        <a href="config/locaddedit/@loc.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="locdelete/@loc.Id">
+                        <a href="config/locdelete/@loc.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>

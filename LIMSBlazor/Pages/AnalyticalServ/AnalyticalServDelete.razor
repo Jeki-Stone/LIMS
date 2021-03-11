@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/analyticalservdelete/{id:int}"
+@page "/config/analyticalservdelete/{id:int}"
 @inject IAnalyticalServService AnalyticalServService
 @inject ICategoryService CategoryService
 @inject IUnitService UnitService
@@ -48,9 +48,9 @@
         {
             // Insert if id is zero.
             await AnalyticalServService.AnalyticalServDelete(id);
-            NavigationManager.NavigateTo("/analyticalservlist");
+            NavigationManager.NavigateTo("config/analyticalservlist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/analyticalservlist");
+            NavigationManager.NavigateTo("config/analyticalservlist");
         } }

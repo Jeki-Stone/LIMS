@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/analyticalservaddedit"
-@page "/analyticalservaddedit/{id:int}"
+@page "/config/analyticalservaddedit"
+@page "/config/analyticalservaddedit/{id:int}"
 @inject IAnalyticalServService AnalyticalServService
 @inject ICategoryService CategoryService
 @inject IUnitService UnitService
@@ -90,10 +90,10 @@
                 // Update is id > 0
                 await AnalyticalServService.AnalyticalServUpdate(analyticalserv);
             }
-            NavigationManager.NavigateTo("/analyticalservlist");
+            NavigationManager.NavigateTo("config/analyticalservlist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/analyticalservlist");
+            NavigationManager.NavigateTo("config/analyticalservlist");
         }
     }

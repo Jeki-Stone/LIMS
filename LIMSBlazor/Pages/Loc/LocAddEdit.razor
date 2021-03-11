@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/locaddedit"
-@page "/locaddedit/{id:int}"
+@page "/config/locaddedit"
+@page "/config/locaddedit/{id:int}"
 @inject ILocService LocService
 @inject NavigationManager NavigationManager
 
@@ -53,10 +53,10 @@
                 // Update is id > 0
                 await LocService.LocUpdate(loc);
             }
-            NavigationManager.NavigateTo("/loclist");
+            NavigationManager.NavigateTo("config/loclist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/loclist");
+            NavigationManager.NavigateTo("config/loclist");
         }
     }

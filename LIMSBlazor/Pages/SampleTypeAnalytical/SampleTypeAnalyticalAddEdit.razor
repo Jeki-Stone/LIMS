@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/sampletype/sampletypeanalyticaladdedit/{SampleTypeId:int}"
-@page "/sampletype/sampletypeanalyticaladdedit/{SampleTypeId:int}/{AnalyticalServiceId:int}"
+@page "/config/sampletype/sampletypeanalyticaladdedit/{SampleTypeId:int}"
+@page "/config/sampletype/sampletypeanalyticaladdedit/{SampleTypeId:int}/{AnalyticalServiceId:int}"
 @inject ISampleTypeAnalyticalService SampleTypeAnalyticalService
 @inject ISampleTypeService SampleTypeService
 @inject IAnalyticalServService AnalyticalServService
@@ -75,10 +75,10 @@
                 // Insert if id is zero.
                 await SampleTypeAnalyticalService.SampleTypeAnalyticalInsert(sampletypeanalytical, SampleTypeId);
             }
-            NavigationManager.NavigateTo("/sampletype/sampletypeanalyticallist/" + SampleTypeId);
+            NavigationManager.NavigateTo("config/sampletype/sampletypeanalyticallist/" + SampleTypeId);
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/sampletype/sampletypeanalyticallist/" + SampleTypeId);
+            NavigationManager.NavigateTo("config/sampletype/sampletypeanalyticallist/" + SampleTypeId);
         }
     }

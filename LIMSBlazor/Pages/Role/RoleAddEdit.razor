@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/roleaddedit"
-@page "/roleaddedit/{id:int}"
+@page "/config/roleaddedit"
+@page "/config/roleaddedit/{id:int}"
 @inject IRoleService RoleService
 @inject NavigationManager NavigationManager
 
@@ -53,10 +53,10 @@
                 // Update is id > 0
                 await RoleService.RoleUpdate(role);
             }
-            NavigationManager.NavigateTo("/rolelist");
+            NavigationManager.NavigateTo("/config/rolelist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/rolelist");
+            NavigationManager.NavigateTo("/config/rolelist");
         }
     }

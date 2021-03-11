@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/instrumentaddedit"
-@page "/instrumentaddedit/{id:int}"
+@page "/config/instrumentaddedit"
+@page "/config/instrumentaddedit/{id:int}"
 @inject IInstrumentService InstrumentService
 @inject ILabService LabService
 @inject IInstrumTypeService InstrumTypeService
@@ -98,10 +98,10 @@
                 // Update is id > 0
                 await InstrumentService.InstrumentUpdate(instrument);
             }
-            NavigationManager.NavigateTo("/instrumentlist");
+            NavigationManager.NavigateTo("/config/instrumentlist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/instrumentlist");
+            NavigationManager.NavigateTo("/config/instrumentlist");
         }
     }

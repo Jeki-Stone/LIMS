@@ -1,8 +1,8 @@
 ﻿@using LIMSBlazor.Data
-@page "/userlist"
+@page "/config/userlist"
 @inject IUserService UserService
 
-<DataView PageTitle="Список Пользователей" UrlAdd="/useraddedit" UrlAddText="Добавить нового Пользователя">
+<DataView PageTitle="Список Пользователей" UrlAdd="config/useraddedit" UrlAddText="Добавить нового Пользователя">
     <Header>
         <tr>
             <td style="text-align:center">#</td>
@@ -26,15 +26,15 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="useraddedit/@user.Id">
+                        <a href="config/useraddedit/@user.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="userdelete/@user.Id">
+                        <a href="config/userdelete/@user.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="/userlist/userrolelist/@user.Id">
+                        <a href="config/userlist/userrolelist/@user.Id">
                             <img src="../images/downArrow.png" title="Add" width="20" height="20" />
                         </a>
                     </td>

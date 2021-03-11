@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/samplespecaddedit"
-@page "/samplespecaddedit/{id:int}"
+@page "/config/samplespecaddedit"
+@page "/config/samplespecaddedit/{id:int}"
 @inject ISampleSpecService SampleSpecService
 @inject NavigationManager NavigationManager
 
@@ -57,10 +57,10 @@
                 // Update is id > 0
                 await SampleSpecService.SampleSpecUpdate(samplespec);
             }
-            NavigationManager.NavigateTo("/samplespeclist");
+            NavigationManager.NavigateTo("config/samplespeclist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/samplespeclist");
+            NavigationManager.NavigateTo("config/samplespeclist");
         }
     }

@@ -1,8 +1,8 @@
 ﻿@using LIMSBlazor.Data
-@page "/categorylist"
+@page "/config/categorylist"
 @inject ICategoryService CategoryService
 
-<DataView PageTitle="Список категорий аналитических сервисов" UrlAdd="/categoryaddedit" UrlAddText="Добавить новую категорию аналитических сервисов">
+<DataView PageTitle="Список категорий аналитических сервисов" UrlAdd="/config/categoryaddedit" UrlAddText="Добавить новую категорию аналитических сервисов">
     <Header>
         <tr>
             <td style="text-align:center">#</td>
@@ -24,11 +24,11 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="categoryaddedit/@category.Id">
+                        <a href="config/categoryaddedit/@category.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="categorydelete/@category.Id">
+                        <a href="config/categorydelete/@category.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>

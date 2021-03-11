@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/instrumentdelete/{id:int}"
+@page "/config/instrumentdelete/{id:int}"
 @inject IInstrumentService InstrumentService
 @inject ILabService LabService
 @inject IInstrumTypeService InstrumTypeService
@@ -35,7 +35,8 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty  object
+@code { 
+// Create a new, empty  object
         Instrument instrument = new Instrument();
 
         [Parameter]
@@ -56,9 +57,10 @@
         {
             // Insert if id is zero.
             await InstrumentService.InstrumentDelete(id);
-            NavigationManager.NavigateTo("/instrumentlist");
+            NavigationManager.NavigateTo("/config/instrumentlist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/instrumentlist");
-        } }
+            NavigationManager.NavigateTo("/config/instrumentlist");
+        } 
+}

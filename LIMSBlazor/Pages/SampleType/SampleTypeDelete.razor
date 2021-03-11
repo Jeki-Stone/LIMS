@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/sampletypedelete/{id:int}"
+@page "/config/sampletypedelete/{id:int}"
 @inject ISampleTypeService SampleTypeService
 @inject NavigationManager NavigationManager
 
@@ -32,9 +32,9 @@
         {
             // Insert if id is zero.
             await SampleTypeService.SampleTypeDelete(id);
-            NavigationManager.NavigateTo("/sampletypelist");
+            NavigationManager.NavigateTo("config/sampletypelist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/sampletypelist");
+            NavigationManager.NavigateTo("config/sampletypelist");
         } }

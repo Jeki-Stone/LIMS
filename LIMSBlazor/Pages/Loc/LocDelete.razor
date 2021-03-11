@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/locdelete/{id:int}"
+@page "/config/locdelete/{id:int}"
 @inject ILocService LocService
 @inject NavigationManager NavigationManager
 
@@ -33,9 +33,9 @@
         {
             // Insert if id is zero.
             await LocService.LocDelete(id);
-            NavigationManager.NavigateTo("/loclist");
+            NavigationManager.NavigateTo("config/loclist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/loclist");
+            NavigationManager.NavigateTo("config/loclist");
         } }

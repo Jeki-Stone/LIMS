@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/sampletype/sampletypeattraddedit/{SampleTypeId:int}"
-@page "/sampletype/sampletypeattraddedit/{SampleTypeId:int}/{AttrId:int}"
+@page "/config/sampletype/sampletypeattraddedit/{SampleTypeId:int}"
+@page "/config/sampletype/sampletypeattraddedit/{SampleTypeId:int}/{AttrId:int}"
 @inject ISampleTypeAttrService SampleTypeAttrService
 @inject ISampleTypeService SampleTypeService
 @inject IAttrService AttrService
@@ -75,10 +75,10 @@
                 // Insert if id is zero.
                 await SampleTypeAttrService.SampleTypeAttrInsert(sampletypeattr, SampleTypeId);
             }
-            NavigationManager.NavigateTo("/sampletype/sampletypeattrlist/" + SampleTypeId);
+            NavigationManager.NavigateTo("config/sampletype/sampletypeattrlist/" + SampleTypeId);
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/sampletype/sampletypeattrlist/" + SampleTypeId);
+            NavigationManager.NavigateTo("config/sampletype/sampletypeattrlist/" + SampleTypeId);
         }
     }

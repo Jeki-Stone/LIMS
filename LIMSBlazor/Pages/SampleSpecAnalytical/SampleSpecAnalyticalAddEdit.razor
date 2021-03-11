@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/samplespecanalyticaladdedit"
-@page "/samplespecanalyticaladdedit/{SampleSpecId:int}/{AnalyticalServiceId:int}"
+@page "/config/samplespecanalyticaladdedit"
+@page "/config/samplespecanalyticaladdedit/{SampleSpecId:int}/{AnalyticalServiceId:int}"
 @inject ISampleSpecAnalyticalService SampleSpecAnalyticalService
 @inject ISampleSpecService SampleSpecService
 @inject IAnalyticalServService AnalyticalServService
@@ -94,10 +94,10 @@
                 samplespecanalytical.OldAnalyticalServiceId = AnalyticalServiceId;
                 await SampleSpecAnalyticalService.SampleSpecAnalyticalUpdate(samplespecanalytical);
             }
-            NavigationManager.NavigateTo("/samplespecanalyticallist");
+            NavigationManager.NavigateTo("config/samplespecanalyticallist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/samplespecanalyticallist");
+            NavigationManager.NavigateTo("config/samplespecanalyticallist");
         }
     }

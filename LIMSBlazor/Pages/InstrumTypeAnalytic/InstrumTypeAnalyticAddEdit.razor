@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/instrumtype/instrumtypeanalyticaddedit/{InstrumentTypeId:int}"
-@page "/instrumtype/instrumtypeanalyticaddedit/{InstrumentTypeId:int}/{AnalyticalServiceId:int}"
+@page "/config/instrumtype/instrumtypeanalyticaddedit/{InstrumentTypeId:int}"
+@page "/config/instrumtype/instrumtypeanalyticaddedit/{InstrumentTypeId:int}/{AnalyticalServiceId:int}"
 @inject IInstrumTypeAnalyticService InstrumTypeAnalyticService
 @inject IInstrumTypeService InstrumTypeService
 @inject IAnalyticalServService AnalyticalServService
@@ -75,10 +75,10 @@
                 // Insert if id is zero.
                 await InstrumTypeAnalyticService.InstrumTypeAnalyticInsert(instrumtypeanalytic, InstrumentTypeId);
             }
-            NavigationManager.NavigateTo("/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+            NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+            NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
         }
     }

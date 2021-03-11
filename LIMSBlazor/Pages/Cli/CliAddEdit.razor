@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/cliaddedit"
-@page "/cliaddedit/{id:int}"
+@page "/config/cliaddedit"
+@page "/config/cliaddedit/{id:int}"
 @inject ICliService CliService
 @inject NavigationManager NavigationManager
 
@@ -61,10 +61,10 @@
             // Update is id > 0
             await CliService.CliUpdate(cli);
         }
-        NavigationManager.NavigateTo("/clilist");
+        NavigationManager.NavigateTo("config/clilist");
     }
     void Cancel()
     {
-        NavigationManager.NavigateTo("/clilist");
+        NavigationManager.NavigateTo("config/clilist");
     }
 }

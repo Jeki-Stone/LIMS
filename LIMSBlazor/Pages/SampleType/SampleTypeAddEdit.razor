@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/sampletypeaddedit"
-@page "/sampletypeaddedit/{id:int}"
+@page "/config/sampletypeaddedit"
+@page "/config/sampletypeaddedit/{id:int}"
 @inject ISampleTypeService SampleTypeService
 @inject NavigationManager NavigationManager
 
@@ -53,10 +53,10 @@
                 // Insert if id is zero.
                 await SampleTypeService.SampleTypeInsert(sampletype);
             }
-            NavigationManager.NavigateTo("/sampletypelist");
+            NavigationManager.NavigateTo("config/sampletypelist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/sampletypelist");
+            NavigationManager.NavigateTo("config/sampletypelist");
         }
     }

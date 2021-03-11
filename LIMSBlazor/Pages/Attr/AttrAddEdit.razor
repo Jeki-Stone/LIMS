@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/attraddedit"
-@page "/attraddedit/{id:int}"
+@page "/config/attraddedit"
+@page "/config/attraddedit/{id:int}"
 @inject IAttrService AttrService
 @inject NavigationManager NavigationManager
 
@@ -13,6 +13,14 @@
         <tr>
             <td>Описание:</td>
             <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="attr.Description"></textarea></td>
+        </tr>
+        <tr>
+            <td>Тип:</td>
+            <td><input type="number" @bind="attr.Type" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Опция:</td>
+            <td><input type="text" @bind="attr.Options" class="form-control" required></td>
         </tr>
     </table>
 </DataEdit>
@@ -53,10 +61,10 @@
                 // Update is id > 0
                 await AttrService.AttrUpdate(attr);
             }
-            NavigationManager.NavigateTo("/attrlist");
+            NavigationManager.NavigateTo("config/attrlist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/attrlist");
+            NavigationManager.NavigateTo("config/attrlist");
         }
     }

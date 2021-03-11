@@ -22,7 +22,7 @@ namespace LIMSBlazor.Data
         [Required]
         [Range(1, 5, ErrorMessage = "Age must be between 18 and 80.")]
         public int Status { get; set; }
-        public bool? IsFinal { get; set; }
+        public bool IsFinal { get; set; }
         public string Note { get; set; }
         public int LocationId { get; set; }
         public string LastEditComment { get; set; }

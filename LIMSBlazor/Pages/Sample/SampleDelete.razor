@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/sampledelete/{id:int}"
+@page "/samplelog/sampledelete/{id:int}"
 @inject ISampleService SampleService
 @inject ICliService CliService
 @inject ISampleTypeService SampleTypeService
@@ -71,9 +71,9 @@
         {
             // Insert if id is zero.
             await SampleService.SampleDelete(id);
-            NavigationManager.NavigateTo("/samplelist");
+            NavigationManager.NavigateTo("samplelog/samplelist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/samplelist");
+            NavigationManager.NavigateTo("samplelog/samplelist");
         } }

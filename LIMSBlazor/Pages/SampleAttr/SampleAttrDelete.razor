@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/sample/sampleattrdelete/{SampleId:int}/{AttrId:int}"
+@page "/samplelog/sample/sampleattrdelete/{SampleId:int}/{AttrId:int}"
 @inject ISampleAttrService SampleAttrService
 @inject ISampleService SampleService
 @inject IAttrService AttrService
@@ -46,9 +46,9 @@
         {
             // Insert if id is zero.
             await SampleAttrService.SampleAttrDelete(SampleId, AttrId);
-            NavigationManager.NavigateTo("/sample/sampleattrlist/" + SampleId);
+            NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/sample/sampleattrlist/" + SampleId);
+            NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
         } }

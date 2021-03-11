@@ -23,43 +23,43 @@
                 <NavLink class="nav-link" href="config/lablist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Лаборатории
                 </NavLink>
-                <NavLink class="nav-link" href="clilist">
+                <NavLink class="nav-link" href="config/clilist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Клиенты
                 </NavLink>
-                <NavLink class="nav-link" href="userlist">
+                <NavLink class="nav-link" href="config/userlist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Пользователи
                 </NavLink>
-                <NavLink class="nav-link" href="rolelist">
+                <NavLink class="nav-link" href="config/rolelist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Роли пользователей
                 </NavLink>
-                <NavLink class="nav-link" href="instrumtypelist">
+                <NavLink class="nav-link" href="config/instrumtypelist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Типы испы. машин
                 </NavLink>
-                <NavLink class="nav-link" href="instrumentlist">
+                <NavLink class="nav-link" href="config/instrumentlist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Оборудования
                 </NavLink>
-                <NavLink class="nav-link" href="loclist">
+                <NavLink class="nav-link" href="config/loclist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Места взятия проб
                 </NavLink>
-                <NavLink class="nav-link" href="categorylist">
+                <NavLink class="nav-link" href="config/categorylist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Кате. аналити. мето.
                 </NavLink>
-                <NavLink class="nav-link" href="unitlist">
+                <NavLink class="nav-link" href="config/unitlist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Ед. измерения
                 </NavLink>
-                <NavLink class="nav-link" href="attrlist">
+                <NavLink class="nav-link" href="config/attrlist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Аттрибуты
                 </NavLink>
-                <NavLink class="nav-link" href="sampletypelist">
+                <NavLink class="nav-link" href="config/sampletypelist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Типы испытаний
                 </NavLink>
-                <NavLink class="nav-link" href="analyticalservlist">
+                <NavLink class="nav-link" href="config/analyticalservlist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Аналити. сервисы
                 </NavLink>
-                <NavLink class="nav-link" href="samplespeclist">
+                <NavLink class="nav-link" href="config/samplespeclist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Спецификации
                 </NavLink>
-                <NavLink class="nav-link" href="samplespecanalyticallist">
+                <NavLink class="nav-link" href="config/samplespecanalyticallist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Элем. спецификации
                 </NavLink>
             }
@@ -70,8 +70,8 @@
             </NavLink>
             @if (sampleLogVisibl)
             {
-                <NavLink class="nav-link" href="samplelist">
-                    <span class="oi oi-media-play" aria-hidden="true"></span> Образцы
+                <NavLink class="nav-link" href="samplelog/samplelist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Заявка
                 </NavLink>
             }
         </li>
@@ -81,7 +81,7 @@
             </NavLink>
             @if (testVisibl)
             {
-                <NavLink class="nav-link" href="resultlist">
+                <NavLink class="nav-link" href="test/samplelist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Результаты
                 </NavLink>
             }
@@ -92,9 +92,9 @@
             </NavLink>
             @if (analysisVisibl)
             {
-                <NavLink class="nav-link" href="resultlist">
+                @*<NavLink class="nav-link" href="resultlist">
                     <span class="oi oi-media-play" aria-hidden="true"></span> Результаты
-                </NavLink>
+                </NavLink>*@
             }
         </li>
         <li class="nav-item px-3">
@@ -103,8 +103,8 @@
             </NavLink>
             @if (confirmationVisibl)
             {
-                <NavLink class="nav-link" href="resultlist">
-                    <span class="oi oi-media-play" aria-hidden="true"></span> Результаты
+                <NavLink class="nav-link" href="confirmation/samplelist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Заключение
                 </NavLink>
             }
         </li>
@@ -157,31 +157,27 @@
     void selectSampleLog()
     {
         closeAllMenu(ref sampleLogVisibl);
-        sampleLogVisibl = !sampleLogVisibl;
-        //if (!sampleLogVisibl)
-        //    NavigationManager.NavigateTo("/");
+        if (!sampleLogVisibl)
+            NavigationManager.NavigateTo("/");
     }
 
     void selectTest()
     {
         closeAllMenu(ref testVisibl);
-        testVisibl = !testVisibl;
-        //if (!testVisibl)
-        //    NavigationManager.NavigateTo("/");
+        if (!testVisibl)
+            NavigationManager.NavigateTo("/");
     }
 
     void selectAnalysis()
     {
         closeAllMenu(ref analysisVisibl);
-        analysisVisibl = !analysisVisibl;
-        //if (!analysisVisibl)
-        //    NavigationManager.NavigateTo("/");
+        if (!analysisVisibl)
+            NavigationManager.NavigateTo("/");
     }
 
     void selectСonfirmation()
     {
         closeAllMenu(ref confirmationVisibl);
-        confirmationVisibl = !confirmationVisibl;
         if (!confirmationVisibl)
             NavigationManager.NavigateTo("/");
     }

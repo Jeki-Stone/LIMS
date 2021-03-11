@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/categoryaddedit"
-@page "/categoryaddedit/{id:int}"
+@page "/config/categoryaddedit"
+@page "/config/categoryaddedit/{id:int}"
 @inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 
@@ -53,10 +53,10 @@
                 // Update is id > 0
                 await CategoryService.CategoryUpdate(category);
             }
-            NavigationManager.NavigateTo("/categorylist");
+            NavigationManager.NavigateTo("config/categorylist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/categorylist");
+            NavigationManager.NavigateTo("config/categorylist");
         }
     }

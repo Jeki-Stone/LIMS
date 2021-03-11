@@ -1,0 +1,93 @@
+﻿@using LIMSBlazor.Data
+@page "/test/samplelist"
+@inject ISampleService SampleService
+@inject ICliService CliService
+@inject ISampleTypeService SampleTypeService
+@inject ILocService LocService
+
+<DataView PageTitle="Список образцов">
+    <Header>
+        <tr>
+            <th style="text-align:center">#</th>
+            <th>Id</th>
+            <td>Время получения</td>
+            <td>Время начала тестов</td>
+            <td>Клиент</td>
+            <td>Тип образца</td>
+            <td>Статус</td>
+            <td>Готовность</td>
+            <td>Записка</td>
+            <td>Место взятия образца</td>
+            <td>Причины изменений</td>
+            <td>Время создания</td>
+            <td>Время последних изменений</td>
+            <td>Кем созданно</td>
+            <td>Кем изменено</td>
+            <td>Дата готовности</td>
+            <td>Пользователь подтверждающий готовность</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (samples == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
+        }
+        else
+        {
+            @foreach (var sample in samples)
+            {
+                if (sample.Status == 2)
+                {
+                    <tr>
+                        <td style="text-align:center">
+                            <a href="test/sampleaddedit/@sample.Id">
+                                <img src="../images/iEdit.png" width="20" height="20" />
+                            </a>
+                            &nbsp
+                            <a href="test/sample/resultlist/@sample.Id">
+                                <img src="../images/downArrow.png" title="Add result" width="20" height="20" />
+                            </a>
+                        </td>
+                        <td>@sample.Id</td>
+                        <td>@sample.RecieveTime</td>
+                        <td>@sample.TestTime</td>
+                        <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
+                        <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
+                        <td>@GlobalConstant.SampleStatusModel.Where(x => x.Value == Convert.ToString(sample.Status)).FirstOrDefault()?.Text</td>
+                        <td style="text-align:center">
+                            @if (sample.IsFinal == true)
+                            {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                            else
+                            {<img src="../images/iRedX.png" width="25" height="25" />}
+                        </td>
+                        <td>@sample.Note</td>
+                        <td>@locs?.Where(x => x.Id == sample.LocationId).FirstOrDefault()?.Name</td>
+                        <td>@sample.LastEditComment</td>
+                        <td>@sample.CreateTime</td>
+                        <td>@sample.UpdateTime</td>
+                        <td>@sample.CreateUser</td>
+                        <td>@sample.UpdateUser</td>
+                        <td>@sample.FinalizeTime</td>
+                        <td>@sample.FinalizeUser</td>
+                    </tr>
+                }
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    IEnumerable<Sample> samples;
+    IEnumerable<Cli> clis;
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<Loc> locs;
+    protected override async Task OnInitializedAsync()
+    {
+        samples = await SampleService.SampleList();
+        clis = await CliService.CliList();
+        sampletypes = await SampleTypeService.SampleTypeList();
+        locs = await LocService.LocList();
+    }
+}

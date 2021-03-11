@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/userlist/userroleaddedit/{UserId:int}"
-@page "/userlist/userroleaddedit/{UserId:int}/{LabId:int}/{RoleId:int}"
+@page "/config/userlist/userroleaddedit/{UserId:int}"
+@page "/config/userlist/userroleaddedit/{UserId:int}/{LabId:int}/{RoleId:int}"
 @inject IUserRoleService UserRoleService
 @inject ILabService LabService
 @inject IUserService UserService
@@ -96,10 +96,10 @@
                 // Insert if id is zero.
                 await UserRoleService.UserRoleInsert(userrole, UserId);
             }
-            NavigationManager.NavigateTo("/userlist/userrolelist/" + UserId);
+            NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/userlist/userrolelist/" + UserId);
+            NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
         }
     }

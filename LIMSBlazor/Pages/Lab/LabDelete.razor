@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/labdelete/{id:int}"
+@page "/config/labdelete/{id:int}"
 @inject ILabService LabService
 @inject ILocService LocService
 @inject NavigationManager NavigationManager
@@ -45,9 +45,9 @@
         {
             // Insert if id is zero.
             await LabService.LabDelete(id);
-            NavigationManager.NavigateTo("/lablist");
+            NavigationManager.NavigateTo("config/lablist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/lablist");
+            NavigationManager.NavigateTo("config/lablist");
         } }

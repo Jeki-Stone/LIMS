@@ -28,6 +28,8 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("Name", attr.Name, DbType.String);
                     parametrs.Add("Description", attr.Description, DbType.String);
+                    parametrs.Add("Type", attr.Type, DbType.String);
+                    parametrs.Add("Options", attr.Options, DbType.String);
                     // Stored procedure method
                     await conn.ExecuteAsync("spAttrs_Insert", parametrs, commandType: CommandType.StoredProcedure);
 
@@ -79,6 +81,8 @@ namespace LIMSBlazor.Data
                     parametrs.Add("Id", attr.Id, DbType.Int32);
                     parametrs.Add("Name", attr.Name, DbType.String);
                     parametrs.Add("Description", attr.Description, DbType.String);
+                    parametrs.Add("Type", attr.Type, DbType.String);
+                    parametrs.Add("Options", attr.Options, DbType.String);
                     await conn.ExecuteAsync("spAttrs_Update", parametrs, commandType: CommandType.StoredProcedure);
                 }
             }

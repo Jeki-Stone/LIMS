@@ -1,11 +1,11 @@
 ﻿@using LIMSBlazor.Data
-@page "/sample/sampleattrlist/{SampleId:int}"
+@page "/samplelog/sample/sampleattrlist/{SampleId:int}"
 @inject ISampleAttrService SampleAttrService
 @inject ISampleService SampleService
 @inject IAttrService AttrService
 
 
-<DataView PageTitle="Список атрибутов испытания" UrlAdd=@UrlSampleId UrlBack="/samplelist" UrlAddText="Добавить новый атрибут испытания" UrlBackText="Вернуться к списку испытаний">
+<DataView PageTitle="Список атрибутов испытания" UrlAdd=@UrlSampleId UrlBack="samplelog/samplelist" UrlAddText="Добавить новый атрибут испытания" UrlBackText="Вернуться к списку испытаний">
     <Header>
         <tr>
             <th style="text-align:center">#</th>
@@ -33,11 +33,11 @@
                 {
                     <tr>
                         <td style="text-align:center">
-                            <a href="/sample/sampleattraddedit/@sampleattr.SampleId/@sampleattr.AttrId">
+                            <a href="samplelog/sample/sampleattraddedit/@sampleattr.SampleId/@sampleattr.AttrId">
                                 <img src="../images/iEdit.png" width="20" height="20" />
                             </a>
                             &nbsp
-                            <a href="/sample/sampleattrdelete/@sampleattr.SampleId/@sampleattr.AttrId">
+                            <a href="samplelog/sample/sampleattrdelete/@sampleattr.SampleId/@sampleattr.AttrId">
                                 <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                             </a>
                         </td>
@@ -70,6 +70,6 @@
         sampleattrs = await SampleAttrService.SampleAttrList();
         samples = await SampleService.SampleList();
         attrs = await AttrService.AttrList();
-        UrlSampleId = "/sample/sampleattradd/" + SampleId;
+        UrlSampleId = "samplelog/sample/sampleattradd/" + SampleId;
     }
 }

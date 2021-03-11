@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/clidelete/{id:int}"
+@page "/config/clidelete/{id:int}"
 @inject ICliService CliService
 @inject NavigationManager NavigationManager
 
@@ -41,9 +41,9 @@
         {
             // Insert if id is zero.
             await CliService.CliDelete(id);
-            NavigationManager.NavigateTo("/clilist");
+            NavigationManager.NavigateTo("config/clilist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/clilist");
+            NavigationManager.NavigateTo("config/clilist");
         } }

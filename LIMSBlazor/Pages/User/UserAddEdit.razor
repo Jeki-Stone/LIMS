@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/useraddedit"
-@page "/useraddedit/{id:int}"
+@page "/config/useraddedit"
+@page "/config/useraddedit/{id:int}"
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
 
@@ -63,10 +63,10 @@
             // Update is id > 0
             await UserService.UserUpdate(user);
         }
-        NavigationManager.NavigateTo("/userlist");
+        NavigationManager.NavigateTo("/config/userlist");
     }
     void Cancel()
     {
-        NavigationManager.NavigateTo("/userlist");
+        NavigationManager.NavigateTo("/config/userlist");
     }
 }

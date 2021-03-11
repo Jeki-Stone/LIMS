@@ -1,8 +1,8 @@
 ﻿@using LIMSBlazor.Data
-@page "/unitlist"
+@page "/config/unitlist"
 @inject IUnitService UnitService
 
-<DataView PageTitle="Список Ед. измерения" UrlAdd="/unitaddedit" UrlAddText="Добавить новую Ед. измерения">
+<DataView PageTitle="Список Ед. измерения" UrlAdd="config//unitaddedit" UrlAddText="Добавить новую Ед. измерения">
     <Header>
         <tr>
             <td style="text-align:center">#</td>
@@ -25,11 +25,11 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="unitaddedit/@unit.Id">
+                        <a href="config/unitaddedit/@unit.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="unitdelete/@unit.Id">
+                        <a href="config/unitdelete/@unit.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>

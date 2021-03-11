@@ -1,11 +1,11 @@
 ﻿@using LIMSBlazor.Data
-@page "/userlist/userrolelist/{UserId:int}"
+@page "/config/userlist/userrolelist/{UserId:int}"
 @inject IUserRoleService UserRoleService
 @inject ILabService LabService
 @inject IUserService UserService
 @inject IRoleService RoleService
 
-<DataView PageTitle="Список ролей пользователя" UrlAdd=@UrlUserId UrlBack="/userlist" UrlAddText="Добавить новую роль для пользователя" UrlBackText="Вернуться к списку Пользователей">
+<DataView PageTitle="Список ролей пользователя" UrlAdd=@UrlUserId UrlBack="/config/userlist" UrlAddText="Добавить новую роль для пользователя" UrlBackText="Вернуться к списку Пользователей">
     <Header>
         <tr>
             <th style="text-align:center">#</th>
@@ -29,11 +29,11 @@
                 {
                     <tr>
                         <td style="text-align:center">
-                            <a href="/userlist/userroleaddedit/@userrole.UserId/@userrole.LabId/@userrole.RoleId">
+                            <a href="/config/userlist/userroleaddedit/@userrole.UserId/@userrole.LabId/@userrole.RoleId">
                                 <img src="../images/iEdit.png" width="20" height="20" />
                             </a>
                             &nbsp
-                            <a href="/userlist/userroledelete/@userrole.UserId/@userrole.LabId/@userrole.RoleId">
+                            <a href="/config/userlist/userroledelete/@userrole.UserId/@userrole.LabId/@userrole.RoleId">
                                 <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                             </a>
                         </td>
@@ -65,6 +65,6 @@
         users = await UserService.UserList();
         labs = await LabService.LabList();
         roles = await RoleService.RoleList();
-        UrlUserId = "/userlist/userroleaddedit/" + @UserId;
+        UrlUserId = "/config/userlist/userroleaddedit/" + @UserId;
     }
 }

@@ -1,8 +1,8 @@
 ﻿@using LIMSBlazor.Data
-@page "/samplespeclist"
+@page "/config/samplespeclist"
 @inject ISampleSpecService SampleSpecService
 
-<DataView PageTitle="Список спецификаций" UrlAdd="/samplespecaddedit"  UrlAddText="Добавить новую спецификацию">
+<DataView PageTitle="Список спецификаций" UrlAdd="config/samplespecaddedit"  UrlAddText="Добавить новую спецификацию">
     <Header>
         <tr>
             <td style="text-align:center">#</td>
@@ -25,11 +25,11 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="samplespecaddedit/@samplespec.Id">
+                        <a href="config/samplespecaddedit/@samplespec.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="samplespecdelete/@samplespec.Id">
+                        <a href="config/samplespecdelete/@samplespec.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>

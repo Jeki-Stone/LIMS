@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/resultdelete/{id:int}"
+@page "/samplelog/sample/resultdelete/{SampleId:int}/{id:int}"
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
@@ -42,6 +42,8 @@
         IEnumerable<AnalyticalServ> analyticalservs;
 
         [Parameter]
+        public int SampleId { get; set; }
+        [Parameter]
         public int id { get; set; }
 
         //Executes on page open..
@@ -56,9 +58,9 @@
         {
             // Insert if id is zero.
             await ResultService.ResultDelete(id);
-            NavigationManager.NavigateTo("/resultlist/");
+            NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/resultlist/");
+            NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
         } }

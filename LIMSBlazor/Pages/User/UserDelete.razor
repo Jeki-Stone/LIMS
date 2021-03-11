@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/userdelete/{id:int}"
+@page "/config/userdelete/{id:int}"
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
 
@@ -40,9 +40,9 @@
         {
             // Insert if id is zero.
             await UserService.UserDelete(id);
-            NavigationManager.NavigateTo("/userlist");
+            NavigationManager.NavigateTo("/config/userlist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/userlist");
+            NavigationManager.NavigateTo("/config/userlist");
         } }

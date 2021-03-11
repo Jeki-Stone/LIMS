@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/sample/sampleattradd/{SampleId:int}"
-@page "/sample/sampleattraddedit/{SampleId:int}/{AttrId:int}"
+@page "/samplelog/sample/sampleattradd/{SampleId:int}"
+@page "/samplelog/sample/sampleattraddedit/{SampleId:int}/{AttrId:int}"
 @inject ISampleAttrService SampleAttrService
 @inject ISampleService SampleService
 @inject IAttrService AttrService
@@ -13,7 +13,7 @@
             <td>@SampleId</td>
         </tr>
         <tr>
-            <td>Атребут:</td>
+            <td>Атрибут:</td>
             <td>
                 <select @bind="sampleattr.AttrId" class="form-control" required>
                     @if (attrs != null)
@@ -83,10 +83,10 @@
                 await SampleAttrService.SampleAttrInsert(sampleattr, SampleId);
             }
 
-            NavigationManager.NavigateTo("/sample/sampleattrlist/" + SampleId);
+            NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/sample/sampleattrlist/" + SampleId);
+            NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
         }
     }

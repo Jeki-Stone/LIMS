@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/instrumtypeaddedit"
-@page "/instrumtypeaddedit/{id:int}"
+@page "/config/instrumtypeaddedit"
+@page "/config/instrumtypeaddedit/{id:int}"
 @inject IInstrumTypeService InstrumTypeService
 @inject NavigationManager NavigationManager
 
@@ -53,10 +53,10 @@
                 // Update is id > 0
                 await InstrumTypeService.InstrumTypeUpdate(instrumtype);
             }
-            NavigationManager.NavigateTo("/instrumtypelist");
+            NavigationManager.NavigateTo("/config/instrumtypelist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/instrumtypelist");
+            NavigationManager.NavigateTo("/config/instrumtypelist");
         }
     }

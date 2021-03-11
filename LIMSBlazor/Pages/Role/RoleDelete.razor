@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/roledelete/{id:int}"
+@page "/config/roledelete/{id:int}"
 @inject IRoleService RoleService
 @inject NavigationManager NavigationManager
 
@@ -33,9 +33,9 @@
         {
             // Insert if id is zero.
             await RoleService.RoleDelete(id);
-            NavigationManager.NavigateTo("/rolelist");
+            NavigationManager.NavigateTo("/config/rolelist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/rolelist");
+            NavigationManager.NavigateTo("/config/rolelist");
         } }

@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/categorydelete/{id:int}"
+@page "/config/categorydelete/{id:int}"
 @inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 
@@ -33,9 +33,9 @@
         {
             // Insert if id is zero.
             await CategoryService.CategoryDelete(id);
-            NavigationManager.NavigateTo("/categorylist");
+            NavigationManager.NavigateTo("config/categorylist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/categorylist");
+            NavigationManager.NavigateTo("config/categorylist");
         } }

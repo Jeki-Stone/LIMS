@@ -1,8 +1,8 @@
 ﻿@using LIMSBlazor.Data
-@page "/clilist"
+@page "/config/clilist"
 @inject ICliService CliService
 
-<DataView PageTitle="Список клиентов" UrlAdd="/cliaddedit" UrlAddText="Добавить нового клиента">
+<DataView PageTitle="Список клиентов" UrlAdd="config/cliaddedit" UrlAddText="Добавить нового клиента">
     <Header>
         <tr>
             <td style="text-align:center">#</td>
@@ -26,11 +26,11 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="cliaddedit/@cli.Id">
+                        <a href="config/cliaddedit/@cli.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="clidelete/@cli.Id">
+                        <a href="config/clidelete/@cli.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>

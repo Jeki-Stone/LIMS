@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/labaddedit"
-@page "/labaddedit/{id:int}"
+@page "/config/labaddedit"
+@page "/config/labaddedit/{id:int}"
 @inject ILabService LabService
 @inject ILocService LocService
 @inject NavigationManager NavigationManager
@@ -76,10 +76,10 @@
                 // Update is id > 0
                 await LabService.LabUpdate(lab);
             }
-            NavigationManager.NavigateTo("/lablist");
+            NavigationManager.NavigateTo("config/lablist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/lablist");
+            NavigationManager.NavigateTo("config/lablist");
         }
     }

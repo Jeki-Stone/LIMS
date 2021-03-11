@@ -1,14 +1,16 @@
 ﻿@using LIMSBlazor.Data
-@page "/attrlist"
+@page "/config/attrlist"
 @inject IAttrService AttrService
 
-<DataView PageTitle="Список аттрибутов" UrlAdd="/attraddedit"UrlAddText="Добавить новый аттрибут">
+<DataView PageTitle="Список аттрибутов" UrlAdd="config/attraddedit" UrlAddText="Добавить новый аттрибут">
     <Header>
         <tr>
             <td style="text-align:center">#</td>
             <td>Id</td>
             <td>Наименование</td>
             <td>Описание</td>
+            <td>Тип</td>
+            <td>Опция</td>
         </tr>
     </Header>
     <Rows>
@@ -24,16 +26,18 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="attraddedit/@attr.Id">
+                        <a href="config/attraddedit/@attr.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
-                        <a href="attrdelete/@attr.Id">
+                        <a href="config/attrdelete/@attr.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>
                     <td>@attr.Id</td>
                     <td>@attr.Name</td>
                     <td>@attr.Description</td>
+                    <td>@attr.Type</td>
+                    <td>@attr.Options</td>
                 </tr>
             }
         }

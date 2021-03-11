@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/attrdelete/{id:int}"
+@page "/config/attrdelete/{id:int}"
 @inject IAttrService AttrService
 @inject NavigationManager NavigationManager
 
@@ -12,6 +12,14 @@
         <tr>
             <td>Описание:</td>
             <td>@attr.Description</td>
+        </tr>
+        <tr>
+            <td>Тип:</td>
+            <td>@attr.Type</td>
+        </tr>
+        <tr>
+            <td>Опция:</td>
+            <td>@attr.Options</td>
         </tr>
     </table>
 </DataEdit>
@@ -33,9 +41,9 @@
         {
             // Insert if id is zero.
             await AttrService.AttrDelete(id);
-            NavigationManager.NavigateTo("/attrlist");
+            NavigationManager.NavigateTo("config/attrlist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/attrlist");
+            NavigationManager.NavigateTo("config/attrlist");
         } }

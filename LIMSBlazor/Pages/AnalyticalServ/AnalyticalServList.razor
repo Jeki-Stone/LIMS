@@ -1,10 +1,10 @@
 ﻿@using LIMSBlazor.Data
-@page "/analyticalservlist"
+@page "/config/analyticalservlist"
 @inject IAnalyticalServService AnalyticalServService
 @inject ICategoryService CategoryService
 @inject IUnitService UnitService
 
-<DataView PageTitle="Список аналитических сервисов" UrlAdd="/analyticalservaddedit" UrlAddText="Добавить новый аналитический сервис">
+<DataView PageTitle="Список аналитических сервисов" UrlAdd="config/analyticalservaddedit" UrlAddText="Добавить новый аналитический сервис">
     <Header>
         <tr>
             <th style="text-align:center">#</th>
@@ -28,11 +28,11 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="analyticalservaddedit/@analyticalserv.Id">
+                        <a href="config/analyticalservaddedit/@analyticalserv.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="analyticalservdelete/@analyticalserv.Id">
+                        <a href="config/analyticalservdelete/@analyticalserv.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>

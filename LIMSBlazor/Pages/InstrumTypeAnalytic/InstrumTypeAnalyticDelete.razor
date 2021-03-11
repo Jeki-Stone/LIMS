@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/instrumtype/instrumtypeanalyticdelete/{InstrumentTypeId:int}/{AnalyticalServiceId:int}"
+@page "/config/instrumtype/instrumtypeanalyticdelete/{InstrumentTypeId:int}/{AnalyticalServiceId:int}"
 @inject IInstrumTypeAnalyticService InstrumTypeAnalyticService
 @inject IInstrumTypeService InstrumTypeService
 @inject IAnalyticalServService AnalyticalServService
@@ -42,9 +42,9 @@
         {
             // Insert if id is zero.
             await InstrumTypeAnalyticService.InstrumTypeAnalyticDelete(InstrumentTypeId, AnalyticalServiceId);
-            NavigationManager.NavigateTo("/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+            NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+            NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
         } }

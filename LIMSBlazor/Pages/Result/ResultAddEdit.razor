@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/resultaddedit"
-@page "/resultaddedit/{id:int}"
+@page "/samplelog/sample/resultaddedit/{SampleId:int}"
+@page "/samplelog/sample/resultaddedit/{SampleId:int}/{id:int}"
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
@@ -10,18 +10,7 @@
     <table>
         <tr>
             <td>Id испытания:</td>
-            <td>
-                <select @bind="result.SampleId" class="form-control" required>
-                    @if (samples != null)
-                    {
-                        <option value="0">Выберите значение</option>
-                        foreach (var item in samples)
-                        {
-                            <option value="@item.Id">@item.Id</option>
-                        }
-                    }
-                </select>
-            </td>
+            <td>@SampleId</td>
         </tr>
         <tr>
             <td>Аналитический сервис:</td>
@@ -65,6 +54,8 @@
         IEnumerable<AnalyticalServ> analyticalservs;
 
         [Parameter]
+        public int SampleId { get; set; }
+        [Parameter]
         public int id { get; set; }
 
         // Set default page title and button text
@@ -99,13 +90,14 @@
             {
                 result.CreateTime = DateTime.Now;
                 result.CreateUser = "Создавший пользователь";
+                result.SampleId = SampleId;
                 // Insert if id is zero.
                 await ResultService.ResultInsert(result);
             }
-            NavigationManager.NavigateTo("/resultlist");
+            NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/resultlist");
+            NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
         }
     }

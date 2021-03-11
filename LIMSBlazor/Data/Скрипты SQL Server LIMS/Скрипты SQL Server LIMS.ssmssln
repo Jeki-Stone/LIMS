@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# SQL Server Management Studio Solution File, Format Version 18.00
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "Скрипты SQL Server LIMS", "Скрипты SQL Server LIMS\Скрипты SQL Server LIMS.ssmssqlproj", "{F5C4EAD2-ECBD-4AFA-B530-16E0F03AFB9A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Default|Default = Default|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5C4EAD2-ECBD-4AFA-B530-16E0F03AFB9A}.Default|Default.ActiveCfg = Default
+		{CDF763ED-1F7C-4FB6-BB42-83CA4026E7BA}.Default|Default.ActiveCfg = Default
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D8730B32-A291-4D6C-A2E1-2A50761FA8D4}
+	EndGlobalSection
+EndGlobal

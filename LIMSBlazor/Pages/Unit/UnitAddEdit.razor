@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/unitaddedit"
-@page "/unitaddedit/{id:int}"
+@page "/config/unitaddedit"
+@page "/config/unitaddedit/{id:int}"
 @inject IUnitService UnitService
 @inject NavigationManager NavigationManager
 
@@ -57,10 +57,10 @@
                 // Update is id > 0
                 await UnitService.UnitUpdate(unit);
             }
-            NavigationManager.NavigateTo("/unitlist");
+            NavigationManager.NavigateTo("config/unitlist");
         }
         void Cancel()
         {
-            NavigationManager.NavigateTo("/unitlist");
+            NavigationManager.NavigateTo("config/unitlist");
         }
     }
