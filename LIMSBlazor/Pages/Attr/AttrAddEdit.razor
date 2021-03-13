@@ -16,7 +16,15 @@
         </tr>
         <tr>
             <td>Тип:</td>
-            <td><input type="number" @bind="attr.Type" class="form-control" required></td>
+            <td>
+                <select @bind="attr.Type" required class="form-control">
+                    <option value="0">Выберете значение</option>
+                    @foreach (var item in GlobalConstant.AttrTypeModel)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </td>
         </tr>
         <tr>
             <td>Опция:</td>

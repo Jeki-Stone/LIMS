@@ -8,7 +8,7 @@ namespace LIMSBlazor.Data
     /// <summary>
     /// Проба / атребут пробы
     /// </summary>
-    public class SampleAttr
+    public class SampleAttr : IAttr
     {
         public int SampleId { get; set; }
         public int OldAttrId { get; set; }

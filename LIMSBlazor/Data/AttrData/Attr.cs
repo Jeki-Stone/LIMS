@@ -8,7 +8,7 @@ namespace LIMSBlazor.Data
     /// <summary>
     /// Атребуты
     /// </summary>
-    public class Attr
+    public class Attr 
     {
         public int Id { get; set; }
         public string Name { get; set; }

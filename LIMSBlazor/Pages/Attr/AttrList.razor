@@ -36,7 +36,7 @@
                     <td>@attr.Id</td>
                     <td>@attr.Name</td>
                     <td>@attr.Description</td>
-                    <td>@attr.Type</td>
+                    <td>@GlobalConstant.AttrTypeModel.Where(x => x.Value == Convert.ToString(attr.Type)).FirstOrDefault()?.Text</td>
                     <td>@attr.Options</td>
                 </tr>
             }

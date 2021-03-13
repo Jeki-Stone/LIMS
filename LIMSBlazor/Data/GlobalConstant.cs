@@ -15,12 +15,14 @@ namespace LIMSBlazor.Data
             new SelectListItem { Value = "4", Text = "Готов" },
             new SelectListItem { Value = "5", Text = "Отмена" }
         };
+
+        public static List<SelectListItem> AttrTypeModel = new List<SelectListItem> {
+            new SelectListItem { Value = "1", Text = "Число" },
+            new SelectListItem { Value = "2", Text = "Строка" },
+            new SelectListItem { Value = "3", Text = "Список" },
+            new SelectListItem { Value = "4", Text = "Логический" },
+            new SelectListItem { Value = "5", Text = "Дата" },
+            new SelectListItem { Value = "6", Text = "Дата и время" }
+        };
     }
-
-    //public class SelectListItem
-    //{
-    //    public int Id { get; set; }
-    //    public string Name { get; set; }
-
-    //}
 }

@@ -1,0 +1,57 @@
+﻿@using LIMSBlazor.Data
+@inject IAttrService AttrService
+
+@if (_attr != null)
+{
+
+    @if (_attr.Type == 1)
+    {
+        <td><input type="number" @bind="Attr.Value" class="form-control" required placeholder="Введите число"></td>
+    }
+
+    @if (_attr.Type == 2)
+    {
+        <td><input type="text" @bind="Attr.Value" class="form-control" required placeholder="Введите текст"></td>
+    }
+
+    @if ((_attr.Type == 3) || (_attr.Type == 4))
+    {
+        <td><input type="checkbox" @bind="Attr.Value" class="form-control" required></td>
+    }
+
+    @if (_attr.Type == 5)
+    {
+        <td><input type="date" @bind="dateTime" @oninput="dateTimeChange" class="form-control" required placeholder="Введите дату и время"></td>
+    }
+
+    @if (_attr.Type == 6)
+    {
+        <td><input type="datetime-local" @bind="dateTime" @oninput="dateTimeChange" class="form-control" required placeholder="Введите дату и время"></td>
+    }
+}
+
+@code {
+
+    //@oninput="OnDateTimeChange"
+
+    [Parameter]
+    public IAttr Attr { get; set; }
+
+
+    Attr _attr = null;
+    private DateTime dateTime;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _attr = await AttrService.Attr_GetOne(Attr.AttrId);
+        if (Attr?.Value != null)
+            DateTime.TryParse(Attr.Value, out dateTime);
+    }
+
+    void dateTimeChange(ChangeEventArgs e)
+    {
+        Attr.Value = e.Value.ToString();
+        DateTime.TryParse(Attr.Value, out dateTime);
+    }
+
+}
