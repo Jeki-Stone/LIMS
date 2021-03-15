@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LIMSBlazor.Data
@@ -10,5 +11,6 @@ namespace LIMSBlazor.Data
         Task<Attr> Attr_GetOne(int Id);
         Task<bool> AttrUpdate(Attr attr);
         Task<bool> AttrDelete(int id);
+        Task<IEnumerable<AttrOpton>> Attr_GetOptions(string sql);
     }
 }

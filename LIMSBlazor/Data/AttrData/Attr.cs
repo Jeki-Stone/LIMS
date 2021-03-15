@@ -16,4 +16,10 @@ namespace LIMSBlazor.Data
         public int Type { get; set; }
         public string Options { get; set; }
     }
+
+    public class AttrOpton
+    {
+        public string Id { get; set; }
+        public string Text { get; set; }
+    }
 }

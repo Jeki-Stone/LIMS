@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
@@ -68,6 +69,16 @@ namespace LIMSBlazor.Data
                 attr = await conn.QueryFirstOrDefaultAsync<Attr>("spAttrs_GetOne", parameters, commandType: CommandType.StoredProcedure);
             }
             return attr;
+        }
+
+        public async Task<IEnumerable<AttrOpton>> Attr_GetOptions(string sql)
+        {
+            IEnumerable<AttrOpton> model;
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+                model = await conn.QueryAsync<AttrOpton>(sql, null, commandType: CommandType.Text);
+            }
+            return model;
         }
 
         // Add (create) a data table row (SQL Update)

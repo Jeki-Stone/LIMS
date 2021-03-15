@@ -43,7 +43,7 @@
                         </td>
                         <td>@sampleattr.SampleId</td>
                         <td>@attrs.Where(x => x.Id == sampleattr.AttrId).FirstOrDefault()?.Name</td>
-                        <td>@sampleattr.Value</td>
+                        <td style="text-align:center"><AttrEdit Attr="@sampleattr" ReadOnly="true" /></td>
                         <td>@sampleattr.CreateTime</td>
                         <td>@sampleattr.UpdateTime</td>
                         <td>@sampleattr.CreateUser</td>

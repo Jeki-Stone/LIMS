@@ -15,37 +15,36 @@
         <tr>
             <td>Атрибут:</td>
             <td>
-                <select @bind="sampleattr.AttrId" class="form-control" required  disabled="@(sampleattr.SampleId != 0)">
-
-                @if (attrs != null)
-                {
-                    <option value="0">Выберите значение</option>
-                    foreach (var item in attrs)
+                <select @bind="sampleattr.AttrId" class="form-control" required disabled="@(sampleattr.SampleId != 0)">
+                    @if (attrs != null)
                     {
-                        <option value="@item.Id">@item.Name</option>
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in attrs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
                     }
-                }
-            </select>
-</td>
+                </select>
+            </td>
         </tr>
         <tr>
             <td>Значение:</td>
             <AttrEdit Attr="@sampleattr" />
-        </tr>        
+        </tr>
     </table>
 </DataEdit>
 
 @code {
-        // Create a new, empty object
-        SampleAttr sampleattr = new SampleAttr();
+    // Create a new, empty object
+    SampleAttr sampleattr = new SampleAttr();
 
-        IEnumerable<Sample> samples;
-        IEnumerable<Attr> attrs;
+    IEnumerable<Sample> samples;
+    IEnumerable<Attr> attrs;
 
-        [Parameter]
-        public int SampleId { get; set; }
-        [Parameter]
-        public int AttrId { get; set; }
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int AttrId { get; set; }
 
     // Set default page title and button text
     public string pagetitle = "Добавить новый атрибут испытания";
