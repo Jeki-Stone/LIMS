@@ -1,5 +1,4 @@
 ﻿@using LIMSBlazor.Data
-@page "/test/sampleaddedit"
 @page "/test/sampleaddedit/{Id:int}"
 @inject ISampleService SampleService
 @inject ICliService CliService
@@ -41,7 +40,12 @@
         </tr>
         <tr>
             <td>Готовность:</td>
-            <td>@sample.IsFinal</td>
+            <td>
+                @if (sample.IsFinal == true)
+                {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                else
+                {<img src="../images/iRedX.png" width="25" height="25" />}
+            </td>
         </tr>
         <tr>
             <td>Записка:</td>
@@ -72,8 +76,8 @@
     public int? Id { get; set; }
 
     // Set default page title and button text
-    public string pagetitle = "Добавить новый образец";
-    public string buttontext = "Добавить";
+    public string pagetitle = "Изменить статус испытания";
+    public string buttontext = "Изменить";
 
     //Executes on page open, set defaults on page.
     protected override async Task OnInitializedAsync()
@@ -82,14 +86,8 @@
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         sampletypeanalyticals = await SampleTypeAnalyticalService.SampleTypeAnalyticalList();
-        // ============ If the passed-in id is zero, assume new data.
-        if (Id != null)
-        {
-            sample = await SampleService.Sample_GetOne((int)Id);
-            // Change page title and button text since this is an edit.
-            pagetitle = "Изменить данные образца";
-            buttontext = "Изменить";
-        }
+        sample = await SampleService.Sample_GetOne((int)Id);
+
     }
 
     protected async Task SampleSave()

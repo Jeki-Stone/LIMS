@@ -16,7 +16,7 @@
             <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
-            <td>Номер результатов:</td>
+            <td>Номер образца:</td>
             <td>@result.ValueNo</td>
         </tr>
         <tr>
@@ -24,8 +24,9 @@
             <td>@result.Value</td>
         </tr>
         <tr>
-            <td>Готовность:</td>
-            <td>@result.IsFinal</td>
+            <td>В оценке:</td>
+            <td>@if (result.IsFinal == true) {<img src="../images/iGreenCheck.png" width="25" height="25"/>}
+                else {<img src="../images/iRedX.png" width="25" height="25" />}</td>
         </tr>
         <tr>
             <td>Записка:</td>
@@ -47,22 +48,16 @@
         public int id { get; set; }
 
         // Set default page title and button text
-        public string pagetitle = "Добавить новый результат испытания";
-        public string buttontext = "Добавить";
+        public string pagetitle = "Редактирование записи результата испытания";
+        public string buttontext = "Изменить";
 
         //Executes on page open, set defaults on page.
         protected override async Task OnInitializedAsync()
         {
             samples = await SampleService.SampleList();
             analyticalservs = await AnalyticalServService.AnalyticalServList();
-            // ============ If the passed-in id is zero, assume new data.
-            if (id != 0)
-            {
-                result = await ResultService.Result_GetOne(id);
-                // Change page title and button text since this is an edit.
-                pagetitle = "Изменить данные результата испытания";
-                buttontext = "Изменить";
-            }
+            result = await ResultService.Result_GetOne(id);
+
         }
 
         protected async Task ResultSave()

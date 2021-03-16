@@ -16,7 +16,7 @@
                 <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
             </tr>
             <tr>
-                <td>Номер результатов:</td>
+                <td>Номер образца:</td>
                 <td>@result.ValueNo</td>
             </tr>
             <tr>
@@ -24,8 +24,9 @@
                 <td>@result.Value</td>
             </tr>
             <tr>
-                <td>Готовность:</td>
-                <td>@result.IsFinal</td>
+                <td>В оценке:</td>
+                <td>@if (result.IsFinal == true) {<img src="../images/iGreenCheck.png" width="25" height="25"/>}
+                    else {<img src="../images/iRedX.png" width="25" height="25" />}</td>
             </tr>
             <tr>
                 <td>Записка:</td>

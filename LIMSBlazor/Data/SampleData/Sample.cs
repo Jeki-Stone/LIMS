@@ -14,11 +14,13 @@ namespace LIMSBlazor.Data
         public int Id { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:nn}", ApplyFormatInEditMode = true)]
         public DateTime RecieveTime { get; set; } = DateTime.Now;
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:nn}", ApplyFormatInEditMode = true)]
         public DateTime? TestTime { get; set; }
         [Required]
         [Range(1, 10000000, ErrorMessage = "Age must be between 18 and 80.")]
         public int ClientId { get; set; }
         public int SampleTypeId { get; set; }
+        public int NumSamples { get; set; }
         [Required]
         [Range(1, 5, ErrorMessage = "Age must be between 18 and 80.")]
         public int Status { get; set; }

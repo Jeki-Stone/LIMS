@@ -11,9 +11,9 @@
             <th>Id</th>
             <td>Id испытания</td>
             <td>Аналитический сервис</td>
-            <td>Номер результатов</td>
+            <td>Номер образца</td>
             <td>Результат</td>
-            <td>Готовность</td>
+            <td>В оценке</td>
             <td>Записка</td>
             <td>Время создания</td>
             <td>Время последних изменений</td>
@@ -45,7 +45,8 @@
                         <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
                         <td>@result.ValueNo</td>
                         <td>@result.Value</td>
-                        <td>@result.IsFinal</td>
+                        <td>@if (result.IsFinal == true) {<img src="../images/iGreenCheck.png" width="25" height="25"/>}
+                            else {<img src="../images/iRedX.png" width="25" height="25" />}</td>
                         <td>@result.Note</td>
                         <td>@result.CreateTime</td>
                         <td>@result.UpdateTime</td>

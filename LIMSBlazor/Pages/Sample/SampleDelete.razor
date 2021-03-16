@@ -6,7 +6,7 @@
 @inject ILocService LocService
 @inject NavigationManager NavigationManager
 
-<DataEdit FormType="Delete" PageTitle="Удалить образец" DeleteWarning="Вы уверены что хотите удалить этот образец? Данные нельзя будет вернуть!" Model="@sample" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+<DataEdit FormType="Delete" PageTitle="Удалить испытание" DeleteWarning="Вы уверены что хотите удалить это испытание? Данные нельзя будет вернуть!" Model="@sample" OnClickDelete="@Delete" OnClickCancel="@Cancel">
     <table>
         <tr>
             <td>Время получения:</td>
@@ -25,12 +25,21 @@
             <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
+            <td>Количество образцов:</td>
+            <td>@sample.NumSamples</td>
+        </tr>
+        <tr>
             <td>Статус:</td>
             <td>@sample.Status</td>
         </tr>
         <tr>
             <td>Готовность:</td>
-            <td>@sample.IsFinal</td>
+            <td>
+                @if (sample.IsFinal == true)
+                {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                else
+                {<img src="../images/iRedX.png" width="25" height="25" />}
+            </td>
         </tr>
         <tr>
             <td>Записка:</td>
@@ -48,32 +57,32 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty  object
-        Sample sample = new Sample();
+@code { // Create a new, empty  object
+    Sample sample = new Sample();
 
-        IEnumerable<Cli> clis;
-        IEnumerable<SampleType> sampletypes;
-        IEnumerable<Loc> locs;
+    IEnumerable<Cli> clis;
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<Loc> locs;
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            clis = await CliService.CliList();
-            sampletypes = await SampleTypeService.SampleTypeList();
-            locs = await LocService.LocList();
-            sample = await SampleService.Sample_GetOne(id);
-        }
+    //Executes on page open..
+    protected override async Task OnInitializedAsync()
+    {
+        clis = await CliService.CliList();
+        sampletypes = await SampleTypeService.SampleTypeList();
+        locs = await LocService.LocList();
+        sample = await SampleService.Sample_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await SampleService.SampleDelete(id);
-            NavigationManager.NavigateTo("samplelog/samplelist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("samplelog/samplelist");
-        } }
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await SampleService.SampleDelete(id);
+        NavigationManager.NavigateTo("samplelog/samplelist");
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("samplelog/samplelist");
+    } }

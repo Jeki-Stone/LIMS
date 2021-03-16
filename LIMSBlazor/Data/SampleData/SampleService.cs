@@ -30,6 +30,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("TestTime", sample.TestTime, DbType.DateTime);
                     parametrs.Add("ClientId", sample.ClientId, DbType.Int32);
                     parametrs.Add("SampleTypeId", sample.SampleTypeId, DbType.Int32);
+                    parametrs.Add("NumSamples", sample.NumSamples, DbType.Int32);
                     parametrs.Add("Status", sample.Status, DbType.Int32);
                     parametrs.Add("IsFinal", sample.IsFinal, DbType.Boolean);
                     parametrs.Add("Note", sample.Note, DbType.String);
@@ -94,6 +95,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("TestTime", sample.TestTime, DbType.DateTime);
                     parametrs.Add("ClientId", sample.ClientId, DbType.Int32);
                     parametrs.Add("SampleTypeId", sample.SampleTypeId, DbType.Int32);
+                    parametrs.Add("NumSamples", sample.NumSamples, DbType.Int32);
                     parametrs.Add("Status", sample.Status, DbType.Int32);
                     parametrs.Add("IsFinal", sample.IsFinal, DbType.Boolean);
                     parametrs.Add("Note", sample.Note, DbType.String);
