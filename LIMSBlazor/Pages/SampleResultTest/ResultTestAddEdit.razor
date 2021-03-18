@@ -31,13 +31,17 @@
             <td>Номер образца:</td>
             <td>
                 <select @bind="result.ValueNo" class="form-control" required>
-                    @if (sample != null)
+                    @if (samples != null)
                     {
                         <option value="0">Выберите значение</option>
-                            for (int i = 1; i <= sample.NumSamples; i++)
-                            {
-                                <option value="@i">@i</option>
-                            }
+                        foreach (var item in samples)
+                        {
+                            if (item.Id == result.SampleId)
+                                for (int i = 1; i <= item.NumSamples; i++)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                        }
                     }
                 </select>
             </td>
@@ -60,10 +64,10 @@
 @code {
     // Create a new, empty object
     Result result = new Result();
-    Sample sample = new Sample();
 
     //IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Sample> samples;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -79,6 +83,7 @@
     {
         //samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
+        samples = await SampleService.SampleList();
         result.IsFinal = true;
         // ============ If the passed-in id is zero, assume new data.
         if (id != 0)

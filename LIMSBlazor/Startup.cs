@@ -9,6 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using LIMSBlazor.Data;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 
 namespace LIMSBlazor
 {
@@ -25,6 +28,11 @@ namespace LIMSBlazor
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddBlazorise(options =>
+            {
+                options.ChangeTextOnKeyPress = true; // optional
+            }).AddBootstrapProviders().AddFontAwesomeIcons();
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<ILabService, LabService>();
@@ -58,6 +66,8 @@ namespace LIMSBlazor
 
             //Optional for debugging
             services.AddServerSideBlazor(o => o.DetailedErrors = true);
+
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

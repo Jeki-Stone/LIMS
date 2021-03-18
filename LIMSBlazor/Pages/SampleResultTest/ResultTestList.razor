@@ -49,8 +49,12 @@
                         <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
                         <td>@result.ValueNo</td>
                         <td>@result.Value</td>
-                        <td style="text-align:center">@if (result.IsFinal == true) {<img src="../images/iGreenCheck.png" width="25" height="25"/>}
-                            else {<img src="../images/iRedX.png" width="25" height="25" />}</td>
+                        <td style="text-align:center">
+                            @if (result.IsFinal == true)
+                            {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                            else
+                            {<img src="../images/iRedX.png" width="25" height="25" />}
+                        </td>
                         <td>@result.Note</td>
                         <td>@result.CreateTime</td>
                         <td>@result.UpdateTime</td>
@@ -61,6 +65,7 @@
             }
         }
     </Rows>
+
 </DataView>
 
 @code {
