@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/test/sampleaddedit/{Id:int}"
+@page "/analysis/sampleaddedit/{Id:int}"
 @inject ISampleService SampleService
 @inject ICliService CliService
 @inject ISampleTypeService SampleTypeService
@@ -99,10 +99,10 @@
             // Update is id > 0
             await SampleService.SampleUpdate(sample);
         }
-        NavigationManager.NavigateTo("/test/samplelist");
+        NavigationManager.NavigateTo("/analysis/samplelist");
     }
     void Cancel()
     {
-        NavigationManager.NavigateTo("/test/samplelist");
+        NavigationManager.NavigateTo("/analysis/samplelist");
     }
 }

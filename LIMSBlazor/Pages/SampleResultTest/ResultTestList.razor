@@ -3,6 +3,7 @@
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject NavigationManager NavigationManager
 
 <DataView PageTitle="Список результатов испытания" UrlAdd=@UrlSampleId UrlBack="/test/samplelist" UrlAddText="Добавить новый результат испытания" UrlBackText="Вернуться к списку испытаний">
     <Header>
@@ -65,7 +66,6 @@
             }
         }
     </Rows>
-
 </DataView>
 
 @code {

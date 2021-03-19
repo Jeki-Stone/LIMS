@@ -1,0 +1,78 @@
+﻿@using LIMSBlazor.Data
+@page "/analysis/sample/resultaddedit/{SampleId:int}/{id:int}"
+@inject IResultService ResultService
+@inject ISampleService SampleService
+@inject IAnalyticalServService AnalyticalServService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@result" BtnSaveText="@buttontext" OnValidSubmit="@ResultSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Id испытания:</td>
+            <td>@SampleId</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Номер образца:</td>
+            <td>@result.ValueNo</td>
+        </tr>
+        <tr>
+            <td>Результат:</td>
+            <td>@result.Value</td>
+        </tr>
+        <tr>
+            <td>В оценке:</td>
+            <td><input type="checkbox" @bind="result.IsFinal"></td>
+        </tr>
+        <tr>
+            <td>Записка:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="result.Note"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    // Create a new, empty object
+    Result result = new Result();
+
+    //IEnumerable<Sample> samples;
+    IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Sample> samples;
+
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int id { get; set; }
+
+    // Set default page title and button text
+    public string pagetitle = "Изменить статус результата испытания";
+    public string buttontext = "Изменить";
+
+    //Executes on page open, set defaults on page.
+    protected override async Task OnInitializedAsync()
+    {
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        samples = await SampleService.SampleList();
+        // ============ If the passed-in id is zero, assume new data.
+        result = await ResultService.Result_GetOne(id);
+    }
+
+    protected async Task ResultSave()
+    {
+        if (id != 0)
+        {
+            result.UpdateTime = DateTime.Now;
+            result.UpdateUser = "Обновивший пользователь пользователь";
+            // Update is id > 0
+            await ResultService.ResultUpdate(result);
+        }
+        NavigationManager.NavigateTo("/analysis/sample/resultlist/" + SampleId);
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/analysis/sample/resultlist/" + SampleId);
+    }
+}

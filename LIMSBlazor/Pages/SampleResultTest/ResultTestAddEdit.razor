@@ -81,7 +81,6 @@
     //Executes on page open, set defaults on page.
     protected override async Task OnInitializedAsync()
     {
-        //samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         samples = await SampleService.SampleList();
         result.IsFinal = true;

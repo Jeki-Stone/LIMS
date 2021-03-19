@@ -1,0 +1,79 @@
+﻿@using LIMSBlazor.Data
+@using Microsoft.AspNetCore.Mvc.Rendering;
+@using System.Collections.Generic;
+@inject IAttrService AttrService
+@inject ISampleAttrService SampleAttrService
+
+<Button Clicked="@(async () => await HandleRedraw())">Redraw</Button>
+<RadarChart @ref="radarChart" TItem="double" Clicked="@OnClicked" />
+
+@code {
+    [Parameter]
+    public List<Result> GrupItem { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+
+    RadarChart<double> radarChart;
+    List<string> Labels = new List<string>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await HandleRedraw();
+        } else
+        {
+            await HandleRedraw();
+        }
+    }
+
+    async Task HandleRedraw()
+    {
+        await radarChart.Clear();
+
+        await radarChart.AddLabelsDatasetsAndUpdate(Labels, GetRadarChartDataset());
+        var options = new RadarChartOptions
+        {
+            AspectRatio = 1,
+        };
+        await radarChart.SetOptions(options);
+    }
+
+
+    RadarChartDataset<double>[] GetRadarChartDataset()
+    {
+        List<string> backgroundColors = new List<string> { ChartColor.FromRgba(255, 99, 132, 0.2f), ChartColor.FromRgba(54, 162, 235, 0.2f), ChartColor.FromRgba(255, 206, 86, 0.2f), ChartColor.FromRgba(75, 192, 192, 0.2f), ChartColor.FromRgba(153, 102, 255, 0.2f), ChartColor.FromRgba(255, 159, 64, 0.2f) };
+        List<string> borderColors = new List<string> { ChartColor.FromRgba(255, 99, 132, 1f), ChartColor.FromRgba(54, 162, 235, 1f), ChartColor.FromRgba(255, 206, 86, 1f), ChartColor.FromRgba(75, 192, 192, 1f), ChartColor.FromRgba(153, 102, 255, 1f), ChartColor.FromRgba(255, 159, 64, 1f) };
+        return new RadarChartDataset<double>[] {
+            new RadarChartDataset<double> {
+                Label = Title,
+                Data = GetData(),
+                BackgroundColor = backgroundColors,
+                BorderColor = borderColors,
+                Fill = true,
+                LineTension = 0,
+            }
+        };
+
+    }
+
+
+    List<double> GetData()
+    {
+        var data = new List<double>();
+
+        foreach (var item in GrupItem)
+        {
+            if (!Labels.Contains(item.ValueNo.ToString()))
+                Labels.Add(item.ValueNo.ToString());
+            data.Add(item.Value);
+        }
+
+        return data;
+    }
+
+    void OnClicked(ChartMouseEventArgs e)
+    {
+        var model = e.Model as RadarChartModel;
+    }
+}
