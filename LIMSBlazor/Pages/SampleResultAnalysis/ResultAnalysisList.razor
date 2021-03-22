@@ -46,60 +46,57 @@
         {
             @foreach (var result in results)
             {
-                if (result.SampleId == SampleId)
+                if (changsort == 0)
                 {
-                    if (changsort == 0)
-                    {
-                        <tr>
-                            <td style="text-align:center">
-                                <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
-                                    <img src="../images/iEdit.png" width="20" height="20" />
-                                </a>
-                            </td>
-                            <td>@result.Id</td>
-                            <td>@result.SampleId</td>
-                            <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                            <td>@result.ValueNo</td>
-                            <td>@result.Value</td>
-                            <td style="text-align:center">
-                                @if (result.IsFinal == true)
-                                {<img src="../images/iGreenCheck.png" width="25" height="25" />}
-                                else
-                                {<img src="../images/iRedX.png" width="25" height="25" />}
-                            </td>
-                            <td>@result.Note</td>
-                            <td>@result.CreateTime</td>
-                            <td>@result.UpdateTime</td>
-                            <td>@result.CreateUser</td>
-                            <td>@result.UpdateUser</td>
-                        </tr>
-                    }
-                    else if (result.AnalyticalServiceId == changsort)
-                    {
-                        <tr>
-                            <td style="text-align:center">
-                                <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
-                                    <img src="../images/iEdit.png" width="20" height="20" />
-                                </a>
-                            </td>
-                            <td>@result.Id</td>
-                            <td>@result.SampleId</td>
-                            <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                            <td>@result.ValueNo</td>
-                            <td>@result.Value</td>
-                            <td style="text-align:center">
-                                @if (result.IsFinal == true)
-                                {<img src="../images/iGreenCheck.png" width="25" height="25" />}
-                                else
-                                {<img src="../images/iRedX.png" width="25" height="25" />}
-                            </td>
-                            <td>@result.Note</td>
-                            <td>@result.CreateTime</td>
-                            <td>@result.UpdateTime</td>
-                            <td>@result.CreateUser</td>
-                            <td>@result.UpdateUser</td>
-                        </tr>
-                    }
+                    <tr>
+                        <td style="text-align:center">
+                            <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
+                                <img src="../images/iEdit.png" width="20" height="20" />
+                            </a>
+                        </td>
+                        <td>@result.Id</td>
+                        <td>@result.SampleId</td>
+                        <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                        <td>@result.ValueNo</td>
+                        <td>@result.Value</td>
+                        <td style="text-align:center">
+                            @if (result.IsFinal == true)
+                            {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                            else
+                            {<img src="../images/iRedX.png" width="25" height="25" />}
+                        </td>
+                        <td>@result.Note</td>
+                        <td>@result.CreateTime</td>
+                        <td>@result.UpdateTime</td>
+                        <td>@result.CreateUser</td>
+                        <td>@result.UpdateUser</td>
+                    </tr>
+                }
+                else if (result.AnalyticalServiceId == changsort)
+                {
+                    <tr>
+                        <td style="text-align:center">
+                            <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
+                                <img src="../images/iEdit.png" width="20" height="20" />
+                            </a>
+                        </td>
+                        <td>@result.Id</td>
+                        <td>@result.SampleId</td>
+                        <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                        <td>@result.ValueNo</td>
+                        <td>@result.Value</td>
+                        <td style="text-align:center">
+                            @if (result.IsFinal == true)
+                            {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                            else
+                            {<img src="../images/iRedX.png" width="25" height="25" />}
+                        </td>
+                        <td>@result.Note</td>
+                        <td>@result.CreateTime</td>
+                        <td>@result.UpdateTime</td>
+                        <td>@result.CreateUser</td>
+                        <td>@result.UpdateUser</td>
+                    </tr>
                 }
             }
         }
@@ -115,14 +112,14 @@
                         {
                             var title = analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name;
                             <div style="min-width: 500px;">
-                                <ChartEdit Title=@title GrupItem=@item.Where(x => x.IsFinal == true).ToList() />
+                                <ChartEdit AnalyticalTrue="1" Title=@title GrupItem=@item.Where(x => x.IsFinal == true).ToList() />
                             </div>
                         }
                         else if (item.Key == changsort)
                         {
                             var title = analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name;
                             <div style="min-width: 500px;">
-                                <ChartEdit Title=@title GrupItem=@item.Where(x => x.IsFinal == true).ToList() />
+                                <ChartEdit AnalyticalTrue="1" Title=@title GrupItem=@item.Where(x => x.IsFinal == true).ToList() />
                             </div>
                         }
                     }
@@ -149,7 +146,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        results = await ResultService.ResultList();
+        results = await ResultService.ResultList(SampleId);
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         UrlSampleId = "/analysis/sample/resultaddedit/" + SampleId;

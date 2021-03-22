@@ -1,17 +1,28 @@
 ﻿@using LIMSBlazor.Data
 @using Microsoft.AspNetCore.Mvc.Rendering;
+@using System.Linq;
+@using System.Collections;
 @using System.Collections.Generic;
 @inject IAttrService AttrService
 @inject ISampleAttrService SampleAttrService
+@inject IFinalResultService FinalResultService
 
-<Button Clicked="@(async () => await HandleRedraw())">Redraw</Button>
+<Button Clicked="@(async () => await HandleRedraw())">Перерисовать</Button>
+@if (AnalyticalTrue == 1)
+{<Button Clicked="@AddFinalResult">Добавить в финальные результаты</Button>}
 <RadarChart @ref="radarChart" TItem="double" Clicked="@OnClicked" />
 
 @code {
+    FinalResult finalresult = new FinalResult();
+
     [Parameter]
     public List<Result> GrupItem { get; set; }
     [Parameter]
     public string Title { get; set; }
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int AnalyticalTrue { get; set; }
 
     RadarChart<double> radarChart;
     List<string> Labels = new List<string>();
@@ -21,7 +32,8 @@
         if (firstRender)
         {
             await HandleRedraw();
-        } else
+        }
+        else
         {
             await HandleRedraw();
         }
@@ -30,11 +42,14 @@
     async Task HandleRedraw()
     {
         await radarChart.Clear();
+        Labels.Clear();
+
 
         await radarChart.AddLabelsDatasetsAndUpdate(Labels, GetRadarChartDataset());
         var options = new RadarChartOptions
         {
             AspectRatio = 1,
+
         };
         await radarChart.SetOptions(options);
     }
@@ -52,6 +67,7 @@
                 BorderColor = borderColors,
                 Fill = true,
                 LineTension = 0,
+
             }
         };
 
@@ -61,19 +77,58 @@
     List<double> GetData()
     {
         var data = new List<double>();
+        float itemValue = 0;
+        string itemName = "";
 
         foreach (var item in GrupItem)
         {
-            if (!Labels.Contains(item.ValueNo.ToString()))
-                Labels.Add(item.ValueNo.ToString());
-            data.Add(item.Value);
+            if (item.SampleId == SampleId)
+            {
+                if (!Labels.Contains(item.ValueNo.ToString()))
+                    Labels.Add(item.ValueNo.ToString());
+                data.Add(item.Value);
+                if (itemName == "")
+                    itemName = item.ValueNo.ToString();
+                else
+                    itemName = itemName + "," + item.ValueNo.ToString();
+                itemValue += item.Value;
+            }
         }
-
+        itemValue = itemValue / GrupItem.Count;
+        Labels.Add(itemName);
+        data.Add(itemValue);
         return data;
     }
 
     void OnClicked(ChartMouseEventArgs e)
     {
         var model = e.Model as RadarChartModel;
+    }
+
+    protected async Task AddFinalResult()
+    {
+        float itemValue = 0;
+        string itemName = "";
+
+        foreach (var item in GrupItem)
+        {
+            if (item.SampleId == SampleId)
+            {
+                finalresult.SampleId = item.SampleId;
+                finalresult.AnalyticalServiceId = item.AnalyticalServiceId;
+                if (itemName == "")
+                    itemName = item.ValueNo.ToString();
+                else
+                    itemName = itemName + "," + item.ValueNo.ToString();
+                itemValue += item.Value;
+            }
+        }
+
+        finalresult.ValueNo = itemName;
+        finalresult.Value = itemValue / GrupItem.Count;
+        finalresult.CreateTime = DateTime.Now;
+        finalresult.CreateUser = "Создавший пользователь";
+        await FinalResultService.FinalResultInsert(finalresult);
+        await HandleRedraw();
     }
 }

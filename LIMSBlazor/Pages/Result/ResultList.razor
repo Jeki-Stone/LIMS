@@ -74,7 +74,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        results = await ResultService.ResultList();
+        results = await ResultService.ResultList(SampleId);
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         UrlSampleId = "/samplelog/sample/resultaddedit/" + SampleId;

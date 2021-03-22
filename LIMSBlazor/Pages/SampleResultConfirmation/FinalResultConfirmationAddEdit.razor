@@ -1,0 +1,74 @@
+﻿@using LIMSBlazor.Data
+@page "/confirmation/sample/finalresultaddedit/{SampleId:int}/{id:int}"
+@inject IFinalResultService FinalResultService
+@inject ISampleService SampleService
+@inject IAnalyticalServService AnalyticalServService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@finalresult" BtnSaveText="@buttontext" OnValidSubmit="@ResultSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Id испытания:</td>
+            <td>@SampleId</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>@analyticalservs?.Where(x => x.Id == finalresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Номер образца:</td>
+            <td>@finalresult.ValueNo</td>
+        </tr>
+        <tr>
+            <td>Результат:</td>
+            <td>@finalresult.Value</td>
+        </tr>
+        <tr>
+            <td>Одобрено:</td>
+            <td><input type="checkbox" @bind="finalresult.IsFinal"></td>
+        </tr>
+        <tr>
+            <td>Записка:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="finalresult.Note"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    // Create a new, empty object
+    FinalResult finalresult = new FinalResult();
+
+    IEnumerable<Sample> samples;
+    IEnumerable<AnalyticalServ> analyticalservs;
+
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int id { get; set; }
+
+    // Set default page title and button text
+    public string pagetitle = "Редактирование записи финального результата испытания";
+    public string buttontext = "Изменить";
+
+    //Executes on page open, set defaults on page.
+    protected override async Task OnInitializedAsync()
+    {
+        samples = await SampleService.SampleList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        finalresult = await FinalResultService.FinalResult_GetOne(id);
+    }
+
+    protected async Task ResultSave()
+    {
+        finalresult.UpdateTime = DateTime.Now;
+        finalresult.UpdateUser = "Обновивший пользователь пользователь";
+        // Update is id > 0
+        await FinalResultService.FinalResultUpdate(finalresult);
+
+        NavigationManager.NavigateTo("confirmation/sample/finalresultlist/" + SampleId);
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("confirmation/sample/finalresultlist/" + SampleId);
+    }
+}
