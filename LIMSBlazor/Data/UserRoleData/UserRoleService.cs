@@ -41,12 +41,14 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        public async Task<IEnumerable<UserRole>> UserRoleList()
+        public async Task<IEnumerable<UserRole>> UserRoleList(int UserId)
         {
             IEnumerable<UserRole> userroles;
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                userroles = await conn.QueryAsync<UserRole>("spUserRoles_GetAll", commandType: CommandType.StoredProcedure);
+                var parametrs = new DynamicParameters();
+                parametrs.Add("UserId", UserId, DbType.Int32);
+                userroles = await conn.QueryAsync<UserRole>("spUserRoles_GetAll", parametrs, commandType: CommandType.StoredProcedure);
             }
             return userroles;
         }

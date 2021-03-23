@@ -5,27 +5,36 @@
 @using System.Collections.Generic;
 @inject IAttrService AttrService
 @inject ISampleAttrService SampleAttrService
+@inject IResultService ResultService
 @inject IFinalResultService FinalResultService
 
 <Button Clicked="@(async () => await HandleRedraw())">Перерисовать</Button>
-@if (AnalyticalTrue == 1)
-{<Button Clicked="@AddFinalResult">Добавить в финальные результаты</Button>}
+@if ((AnalyticalTrue == 1) && (GrupItem.Count >= 2))
+{<Button Clicked="@AddUpdateFinalResult">В финальные результаты</Button>}
 <RadarChart @ref="radarChart" TItem="double" Clicked="@OnClicked" />
 
 @code {
-    FinalResult finalresult = new FinalResult();
+        /// <summary>
+        /// Задаются параметры графиков
+        /// </summary>
 
-    [Parameter]
-    public List<Result> GrupItem { get; set; }
-    [Parameter]
-    public string Title { get; set; }
-    [Parameter]
-    public int SampleId { get; set; }
-    [Parameter]
-    public int AnalyticalTrue { get; set; }
 
-    RadarChart<double> radarChart;
-    List<string> Labels = new List<string>();
+        IEnumerable<FinalResult> finalresults;
+
+        [Parameter]
+        public List<Result> GrupItem { get; set; }
+        [Parameter]
+        public string Title { get; set; }
+        [Parameter]
+        public int SampleId { get; set; }
+        [Parameter]
+        public int AnalyticalTrue { get; set; }
+
+        RadarChart<double> radarChart;
+        List<string> Labels = new List<string>();
+        FinalResult finalresult = new FinalResult();
+        Result result = new Result();
+        List<FinalResult> FinalResults = new List<FinalResult>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -43,15 +52,24 @@
     {
         await radarChart.Clear();
         Labels.Clear();
+        FinalResults.Clear();
 
-
-        await radarChart.AddLabelsDatasetsAndUpdate(Labels, GetRadarChartDataset());
-        var options = new RadarChartOptions
+        if (GrupItem.Count >= 2)
         {
-            AspectRatio = 1,
+            finalresults = await FinalResultService.FinalResultList(SampleId);
+            foreach (var item in finalresults.GroupBy(e => e.AnalyticalServiceId))
+            {
+                FinalResults.Add(item.FirstOrDefault());
+            }
 
-        };
-        await radarChart.SetOptions(options);
+            await radarChart.AddLabelsDatasetsAndUpdate(Labels, GetRadarChartDataset());
+            var options = new RadarChartOptions
+            {
+                AspectRatio = 1,
+
+            };
+            await radarChart.SetOptions(options);
+        }
     }
 
 
@@ -59,18 +77,18 @@
     {
         List<string> backgroundColors = new List<string> { ChartColor.FromRgba(255, 99, 132, 0.2f), ChartColor.FromRgba(54, 162, 235, 0.2f), ChartColor.FromRgba(255, 206, 86, 0.2f), ChartColor.FromRgba(75, 192, 192, 0.2f), ChartColor.FromRgba(153, 102, 255, 0.2f), ChartColor.FromRgba(255, 159, 64, 0.2f) };
         List<string> borderColors = new List<string> { ChartColor.FromRgba(255, 99, 132, 1f), ChartColor.FromRgba(54, 162, 235, 1f), ChartColor.FromRgba(255, 206, 86, 1f), ChartColor.FromRgba(75, 192, 192, 1f), ChartColor.FromRgba(153, 102, 255, 1f), ChartColor.FromRgba(255, 159, 64, 1f) };
-        return new RadarChartDataset<double>[] {
-            new RadarChartDataset<double> {
+        return new RadarChartDataset<double>[]
+        {
+            new RadarChartDataset<double>
+            {
                 Label = Title,
                 Data = GetData(),
                 BackgroundColor = backgroundColors,
                 BorderColor = borderColors,
                 Fill = true,
                 LineTension = 0,
-
             }
-        };
-
+                    };
     }
 
 
@@ -82,17 +100,14 @@
 
         foreach (var item in GrupItem)
         {
-            if (item.SampleId == SampleId)
-            {
-                if (!Labels.Contains(item.ValueNo.ToString()))
-                    Labels.Add(item.ValueNo.ToString());
-                data.Add(item.Value);
-                if (itemName == "")
-                    itemName = item.ValueNo.ToString();
-                else
-                    itemName = itemName + "," + item.ValueNo.ToString();
-                itemValue += item.Value;
-            }
+            if (!Labels.Contains(item.ValueNo.ToString()))
+                Labels.Add(item.ValueNo.ToString());
+            data.Add(item.Value);
+            if (itemName == "")
+                itemName = item.ValueNo.ToString();
+            else
+                itemName = itemName + "," + item.ValueNo.ToString();
+            itemValue += item.Value;
         }
         itemValue = itemValue / GrupItem.Count;
         Labels.Add(itemName);
@@ -102,17 +117,17 @@
 
     void OnClicked(ChartMouseEventArgs e)
     {
-        var model = e.Model as RadarChartModel;
+        int index = e.Index;
     }
 
-    protected async Task AddFinalResult()
+    protected async Task AddUpdateFinalResult()
     {
         float itemValue = 0;
         string itemName = "";
 
-        foreach (var item in GrupItem)
+        if (GrupItem.Count > 0)
         {
-            if (item.SampleId == SampleId)
+            foreach (var item in GrupItem)
             {
                 finalresult.SampleId = item.SampleId;
                 finalresult.AnalyticalServiceId = item.AnalyticalServiceId;
@@ -122,13 +137,16 @@
                     itemName = itemName + "," + item.ValueNo.ToString();
                 itemValue += item.Value;
             }
-        }
 
-        finalresult.ValueNo = itemName;
-        finalresult.Value = itemValue / GrupItem.Count;
-        finalresult.CreateTime = DateTime.Now;
-        finalresult.CreateUser = "Создавший пользователь";
-        await FinalResultService.FinalResultInsert(finalresult);
+            finalresult.ValueNo = itemName;
+            finalresult.Value = itemValue / GrupItem.Count;
+            //if ()
+            {
+                finalresult.CreateTime = DateTime.Now;
+                finalresult.CreateUser = "Создавший пользователь";
+                await FinalResultService.FinalResultInsert(finalresult);
+            }
+        }
         await HandleRedraw();
     }
 }

@@ -5,7 +5,6 @@
 @inject ICliService CliService
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
-@inject ISampleTypeAnalyticalService SampleTypeAnalyticalService
 @inject ISampleAnalyticalService SampleAnalyticalService
 @inject NavigationManager NavigationManager
 
@@ -101,7 +100,6 @@
         IEnumerable<Cli> clis;
         IEnumerable<SampleType> sampletypes;
         IEnumerable<Loc> locs;
-        IEnumerable<SampleTypeAnalytical> sampletypeanalyticals;
 
         [Parameter]
         public int? Id { get; set; }
@@ -117,7 +115,6 @@
             clis = await CliService.CliList();
             sampletypes = await SampleTypeService.SampleTypeList();
             locs = await LocService.LocList();
-            sampletypeanalyticals = await SampleTypeAnalyticalService.SampleTypeAnalyticalList();
             // ============ If the passed-in id is zero, assume new data.
             if (Id != null)
             {
@@ -148,7 +145,7 @@
                 sample.UpdateTime = DateTime.Now;
                 sample.UpdateUser = "Обновивший пользователь пользователь";
                 // Update is id > 0
-                if (sample.Status == 4)
+                if (sample.Status == 5)
                 {
                     sample.IsFinal = true;
                 }

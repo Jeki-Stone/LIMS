@@ -52,12 +52,14 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        public async Task<IEnumerable<FinalResult>> FinalResultList()
+        public async Task<IEnumerable<FinalResult>> FinalResultList(int sampleId)
         {
             IEnumerable<FinalResult> finalresults;
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                finalresults = await conn.QueryAsync<FinalResult>("spFinalResults_GetAll", commandType: CommandType.StoredProcedure);
+                var parametrs = new DynamicParameters();
+                parametrs.Add("SampleId", sampleId, DbType.Int32);
+                finalresults = await conn.QueryAsync<FinalResult>("spFinalResults_GetAll", parametrs, commandType: CommandType.StoredProcedure);
             }
             return finalresults;
         }

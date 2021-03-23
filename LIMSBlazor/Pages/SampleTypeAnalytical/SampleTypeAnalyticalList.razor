@@ -23,23 +23,19 @@
         {
             @foreach (var sampletypeanalytical in sampletypeanalyticals)
             {
-                if (sampletypeanalytical.SampleTypeId == SampleTypeId)
-                {
-                    <tr>
-                        <td style="text-align:center">
-                            <a href="config/sampletype/sampletypeanalyticaladdedit/@sampletypeanalytical.SampleTypeId/@sampletypeanalytical.AnalyticalServiceId">
-                                <img src="../images/iEdit.png" width="20" height="20" />
-                            </a>
-                            &nbsp
-                            <a href="config/sampletype/sampletypeanalyticaldelete/@sampletypeanalytical.SampleTypeId/@sampletypeanalytical.AnalyticalServiceId">
-                                <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                            </a>
-                        </td>
-                        <td>@sampletypes.Where(x => x.Id == sampletypeanalytical.SampleTypeId).FirstOrDefault()?.Name</td>
-                        <td>@analyticalservs.Where(x => x.Id == sampletypeanalytical.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-
-                    </tr>
-                }
+                <tr>
+                    <td style="text-align:center">
+                        <a href="config/sampletype/sampletypeanalyticaladdedit/@sampletypeanalytical.SampleTypeId/@sampletypeanalytical.AnalyticalServiceId">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="config/sampletype/sampletypeanalyticaldelete/@sampletypeanalytical.SampleTypeId/@sampletypeanalytical.AnalyticalServiceId">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@sampletypes.Where(x => x.Id == sampletypeanalytical.SampleTypeId).FirstOrDefault()?.Name</td>
+                    <td>@analyticalservs.Where(x => x.Id == sampletypeanalytical.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                </tr>
             }
         }
     </Rows>
@@ -57,7 +53,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        sampletypeanalyticals = await SampleTypeAnalyticalService.SampleTypeAnalyticalList();
+        sampletypeanalyticals = await SampleTypeAnalyticalService.SampleTypeAnalyticalList(SampleTypeId);
         sampletypes = await SampleTypeService.SampleTypeList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         UrlSampleTypeId = "config/sampletype/sampletypeanalyticaladdedit/" + SampleTypeId;

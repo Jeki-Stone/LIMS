@@ -1,15 +1,15 @@
 ﻿@using LIMSBlazor.Data
-@page "/confirmation/sample/finalresultlist/{SampleId:int}"
+@page "/analysis/sample/finalresultlist/{SampleId:int}"
 @inject IFinalResultService FinalResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link active" href="/confirmation/sample/finalresultlist/@SampleId">Финальные результаты</a>
+        <a class="nav-link active" href="/analysis/sample/finalresultlist/@SampleId">Финальные результаты</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/confirmation/sample/resultlist/@SampleId">Результаты</a>
+        <a class="nav-link" href="/analysis/sample/resultlist/@SampleId">Результаты</a>
     </li>
 </ul>
 <DataView PageTitle="Список финальных результатов испытания" UrlBack="confirmation/samplelist" UrlBackText="Вернуться к списку испытаний">
@@ -42,8 +42,12 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="confirmation/sample/finalresultaddedit/@SampleId/@finaresult.Id">
+                        <a href="analysis/sample/finalresultaddedit/@SampleId/@finaresult.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="analysis/sample/finalresultdelete/@SampleId/@finaresult.Id">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>
                     <td>@finaresult.Id</td>

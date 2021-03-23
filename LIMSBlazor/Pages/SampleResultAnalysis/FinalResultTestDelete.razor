@@ -1,0 +1,71 @@
+﻿@using LIMSBlazor.Data
+@page "/analysis/sample/finalresultdelete/{SampleId:int}/{id:int}"
+@inject IFinalResultService FinalResultService
+@inject ISampleService SampleService
+@inject IAnalyticalServService AnalyticalServService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить финальный результат испытания" DeleteWarning="Вы уверены что хотите удалить этот финальный результат испытания? Данные нельзя будет вернуть!" Model="@finalresult" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Id испытания:</td>
+            <td>@finalresult.SampleId</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>@analyticalservs?.Where(x => x.Id == finalresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Номер образца:</td>
+            <td>@finalresult.ValueNo</td>
+        </tr>
+        <tr>
+            <td>Результат:</td>
+            <td>@finalresult.Value</td>
+        </tr>
+        <tr>
+            <td>В оценке:</td>
+            <td>
+                @if (finalresult.IsFinal == true)
+                {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                else
+                {<img src="../images/iRedX.png" width="25" height="25" />}
+        </td>
+    </tr>
+    <tr>
+        <td>Записка:</td>
+        <td>@finalresult.Note</td>
+    </tr>
+</table>
+</DataEdit>
+
+
+@code { // Create a new, empty  object
+    FinalResult finalresult = new FinalResult();
+
+    IEnumerable<Sample> samples;
+    IEnumerable<AnalyticalServ> analyticalservs;
+
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int id { get; set; }
+
+    //Executes on page open..
+    protected override async Task OnInitializedAsync()
+    {
+        samples = await SampleService.SampleList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        finalresult = await FinalResultService.FinalResult_GetOne(id);
+    }
+
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await FinalResultService.FinalResultDelete(id);
+        NavigationManager.NavigateTo("/analysis/sample/finalresultlist/" + SampleId);
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/analysis/sample/finalresultlist/" + SampleId);
+    } }

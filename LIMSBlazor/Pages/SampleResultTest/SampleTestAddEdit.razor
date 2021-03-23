@@ -4,7 +4,6 @@
 @inject ICliService CliService
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
-@inject ISampleTypeAnalyticalService SampleTypeAnalyticalService
 @inject ISampleAnalyticalService SampleAnalyticalService
 @inject NavigationManager NavigationManager
 
@@ -33,7 +32,10 @@
                     <option value="0">Выберете значение</option>
                     @foreach (var item in GlobalConstant.SampleStatusModel)
                     {
-                        <option value="@item.Value">@item.Text</option>
+                        if ((item.Value == "2") || (item.Value == "3"))
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
                     }
                 </select>
             </td>
@@ -70,7 +72,6 @@
     IEnumerable<Cli> clis;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
-    IEnumerable<SampleTypeAnalytical> sampletypeanalyticals;
 
     [Parameter]
     public int? Id { get; set; }
@@ -85,9 +86,7 @@
         clis = await CliService.CliList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
-        sampletypeanalyticals = await SampleTypeAnalyticalService.SampleTypeAnalyticalList();
         sample = await SampleService.Sample_GetOne((int)Id);
-
     }
 
     protected async Task SampleSave()

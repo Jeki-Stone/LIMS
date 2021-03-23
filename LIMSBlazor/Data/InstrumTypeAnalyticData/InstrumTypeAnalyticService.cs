@@ -44,12 +44,14 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        public async Task<IEnumerable<InstrumTypeAnalytic>> InstrumTypeAnalyticList()
+        public async Task<IEnumerable<InstrumTypeAnalytic>> InstrumTypeAnalyticList(int InstrumentTypeId)
         {
             IEnumerable<InstrumTypeAnalytic> instrumtypeanalitics;
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                instrumtypeanalitics = await conn.QueryAsync<InstrumTypeAnalytic>("spInstrumentTypeAnalyticals_GetAll", commandType: CommandType.StoredProcedure);
+                var parametrs = new DynamicParameters();
+                parametrs.Add("InstrumentTypeId", InstrumentTypeId, DbType.Int32);
+                instrumtypeanalitics = await conn.QueryAsync<InstrumTypeAnalytic>("spInstrumentTypeAnalyticals_GetAll", parametrs, commandType: CommandType.StoredProcedure);
             }
             return instrumtypeanalitics;
         }

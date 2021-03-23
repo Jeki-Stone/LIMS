@@ -44,12 +44,14 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        public async Task<IEnumerable<SampleTypeAnalytical>> SampleTypeAnalyticalList()
+        public async Task<IEnumerable<SampleTypeAnalytical>> SampleTypeAnalyticalList(int SampleTypeId)
         {
             IEnumerable<SampleTypeAnalytical> sampletypeanalyticals;
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                sampletypeanalyticals = await conn.QueryAsync<SampleTypeAnalytical>("spSampleTypeAnalyticals_GetAll", commandType: CommandType.StoredProcedure);
+                var parametrs = new DynamicParameters();
+                parametrs.Add("SampleTypeId", SampleTypeId, DbType.Int32);
+                sampletypeanalyticals = await conn.QueryAsync<SampleTypeAnalytical>("spSampleTypeAnalyticals_GetAll", parametrs, commandType: CommandType.StoredProcedure);
             }
             return sampletypeanalyticals;
         }

@@ -29,27 +29,24 @@
         {
             @foreach (var sampleattr in sampleattrs)
             {
-                if (sampleattr.SampleId == SampleId)
-                {
-                    <tr>
-                        <td style="text-align:center">
-                            <a href="samplelog/sample/sampleattraddedit/@sampleattr.SampleId/@sampleattr.AttrId">
-                                <img src="../images/iEdit.png" width="20" height="20" />
-                            </a>
-                            &nbsp
-                            <a href="samplelog/sample/sampleattrdelete/@sampleattr.SampleId/@sampleattr.AttrId">
-                                <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                            </a>
-                        </td>
-                        <td>@sampleattr.SampleId</td>
-                        <td>@attrs.Where(x => x.Id == sampleattr.AttrId).FirstOrDefault()?.Name</td>
-                        <td style="text-align:center"><AttrEdit Attr="@sampleattr" ReadOnly="true" /></td>
-                        <td>@sampleattr.CreateTime</td>
-                        <td>@sampleattr.UpdateTime</td>
-                        <td>@sampleattr.CreateUser</td>
-                        <td>@sampleattr.UpdateUser</td>
-                    </tr>
-                }
+                <tr>
+                    <td style="text-align:center">
+                        <a href="samplelog/sample/sampleattraddedit/@sampleattr.SampleId/@sampleattr.AttrId">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="samplelog/sample/sampleattrdelete/@sampleattr.SampleId/@sampleattr.AttrId">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@sampleattr.SampleId</td>
+                    <td>@attrs.Where(x => x.Id == sampleattr.AttrId).FirstOrDefault()?.Name</td>
+                    <td style="text-align:center"><AttrEdit Attr="@sampleattr" ReadOnly="true" /></td>
+                    <td>@sampleattr.CreateTime</td>
+                    <td>@sampleattr.UpdateTime</td>
+                    <td>@sampleattr.CreateUser</td>
+                    <td>@sampleattr.UpdateUser</td>
+                </tr>
             }
         }
     </Rows>
@@ -67,7 +64,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        sampleattrs = await SampleAttrService.SampleAttrList();
+        sampleattrs = await SampleAttrService.SampleAttrList(SampleId);
         samples = await SampleService.SampleList();
         attrs = await AttrService.AttrList();
         UrlSampleId = "samplelog/sample/sampleattraddedit/" + SampleId;

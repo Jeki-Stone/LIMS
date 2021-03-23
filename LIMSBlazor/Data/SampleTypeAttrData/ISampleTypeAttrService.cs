@@ -6,7 +6,7 @@ namespace LIMSBlazor.Data
     public interface ISampleTypeAttrService
     {
         Task<bool> SampleTypeAttrInsert(SampleTypeAttr sampletypeattr, int SampleTypeId);
-        Task<IEnumerable<SampleTypeAttr>> SampleTypeAttrList();
+        Task<IEnumerable<SampleTypeAttr>> SampleTypeAttrList(int SampleTypeId);
         Task<SampleTypeAttr> SampleTypeAttr_GetOne(int SampleTypeId, int AttrId);
         Task<bool> SampleTypeAttrUpdate(SampleTypeAttr sampletypeattr);
         Task<bool> SampleTypeAttrDelete(int SampleTypeId, int AttrId);

@@ -7,7 +7,7 @@ namespace LIMSBlazor.Data
     {
         Task<bool> FinalResultInsert(FinalResult finalresult);
 
-        Task<IEnumerable<FinalResult>> FinalResultList();
+        Task<IEnumerable<FinalResult>> FinalResultList(int SampleId);
         Task<FinalResult> FinalResult_GetOne(int Id);
         Task<bool> FinalResultUpdate(FinalResult finalresult);
         Task<bool> FinalResultDelete(int id);

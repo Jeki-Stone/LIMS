@@ -25,23 +25,20 @@
         {
             @foreach (var userrole in userroles)
             {
-                if (userrole.UserId == UserId)
-                {
-                    <tr>
-                        <td style="text-align:center">
-                            <a href="/config/userlist/userroleaddedit/@userrole.UserId/@userrole.LabId/@userrole.RoleId">
-                                <img src="../images/iEdit.png" width="20" height="20" />
-                            </a>
-                            &nbsp
-                            <a href="/config/userlist/userroledelete/@userrole.UserId/@userrole.LabId/@userrole.RoleId">
-                                <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                            </a>
-                        </td>
-                        <td>@users?.Where(x => x.Id == userrole.UserId).FirstOrDefault()?.Name</td>
-                        <td>@labs?.Where(x => x.Id == userrole.LabId).FirstOrDefault()?.Name</td>
-                        <td>@roles?.Where(x => x.Id == userrole.RoleId).FirstOrDefault()?.Name</td>
-                    </tr>
-                }
+                <tr>
+                    <td style="text-align:center">
+                        <a href="/config/userlist/userroleaddedit/@userrole.UserId/@userrole.LabId/@userrole.RoleId">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="/config/userlist/userroledelete/@userrole.UserId/@userrole.LabId/@userrole.RoleId">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@users?.Where(x => x.Id == userrole.UserId).FirstOrDefault()?.Name</td>
+                    <td>@labs?.Where(x => x.Id == userrole.LabId).FirstOrDefault()?.Name</td>
+                    <td>@roles?.Where(x => x.Id == userrole.RoleId).FirstOrDefault()?.Name</td>
+                </tr>
             }
         }
     </Rows>
@@ -61,7 +58,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        userroles = await UserRoleService.UserRoleList();
+        userroles = await UserRoleService.UserRoleList(UserId);
         users = await UserService.UserList();
         labs = await LabService.LabList();
         roles = await RoleService.RoleList();

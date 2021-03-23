@@ -62,13 +62,10 @@
 
     protected async Task ResultSave()
     {
-        if (id != 0)
-        {
-            result.UpdateTime = DateTime.Now;
-            result.UpdateUser = "Обновивший пользователь пользователь";
-            // Update is id > 0
-            await ResultService.ResultUpdate(result);
-        }
+        result.UpdateTime = DateTime.Now;
+        result.UpdateUser = "Обновивший пользователь пользователь";
+        // Update is id > 0
+        await ResultService.ResultUpdate(result);
         NavigationManager.NavigateTo("/analysis/sample/resultlist/" + SampleId);
     }
     void Cancel()

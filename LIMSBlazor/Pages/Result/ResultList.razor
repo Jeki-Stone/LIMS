@@ -32,31 +32,28 @@
         {
             @foreach (var result in results)
             {
-                if (result.SampleId == SampleId)
-                {
-                    <tr>
-                        <td style="text-align:center">
-                            <a href="/samplelog/sample/resultaddedit/@SampleId/@result.Id">
-                                <img src="../images/iEdit.png" width="20" height="20" />
-                            </a>
-                            &nbsp
-                            <a href="/samplelog/sample/resultdelete/@SampleId/@result.Id">
-                                <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                            </a>
-                        </td>
-                        <td>@result.Id</td>
-                        <td>@result.SampleId</td>
-                        <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                        <td>@result.ValueNo</td>
-                        <td>@result.Value</td>
-                        <td>@result.IsFinal</td>
-                        <td>@result.Note</td>
-                        <td>@result.CreateTime</td>
-                        <td>@result.UpdateTime</td>
-                        <td>@result.CreateUser</td>
-                        <td>@result.UpdateUser</td>
-                    </tr>
-                }
+                <tr>
+                    <td style="text-align:center">
+                        <a href="/samplelog/sample/resultaddedit/@SampleId/@result.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="/samplelog/sample/resultdelete/@SampleId/@result.Id">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@result.Id</td>
+                    <td>@result.SampleId</td>
+                    <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@result.ValueNo</td>
+                    <td>@result.Value</td>
+                    <td>@result.IsFinal</td>
+                    <td>@result.Note</td>
+                    <td>@result.CreateTime</td>
+                    <td>@result.UpdateTime</td>
+                    <td>@result.CreateUser</td>
+                    <td>@result.UpdateUser</td>
+                </tr>
             }
         }
     </Rows>

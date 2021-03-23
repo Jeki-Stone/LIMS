@@ -23,22 +23,19 @@
         {
             @foreach (var sampletypeattr in sampletypeattrs)
             {
-                if (sampletypeattr.SampleTypeId == SampleTypeId)
-                {
-                    <tr>
-                        <td style="text-align:center">
-                            <a href="/config/sampletype/sampletypeattraddedit/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
-                                <img src="../images/iEdit.png" width="20" height="20" />
-                            </a>
-                            &nbsp
-                            <a href="/config/sampletype/sampletypeattrdelete/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
-                                <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                            </a>
-                        </td>
-                        <td>@sampletypes.Where(x => x.Id == sampletypeattr.SampleTypeId).FirstOrDefault()?.Name</td>
-                        <td>@attrs.Where(x => x.Id == sampletypeattr.AttrId).FirstOrDefault()?.Name</td>
-                    </tr>
-                }
+                <tr>
+                    <td style="text-align:center">
+                        <a href="/config/sampletype/sampletypeattraddedit/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="/config/sampletype/sampletypeattrdelete/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@sampletypes.Where(x => x.Id == sampletypeattr.SampleTypeId).FirstOrDefault()?.Name</td>
+                    <td>@attrs.Where(x => x.Id == sampletypeattr.AttrId).FirstOrDefault()?.Name</td>
+                </tr>
             }
         }
     </Rows>
@@ -56,7 +53,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        sampletypeattrs = await SampleTypeAttrService.SampleTypeAttrList();
+        sampletypeattrs = await SampleTypeAttrService.SampleTypeAttrList(SampleTypeId);
         sampletypes = await SampleTypeService.SampleTypeList();
         attrs = await AttrService.AttrList();
         UrlSampleTypeId = "/config/sampletype/sampletypeattraddedit/" + SampleTypeId;
