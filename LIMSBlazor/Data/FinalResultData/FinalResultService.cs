@@ -118,5 +118,18 @@ namespace LIMSBlazor.Data
             }
             return true;
         }
+
+        //Delete All Data SamplId and AnaliticalId
+        public async Task<bool> FinalResultDeleteAll(int SampleId, int AnalyticalServiceId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("SampleId", SampleId, DbType.Int32);
+            parameters.Add("AnalyticalServiceId", AnalyticalServiceId, DbType.Int32);
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+                await conn.ExecuteAsync("spFinalResults_DeleteAll", parameters, commandType: CommandType.StoredProcedure);
+            }
+            return true;
+        }
     }
 }

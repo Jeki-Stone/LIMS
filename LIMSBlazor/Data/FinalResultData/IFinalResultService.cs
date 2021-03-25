@@ -11,5 +11,6 @@ namespace LIMSBlazor.Data
         Task<FinalResult> FinalResult_GetOne(int Id);
         Task<bool> FinalResultUpdate(FinalResult finalresult);
         Task<bool> FinalResultDelete(int id);
+        Task<bool> FinalResultDeleteAll(int SampleId, int AnalyticalServiceId);
     }
 }

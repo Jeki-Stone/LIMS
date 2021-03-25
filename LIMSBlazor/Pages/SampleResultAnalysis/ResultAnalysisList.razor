@@ -3,6 +3,7 @@
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject IFinalResultService FinalResultService
 @inject NavigationManager NavigationManager
 
 <ul class="nav nav-tabs">
@@ -15,16 +16,23 @@
 </ul>
 <DataView PageTitle="Список результатов испытаний на анализе" UrlBack="/analysis/samplelist" UrlBackText="Вернуться к списку испытаний">
     <Filtr>
-        <select @bind="changsort" id="sort" required class="form-control">
-            @if (analyticalservs != null)
-            {
-                <option value="0">Выберите значение</option>
-                foreach (var item in analyticalservs)
+        <li class="nav-item">
+            <select @bind="changsort" id="sort" required class="form-control">
+                @if (analyticalservs != null)
                 {
-                    <option value="@item.Id">@item.Name</option>
+                    <option value="0">Без фильтров</option>
+                    foreach (var item in analyticalservs)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
                 }
-            }
-        </select>
+            </select>
+        </li>
+        &nbsp
+        &nbsp
+        <li class="nav-item">
+            <button class="btn btn-secondary" @onclick=AddUpdateFinalResult>Обновить финальные результаты</button>
+        </li>
     </Filtr>
     <Header>
         <tr>
@@ -51,28 +59,28 @@
         }
         else
         {
-            @foreach (var result in results.Where(x=> changsort ==0 || x.AnalyticalServiceId == changsort))
+            @foreach (var result in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort))
             {
-                  <tr>
-                        <td style="text-align:center">
-                            <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
-                                <img src="../images/iEdit.png" width="20" height="20" />
-                            </a>
-                        </td>
-                        <td>@result.Id</td>
-                        <td>@result.SampleId</td>
-                        <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                        <td>@result.ValueNo</td>
-                        <td>@result.Value</td>
-                        <td style="text-align:center">
-                            <input type="checkbox" @bind="result.IsFinal">
-                        </td>
-                        <td>@result.Note</td>
-                        <td>@result.CreateTime</td>
-                        <td>@result.UpdateTime</td>
-                        <td>@result.CreateUser</td>
-                        <td>@result.UpdateUser</td>
-                  </tr>
+                <tr>
+                    <td style="text-align:center">
+                        <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@result.Id</td>
+                    <td>@result.SampleId</td>
+                    <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@result.ValueNo</td>
+                    <td>@result.Value</td>
+                    <td style="text-align:center">
+                        <input type="checkbox" @bind="result.IsFinal" @oninput=SaveData>
+                    </td>
+                    <td>@result.Note</td>
+                    <td>@result.CreateTime</td>
+                    <td>@result.UpdateTime</td>
+                    <td>@result.CreateUser</td>
+                    <td>@result.UpdateUser</td>
+                </tr>
             }
         }
     </Rows>
@@ -97,7 +105,6 @@
 
 @code {
     IEnumerable<Result> results;
-    //IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
 
     [Parameter]
@@ -107,6 +114,8 @@
 
     public int changsort = 0;
     public int resId = 0;
+    FinalResult finalresult = new FinalResult();
+    List<Result> GrupItem;
 
     protected override async Task OnInitializedAsync()
     {
@@ -114,5 +123,44 @@
         //samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         UrlSampleId = "/analysis/sample/resultaddedit/" + SampleId;
+    }
+
+    protected async Task AddUpdateFinalResult()
+    {
+        @foreach (var itemGrup in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort).GroupBy(e => e.AnalyticalServiceId))
+        {
+            float itemValue = 0;
+            string itemName = "";
+
+            GrupItem = itemGrup.Where(x => x.IsFinal == true).ToList();
+            if (GrupItem.Count > 0)
+            {
+                foreach (var item in GrupItem)
+                {
+                    finalresult.SampleId = item.SampleId;
+                    finalresult.AnalyticalServiceId = item.AnalyticalServiceId;
+                    if (itemName == "")
+                        itemName = item.ValueNo.ToString();
+                    else
+                        itemName = itemName + "," + item.ValueNo.ToString();
+                    itemValue += item.Value;
+                }
+
+                finalresult.ValueNo = itemName;
+                finalresult.Value = itemValue / GrupItem.Count;
+                finalresult.CreateTime = DateTime.Now;
+                finalresult.CreateUser = "Создавший пользователь";
+                await FinalResultService.FinalResultDeleteAll(finalresult.SampleId, finalresult.AnalyticalServiceId);
+                await FinalResultService.FinalResultInsert(finalresult);
+            }
+        }
+    }
+
+    protected async Task SaveData()
+    {
+        foreach (var item in results)
+        {
+            await ResultService.ResultUpdate(item);
+        }
     }
 }

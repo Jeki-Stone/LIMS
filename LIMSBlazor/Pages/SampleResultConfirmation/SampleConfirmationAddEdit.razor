@@ -37,7 +37,9 @@
                     @foreach (var item in GlobalConstant.SampleStatusModel)
                     {
                         if (item.Value != "1")
-                        {<option value="@item.Value">@item.Text</option>}
+                        {
+                            <option value="@item.Value">@item.Text</option>
+}
                     }
                 </select>
             </td>
@@ -67,18 +69,18 @@
 </DataEdit>
 
 @code {
-        // Create a new, empty object
-        Sample sample = new Sample();
-        SampleAnalytical sampleanalytical = new SampleAnalytical();
-        List<FinalResult> finres = new List<FinalResult>();
+    // Create a new, empty object
+    Sample sample = new Sample();
+    SampleAnalytical sampleanalytical = new SampleAnalytical();
+    List<FinalResult> finres = new List<FinalResult>();
 
-        IEnumerable<Cli> clis;
-        IEnumerable<SampleType> sampletypes;
-        IEnumerable<Loc> locs;
-        IEnumerable<FinalResult> finalresults;
+    IEnumerable<Cli> clis;
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<Loc> locs;
+    IEnumerable<FinalResult> finalresults;
 
-        [Parameter]
-        public int Id { get; set; }
+    [Parameter]
+    public int Id { get; set; }
 
     // Set default page title and button text
     public string pagetitle = "Изменить статус испытания";
@@ -99,46 +101,44 @@
 
     protected async Task SampleSave()
     {
-        int T = 1;
-        foreach (var item in finalresults)
+        if (sample.Status != (int)GlobalConstant.SampleStatus.Final)
         {
-            if (item.IsFinal == false)
-                T--;
+            sample.UpdateTime = DateTime.Now;
+            sample.UpdateUser = "Обновивший пользователь пользователь";
+            // Update is id > 0
+            if (sample.Status == 5)
+            {
+                sample.IsFinal = true;
+            }
+            else
+            {
+                sample.IsFinal = false;
+            }
+            await SampleService.SampleUpdate(sample);
+            NavigationManager.NavigateTo("confirmation/samplelist");
         }
-
-        if (sample.Status != 5)
+        else if (finalresults.Where(x => x.IsFinal != true).ToList().Count >= 1)
         {
-            sample.UpdateTime = DateTime.Now;
-            sample.UpdateUser = "Обновивший пользователь пользователь";
-            // Update is id > 0
-            if (sample.Status == 5)
-            {
-                sample.IsFinal = true;
-            }
-            else
-            {
-                sample.IsFinal = false;
-            }
-            await SampleService.SampleUpdate(sample);
-            NavigationManager.NavigateTo("confirmation/samplelist");
-        } else if (T == 1)
-        {
-            sample.UpdateTime = DateTime.Now;
-            sample.UpdateUser = "Обновивший пользователь пользователь";
-            // Update is id > 0
-            if (sample.Status == 5)
-            {
-                sample.IsFinal = true;
-            }
-            else
-            {
-                sample.IsFinal = false;
-            }
-            await SampleService.SampleUpdate(sample);
-            NavigationManager.NavigateTo("confirmation/samplelist");
+            Visibl = "block";
         }
         else
-            Visibl = "block";
+        {
+            sample.UpdateTime = DateTime.Now;
+            sample.UpdateUser = "Обновивший пользователь пользователь";
+            // Update is id > 0
+            if (sample.Status == 5)
+            {
+                sample.IsFinal = true;
+            }
+            else
+            {
+                sample.IsFinal = false;
+            }
+            await SampleService.SampleUpdate(sample);
+            NavigationManager.NavigateTo("confirmation/samplelist");
+        }
+
+
     }
     void Cancel()
     {

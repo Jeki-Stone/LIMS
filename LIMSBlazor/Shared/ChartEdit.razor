@@ -6,11 +6,8 @@
 @inject IAttrService AttrService
 @inject ISampleAttrService SampleAttrService
 @inject IResultService ResultService
-@inject IFinalResultService FinalResultService
 
 <Button Clicked="@(async () => await HandleRedraw())">Перерисовать</Button>
-@if ((AnalyticalTrue == 1) && (GrupItem.Count >= 2))
-{<Button Clicked="@AddUpdateFinalResult">В финальные результаты</Button>}
 <RadarChart @ref="radarChart" TItem="double" Clicked="@OnClicked" />
 
 @code {
@@ -32,7 +29,6 @@
 
         RadarChart<double> radarChart;
         List<string> Labels = new List<string>();
-        FinalResult finalresult = new FinalResult();
         Result result = new Result();
         List<FinalResult> FinalResults = new List<FinalResult>();
 
@@ -52,21 +48,16 @@
     {
         await radarChart.Clear();
         Labels.Clear();
-        FinalResults.Clear();
+
 
         if (GrupItem.Count >= 2)
         {
-            finalresults = await FinalResultService.FinalResultList(SampleId);
-            foreach (var item in finalresults.GroupBy(e => e.AnalyticalServiceId))
-            {
-                FinalResults.Add(item.FirstOrDefault());
-            }
+            
 
             await radarChart.AddLabelsDatasetsAndUpdate(Labels, GetRadarChartDataset());
             var options = new RadarChartOptions
             {
                 AspectRatio = 1,
-
             };
             await radarChart.SetOptions(options);
         }
@@ -118,35 +109,5 @@
     void OnClicked(ChartMouseEventArgs e)
     {
         int index = e.Index;
-    }
-
-    protected async Task AddUpdateFinalResult()
-    {
-        float itemValue = 0;
-        string itemName = "";
-
-        if (GrupItem.Count > 0)
-        {
-            foreach (var item in GrupItem)
-            {
-                finalresult.SampleId = item.SampleId;
-                finalresult.AnalyticalServiceId = item.AnalyticalServiceId;
-                if (itemName == "")
-                    itemName = item.ValueNo.ToString();
-                else
-                    itemName = itemName + "," + item.ValueNo.ToString();
-                itemValue += item.Value;
-            }
-
-            finalresult.ValueNo = itemName;
-            finalresult.Value = itemValue / GrupItem.Count;
-            //if ()
-            {
-                finalresult.CreateTime = DateTime.Now;
-                finalresult.CreateUser = "Создавший пользователь";
-                await FinalResultService.FinalResultInsert(finalresult);
-            }
-        }
-        await HandleRedraw();
     }
 }
