@@ -61,8 +61,11 @@
                     <option value="0">Выберете значение</option>
                     @foreach (var item in GlobalConstant.SampleStatusModel)
                     {
+                        if ((item.Value == "1") || (item.Value == "2"))
+                                {
                         <option value="@item.Value">@item.Text</option>
                     }
+                }
                 </select>
             </td>
         </tr>
@@ -75,13 +78,13 @@
             <td>
                 <select @bind="sample.LocationId" required class="form-control">
                     @if (locs != null)
-                    {
-                        <option value="0">Выберите значение</option>
-                        foreach (var item in locs)
-                        {
-                            <option value="@item.Id">@item.Name</option>
-                        }
-                    }
+                                                            {
+                    <option value="0">Выберите значение</option>
+                                                                foreach (var item in locs)
+                                                                {
+                    <option value="@item.Id">@item.Name</option>
+                                                                }
+}
                 </select>
             </td>
         </tr>
@@ -92,73 +95,73 @@
     </table>
 </DataEdit>
 
-    @code {
-        // Create a new, empty object
-        Sample sample = new Sample();
-        SampleAnalytical sampleanalytical = new SampleAnalytical();
+@code {
+            // Create a new, empty object
+            Sample sample = new Sample();
+SampleAnalytical sampleanalytical = new SampleAnalytical();
 
-        IEnumerable<Cli> clis;
-        IEnumerable<SampleType> sampletypes;
-        IEnumerable<Loc> locs;
+IEnumerable<Cli> clis;
+IEnumerable<SampleType> sampletypes;
+IEnumerable<Loc> locs;
 
-        [Parameter]
-        public int? Id { get; set; }
+[Parameter]
+public int? Id { get; set; }
 
-        // Set default page title and button text
-        public string pagetitle = "Добавить новыую пробу";
-        public string buttontext = "Добавить";
-        public bool Type = false;
+// Set default page title and button text
+public string pagetitle = "Добавить новыую пробу";
+public string buttontext = "Добавить";
+public bool Type = false;
 
-        //Executes on page open, set defaults on page.
-        protected override async Task OnInitializedAsync()
+//Executes on page open, set defaults on page.
+protected override async Task OnInitializedAsync()
+{
+        clis = await CliService.CliList();
+        sampletypes = await SampleTypeService.SampleTypeList();
+        locs = await LocService.LocList();
+        // ============ If the passed-in id is zero, assume new data.
+        if (Id != null)
         {
-            clis = await CliService.CliList();
-            sampletypes = await SampleTypeService.SampleTypeList();
-            locs = await LocService.LocList();
-            // ============ If the passed-in id is zero, assume new data.
-            if (Id != null)
-            {
-                sample = await SampleService.Sample_GetOne((int)Id);
-                // Change page title and button text since this is an edit.
-                pagetitle = "Изменить данные пробы";
-                buttontext = "Изменить";
-            }
-            if (sample.Status > 1)
-            {
-                Type = true;
-            }
+            sample = await SampleService.Sample_GetOne((int)Id);
+            // Change page title and button text since this is an edit.
+            pagetitle = "Изменить данные пробы";
+            buttontext = "Изменить";
         }
-
-        protected async Task SampleSave()
+        if (sample.Status > 1)
         {
-            if (Id == null)
+            Type = true;
+        }
+}
+
+protected async Task SampleSave()
+{
+        if (Id == null)
+        {
+            sample.CreateTime = DateTime.Now;
+            sample.CreateUser = "Создавший пользователь";
+            // Insert if id is zero.
+            // После вставки Insert возвращает новый обьект
+            sample.IsFinal = false;
+            sample = await SampleService.SampleInsert(sample);
+        }
+        else
+        {
+            sample.UpdateTime = DateTime.Now;
+            sample.UpdateUser = "Обновивший пользователь пользователь";
+            // Update is id > 0
+            if (sample.Status == 5)
             {
-                sample.CreateTime = DateTime.Now;
-                sample.CreateUser = "Создавший пользователь";
-                // Insert if id is zero.
-                // После вставки Insert возвращает новый обьект
-                sample.IsFinal = false;
-                sample = await SampleService.SampleInsert(sample);
+                sample.IsFinal = true;
             }
             else
             {
-                sample.UpdateTime = DateTime.Now;
-                sample.UpdateUser = "Обновивший пользователь пользователь";
-                // Update is id > 0
-                if (sample.Status == 5)
-                {
-                    sample.IsFinal = true;
-                }
-                else
-                {
-                    sample.IsFinal = false;
-                }
-                await SampleService.SampleUpdate(sample);
+                sample.IsFinal = false;
             }
-            NavigationManager.NavigateTo("samplelog/samplelist");
+            await SampleService.SampleUpdate(sample);
         }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("samplelog/samplelist");
-        }
-    }
+        NavigationManager.NavigateTo("samplelog/samplelist");
+}
+void Cancel()
+{
+        NavigationManager.NavigateTo("samplelog/samplelist");
+}
+}

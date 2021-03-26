@@ -33,6 +33,7 @@ namespace LIMSBlazor.Data
         public string CreateUser { get; set; }
         public string UpdateUser { get; set; }
         public string FinalizeUser { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:nn}", ApplyFormatInEditMode = true)]
         public DateTime? FinalizeTime { get; set; }
 
     }

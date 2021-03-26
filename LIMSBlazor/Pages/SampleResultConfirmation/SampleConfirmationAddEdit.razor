@@ -106,7 +106,7 @@
             sample.UpdateTime = DateTime.Now;
             sample.UpdateUser = "Обновивший пользователь пользователь";
             // Update is id > 0
-            if (sample.Status == 5)
+            if (sample.Status == (int)GlobalConstant.SampleStatus.Final)
             {
                 sample.IsFinal = true;
             }
@@ -125,8 +125,9 @@
         {
             sample.UpdateTime = DateTime.Now;
             sample.UpdateUser = "Обновивший пользователь пользователь";
+            sample.FinalizeTime = DateTime.Now;
             // Update is id > 0
-            if (sample.Status == 5)
+            if (sample.Status == (int)GlobalConstant.SampleStatus.Final)
             {
                 sample.IsFinal = true;
             }
