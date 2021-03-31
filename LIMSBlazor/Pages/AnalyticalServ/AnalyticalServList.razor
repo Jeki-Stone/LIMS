@@ -31,9 +31,13 @@
                         <a href="config/analyticalservaddedit/@analyticalserv.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
-                        &nbsp
+                        &nbsp;
                         <a href="config/analyticalservdelete/@analyticalserv.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                        &nbsp;
+                        <a href="config/analyticalserv/analyticalserviceattrlist/@analyticalserv.Id">
+                            <img src="../images/downArrow.png" title="Add attribute" width="20" height="20" />
                         </a>
                     </td>
                     <td>@analyticalserv.Id</td>
@@ -48,9 +52,16 @@
 </DataView>
 
 @code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Category> сategorys;
     IEnumerable<Unit> units;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         analyticalservs = await AnalyticalServService.AnalyticalServList();

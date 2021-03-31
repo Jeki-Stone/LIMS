@@ -25,25 +25,38 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty object
-        Cli cli = new Cli();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Cli cli = new Cli();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            cli = await CliService.Cli_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        cli = await CliService.Cli_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await CliService.CliDelete(id);
-            NavigationManager.NavigateTo("config/clilist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/clilist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await CliService.CliDelete(id);
+        NavigationManager.NavigateTo("config/clilist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/clilist");
+    }
+}

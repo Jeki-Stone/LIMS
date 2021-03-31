@@ -36,7 +36,7 @@
             </td>
         </tr>
         <tr>
-            <td>Тип испытания:</td>
+            <td>Тип пробы:</td>
             <td>
                 <select @bind="sample.SampleTypeId" required class="form-control" disabled=@Type>
                     @if (sampletypes != null)
@@ -74,7 +74,7 @@
             <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.Note"></textarea></td>
         </tr>
         <tr>
-            <td>Место взятия образца:</td>
+            <td>Место взятия проб:</td>
             <td>
                 <select @bind="sample.LocationId" required class="form-control">
                     @if (locs != null)
@@ -96,33 +96,38 @@
 </DataEdit>
 
 @code {
-            // Create a new, empty object
-            Sample sample = new Sample();
-SampleAnalytical sampleanalytical = new SampleAnalytical();
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Sample sample = new Sample();
+    SampleAnalytical sampleanalytical = new SampleAnalytical();
 
-IEnumerable<Cli> clis;
-IEnumerable<SampleType> sampletypes;
-IEnumerable<Loc> locs;
+    IEnumerable<Cli> clis;
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<Loc> locs;
 
-[Parameter]
-public int? Id { get; set; }
+    [Parameter]
+    public int? Id { get; set; }
 
-// Set default page title and button text
-public string pagetitle = "Добавить новыую пробу";
-public string buttontext = "Добавить";
-public bool Type = false;
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новыую пробу";
+    public string buttontext = "Добавить";
+    public bool Type = false;
 
-//Executes on page open, set defaults on page.
-protected override async Task OnInitializedAsync()
-{
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
         clis = await CliService.CliList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
-        // ============ If the passed-in id is zero, assume new data.
+        /// Если Id ноль то будет добавлено новое значение
         if (Id != null)
         {
             sample = await SampleService.Sample_GetOne((int)Id);
-            // Change page title and button text since this is an edit.
             pagetitle = "Изменить данные пробы";
             buttontext = "Изменить";
         }
@@ -130,15 +135,17 @@ protected override async Task OnInitializedAsync()
         {
             Type = true;
         }
-}
+    }
 
-protected async Task SampleSave()
-{
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task SampleSave()
+    {
         if (Id == null)
         {
             sample.CreateTime = DateTime.Now;
             sample.CreateUser = "Создавший пользователь";
-            // Insert if id is zero.
             // После вставки Insert возвращает новый обьект
             sample.IsFinal = false;
             sample = await SampleService.SampleInsert(sample);
@@ -147,7 +154,6 @@ protected async Task SampleSave()
         {
             sample.UpdateTime = DateTime.Now;
             sample.UpdateUser = "Обновивший пользователь пользователь";
-            // Update is id > 0
             if (sample.Status == 5)
             {
                 sample.IsFinal = true;
@@ -159,9 +165,13 @@ protected async Task SampleSave()
             await SampleService.SampleUpdate(sample);
         }
         NavigationManager.NavigateTo("samplelog/samplelist");
-}
-void Cancel()
-{
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
         NavigationManager.NavigateTo("samplelog/samplelist");
-}
+    }
 }

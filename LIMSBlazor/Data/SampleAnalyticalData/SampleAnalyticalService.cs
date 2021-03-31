@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class SampleAnalyticalService : ISampleAnalyticalService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public SampleAnalyticalService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> SampleAnalyticalInsert(SampleAnalytical sampleanalytical, int SampleId)
         {
             try
@@ -28,19 +27,8 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("SampleId", SampleId, DbType.Int32);
                     parametrs.Add("AnalyticalServiceId", sampleanalytical.AnalyticalServiceId, DbType.Int32);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spSampleAnalyticals_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    //foreach (var item in sampletypeanalyticals)
-                    //{
-                    //    if (sample.SampleTypeId == item.SampleTypeId)
-                    //    {
-                    //        sampleanalytical.AnalyticalServiceId = item.AnalyticalServiceId;
-                    //        await SampleAnalyticalService.SampleAnalyticalInsert(sampleanalytical, sample.Id);
-                    //    }
-                    //}
                 }
-
             }
             catch (Exception e)
             {
@@ -49,6 +37,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<SampleAnalytical>> SampleAnalyticalList()
         {
             IEnumerable<SampleAnalytical> sampleanalyticals;
@@ -60,7 +49,7 @@ namespace LIMSBlazor.Data
         }
 
 
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<SampleAnalytical> SampleAnalytical_GetOne(int SampleId, int AnalyticalServiceId)
         {
             SampleAnalytical sampleanalytical = new SampleAnalytical();
@@ -74,7 +63,7 @@ namespace LIMSBlazor.Data
             return sampleanalytical;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> SampleAnalyticalUpdate(SampleAnalytical sampleanalytical)
         {
             try
@@ -95,7 +84,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> SampleAnalyticalDelete(int SampleId, int AnalyticalServiceId)
         {
             var parameters = new DynamicParameters();

@@ -13,12 +13,12 @@
             <td>Время получения</td>
             <td>Время начала тестов</td>
             <td>Клиент</td>
-            <td>Тип испытания</td>
+            <td>Тип пробы</td>
             <td>Количество проб</td>
             <td>Статус</td>
             <td>Готовность</td>
             <td>Записка</td>
-            <td>Место взятия образца</td>
+            <td>Место взятия пробы</td>
             <td>Причины изменений</td>
             <td>Время создания</td>
             <td>Время последних изменений</td>
@@ -81,10 +81,17 @@
 </DataView>
 
 @code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     IEnumerable<Sample> samples;
     IEnumerable<Cli> clis;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         samples = await SampleService.SampleList();

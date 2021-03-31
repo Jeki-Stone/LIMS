@@ -11,15 +11,14 @@ namespace LIMSBlazor.Data
 {
     public class AttrService : IAttrService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public AttrService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> AttrInsert(Attr attr)
         {
             try
@@ -31,14 +30,8 @@ namespace LIMSBlazor.Data
                     parametrs.Add("Description", attr.Description, DbType.String);
                     parametrs.Add("Type", attr.Type, DbType.String);
                     parametrs.Add("Options", attr.Options, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spAttrs_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
-                }
-                
+                }                
             }
             catch (Exception e)
             {
@@ -47,6 +40,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<Attr>> AttrList()
         {
             IEnumerable<Attr> attrs;
@@ -57,8 +51,7 @@ namespace LIMSBlazor.Data
             return attrs;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<Attr> Attr_GetOne(int id)
         {
             Attr attr = new Attr();
@@ -71,6 +64,7 @@ namespace LIMSBlazor.Data
             return attr;
         }
 
+        /// Получите одни данные на основе его идентификатора
         public async Task<IEnumerable<AttrOpton>> Attr_GetOptions(string sql)
         {
             IEnumerable<AttrOpton> model;
@@ -81,7 +75,7 @@ namespace LIMSBlazor.Data
             return model;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> AttrUpdate(Attr attr)
         {
             try
@@ -104,7 +98,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> AttrDelete(int id)
         {
             var parameters = new DynamicParameters();

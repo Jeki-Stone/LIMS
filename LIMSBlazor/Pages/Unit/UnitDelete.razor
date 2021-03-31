@@ -21,25 +21,38 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty object
-        Unit unit = new Unit();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Unit unit = new Unit();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            unit = await UnitService.Unit_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        unit = await UnitService.Unit_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await UnitService.UnitDelete(id);
-            NavigationManager.NavigateTo("config/unitlist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/unitlist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await UnitService.UnitDelete(id);
+        NavigationManager.NavigateTo("config/unitlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/unitlist");
+    }
+}

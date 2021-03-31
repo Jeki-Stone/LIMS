@@ -19,7 +19,7 @@
             <th>Id</th>
             <td>Id испытания</td>
             <td>Аналитический сервис</td>
-            <td>Номер образца</td>
+            <td>Номер пробы</td>
             <td>Результат</td>
             <td>Подтвержден</td>
             <td>Записка</td>
@@ -69,6 +69,9 @@
 </DataView>
 
 @code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     IEnumerable<FinalResult> finalresults;
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
@@ -76,6 +79,9 @@
     [Parameter]
     public int SampleId { get; set; }
 
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         finalresults = await FinalResultService.FinalResultList(SampleId);

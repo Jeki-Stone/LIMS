@@ -17,25 +17,37 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty object
-        Loc loc = new Loc();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Loc loc = new Loc();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            loc = await LocService.Loc_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        loc = await LocService.Loc_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await LocService.LocDelete(id);
-            NavigationManager.NavigateTo("config/loclist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/loclist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await LocService.LocDelete(id);
+        NavigationManager.NavigateTo("config/loclist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/loclist");
+    }
+}

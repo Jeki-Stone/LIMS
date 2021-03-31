@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class InstrumTypeAnalyticService : IInstrumTypeAnalyticService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public InstrumTypeAnalyticService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> InstrumTypeAnalyticInsert(InstrumTypeAnalytic instrumtypeanalitic, int InstrumentTypeId)
         {
             try
@@ -28,12 +27,7 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("InstrumentTypeId", InstrumentTypeId, DbType.Int32);
                     parametrs.Add("AnalyticalServiceId", instrumtypeanalitic.AnalyticalServiceId, DbType.Int32);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spInstrumentTypeAnalyticals_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
                 }
                 
             }
@@ -44,6 +38,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из соответствующие InstrumentTypeId БД
         public async Task<IEnumerable<InstrumTypeAnalytic>> InstrumTypeAnalyticList(int InstrumentTypeId)
         {
             IEnumerable<InstrumTypeAnalytic> instrumtypeanalitics;
@@ -56,8 +51,7 @@ namespace LIMSBlazor.Data
             return instrumtypeanalitics;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<InstrumTypeAnalytic> InstrumTypeAnalytic_GetOne(int InstrumentTypeId, int AnalyticalServiceId)
         {
             InstrumTypeAnalytic instrumtypeanalitic = new InstrumTypeAnalytic();
@@ -71,7 +65,7 @@ namespace LIMSBlazor.Data
             return instrumtypeanalitic;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> InstrumTypeAnalyticUpdate(InstrumTypeAnalytic instrumtypeanalytic)
         {
             try
@@ -92,7 +86,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> InstrumTypeAnalyticDelete(int InstrumentTypeId, int AnalyticalServiceId)
         {
             var parameters = new DynamicParameters();

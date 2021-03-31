@@ -46,60 +46,69 @@
     </table>
 </DataEdit>
 
-    @code {
-        // Create a new, empty object
-        UserRole userrole = new UserRole();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    UserRole userrole = new UserRole();
 
-        IEnumerable<User> users;
-        IEnumerable<Lab> labs;
-        IEnumerable<Role> roles;
+    IEnumerable<User> users;
+    IEnumerable<Lab> labs;
+    IEnumerable<Role> roles;
 
-        [Parameter]
-        public int UserId { get; set; }
-        [Parameter]
-        public int LabId { get; set; }
-        [Parameter]
-        public int RoleId { get; set; }
+    [Parameter]
+    public int UserId { get; set; }
+    [Parameter]
+    public int LabId { get; set; }
+    [Parameter]
+    public int RoleId { get; set; }
 
-        // Set default page title and button text
-        public string pagetitle = "Добавить новую роль пользователю";
-        public string buttontext = "Добавить";
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новую роль пользователю";
+    public string buttontext = "Добавить";
 
-        //Executes on page open, set defaults on page.
-        protected override async Task OnInitializedAsync()
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserService.UserList();
+        labs = await LabService.LabList();
+        roles = await RoleService.RoleList();
+        /// Если Id ноль то будет добавлено новое значение
+        if ((UserId != 0) & (LabId != 0) & (RoleId != 0))
         {
-            users = await UserService.UserList();
-            labs = await LabService.LabList();
-            roles = await RoleService.RoleList();
-            // ============ If the passed-in id is zero, assume new data.
-            if ((UserId != 0) & (LabId != 0) & (RoleId != 0))
-            {
-                userrole = await UserRoleService.UserRole_GetOne(UserId, LabId, RoleId);
-                // Change page title and button text since this is an edit.
-
-                pagetitle = "Изменить данные роли пользователя";
-                buttontext = "Изменить";
-            }
-        }
-
-        protected async Task UserRoleSave()
-        {
-            if ((userrole.UserId != 0) & (userrole.LabId != 0) & (userrole.RoleId != 0))
-            {
-                // Update is id > 0
-                userrole.OldLabId = LabId;
-                userrole.OldRoleId = RoleId;
-                await UserRoleService.UserRoleUpdate(userrole);
-            }
-            else
-            {
-                // Insert if id is zero.
-                await UserRoleService.UserRoleInsert(userrole, UserId);
-            }
-            NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
+            userrole = await UserRoleService.UserRole_GetOne(UserId, LabId, RoleId);
+            pagetitle = "Изменить данные роли пользователя";
+            buttontext = "Изменить";
         }
     }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task UserRoleSave()
+    {
+        if ((userrole.UserId != 0) & (userrole.LabId != 0) & (userrole.RoleId != 0))
+        {
+            userrole.OldLabId = LabId;
+            userrole.OldRoleId = RoleId;
+            await UserRoleService.UserRoleUpdate(userrole);
+        }
+        else
+        {
+            await UserRoleService.UserRoleInsert(userrole, UserId);
+        }
+        NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
+    }
+}

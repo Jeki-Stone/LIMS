@@ -17,46 +17,56 @@
     </table>
 </DataEdit>
 
-    @code {
-        // Create a new, empty object
-        SampleType sampletype = new SampleType();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleType sampletype = new SampleType();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        // Set default page title and button text
-        public string pagetitle = "Добавить новый тип образца испытания";
-        public string buttontext = "Добавить";
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новый тип образца испытания";
+    public string buttontext = "Добавить";
 
-        //Executes on page open, set defaults on page.
-        protected override async Task OnInitializedAsync()
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        /// Если Id ноль то будет добавлено новое значение
+        if (id != 0)
         {
-            // ============ If the passed-in id is zero, assume new data.
-            if (id != 0)
-            {
-                sampletype = await SampleTypeService.SampleType_GetOne(id);
-                // Change page title and button text since this is an edit.
-                pagetitle = "Изменить данные типа образца испытания";
-                buttontext = "Изменить";
-            }
-        }
-
-        protected async Task SampleTypeSave()
-        {
-            if (sampletype.Id != 0)
-            {
-                // Update is id > 0
-                await SampleTypeService.SampleTypeUpdate(sampletype);
-            }
-            else
-            {
-                // Insert if id is zero.
-                await SampleTypeService.SampleTypeInsert(sampletype);
-            }
-            NavigationManager.NavigateTo("config/sampletypelist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/sampletypelist");
+            sampletype = await SampleTypeService.SampleType_GetOne(id);
+            pagetitle = "Изменить данные типа образца испытания";
+            buttontext = "Изменить";
         }
     }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task SampleTypeSave()
+    {
+        if (sampletype.Id != 0)
+        {
+            await SampleTypeService.SampleTypeUpdate(sampletype);
+        }
+        else
+        {
+            await SampleTypeService.SampleTypeInsert(sampletype);
+        }
+        NavigationManager.NavigateTo("config/sampletypelist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/sampletypelist");
+    }
+}

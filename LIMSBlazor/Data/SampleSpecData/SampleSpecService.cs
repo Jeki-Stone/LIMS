@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class SampleSpecService : ISampleSpecService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public SampleSpecService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> SampleSpecInsert(SampleSpec samplespec)
         {
             try
@@ -29,14 +28,8 @@ namespace LIMSBlazor.Data
                     parametrs.Add("Name", samplespec.Name, DbType.String);
                     parametrs.Add("Description", samplespec.Description, DbType.String);
                     parametrs.Add("Version", samplespec.Version, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spSampleSpecs_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
                 }
-                
             }
             catch (Exception e)
             {
@@ -45,6 +38,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<SampleSpec>> SampleSpecList()
         {
             IEnumerable<SampleSpec> samplespecs;
@@ -55,8 +49,7 @@ namespace LIMSBlazor.Data
             return samplespecs;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<SampleSpec> SampleSpec_GetOne(int id)
         {
             SampleSpec samplespec = new SampleSpec();
@@ -69,7 +62,7 @@ namespace LIMSBlazor.Data
             return samplespec;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> SampleSpecUpdate(SampleSpec samplespec)
         {
             try
@@ -91,7 +84,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> SampleSpecDelete(int id)
         {
             var parameters = new DynamicParameters();

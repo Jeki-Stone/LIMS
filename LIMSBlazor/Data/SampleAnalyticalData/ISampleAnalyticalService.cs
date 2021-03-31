@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace LIMSBlazor.Data
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface ISampleAnalyticalService
     {
         Task<bool> SampleAnalyticalInsert(SampleAnalytical sampleanalytical, int SampleId);

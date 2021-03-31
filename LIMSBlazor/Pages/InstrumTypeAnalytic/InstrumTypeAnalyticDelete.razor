@@ -19,32 +19,44 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty  object
-        InstrumTypeAnalytic instrumtypeanalitic = new InstrumTypeAnalytic();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    InstrumTypeAnalytic instrumtypeanalitic = new InstrumTypeAnalytic();
 
-        [Parameter]
-        public int InstrumentTypeId { get; set; }
-        [Parameter]
-        public int AnalyticalServiceId { get; set; }
+    [Parameter]
+    public int InstrumentTypeId { get; set; }
+    [Parameter]
+    public int AnalyticalServiceId { get; set; }
 
-        IEnumerable<InstrumType> instrumtypes;
-        IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<InstrumType> instrumtypes;
+    IEnumerable<AnalyticalServ> analyticalservs;
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            instrumtypeanalitic = await InstrumTypeAnalyticService.InstrumTypeAnalytic_GetOne(InstrumentTypeId, AnalyticalServiceId);
-            instrumtypes = await InstrumTypeService.InstrumTypeList();
-            analyticalservs = await AnalyticalServService.AnalyticalServList();
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        instrumtypeanalitic = await InstrumTypeAnalyticService.InstrumTypeAnalytic_GetOne(InstrumentTypeId, AnalyticalServiceId);
+        instrumtypes = await InstrumTypeService.InstrumTypeList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await InstrumTypeAnalyticService.InstrumTypeAnalyticDelete(InstrumentTypeId, AnalyticalServiceId);
-            NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await InstrumTypeAnalyticService.InstrumTypeAnalyticDelete(InstrumentTypeId, AnalyticalServiceId);
+        NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+    }
+}

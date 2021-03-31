@@ -46,7 +46,7 @@
             <td>@sample.Note</td>
         </tr>
         <tr>
-            <td>Место взятия образца:</td>
+            <td>Место взятия пробы:</td>
             <td>@locs?.Where(x => x.Id == sample.LocationId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
@@ -56,8 +56,10 @@
     </table>
 </DataEdit>
 
-
-@code { // Create a new, empty  object
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     Sample sample = new Sample();
 
     IEnumerable<Cli> clis;
@@ -67,7 +69,9 @@
     [Parameter]
     public int id { get; set; }
 
-    //Executes on page open..
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         clis = await CliService.CliList();
@@ -76,13 +80,20 @@
         sample = await SampleService.Sample_GetOne(id);
     }
 
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
     protected async Task Delete()
     {
-        // Insert if id is zero.
         await SampleService.SampleDelete(id);
         NavigationManager.NavigateTo("samplelog/samplelist");
     }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
     void Cancel()
     {
         NavigationManager.NavigateTo("samplelog/samplelist");
-    } }
+    }
+}

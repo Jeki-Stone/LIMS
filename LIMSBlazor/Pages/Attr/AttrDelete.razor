@@ -25,25 +25,37 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty object
-        Attr attr = new Attr();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Attr attr = new Attr();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            attr = await AttrService.Attr_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        attr = await AttrService.Attr_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await AttrService.AttrDelete(id);
-            NavigationManager.NavigateTo("config/attrlist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/attrlist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await AttrService.AttrDelete(id);
+        NavigationManager.NavigateTo("config/attrlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/attrlist");
+    }
+}

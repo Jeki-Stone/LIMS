@@ -57,51 +57,61 @@
     </table>
 </DataEdit>
 
-    @code {
-        // Create a new, empty object
-        Instrument instrument = new Instrument();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Instrument instrument = new Instrument();
 
-        IEnumerable<InstrumType> instrumtypes;
-        IEnumerable<Lab> labs;
+    IEnumerable<InstrumType> instrumtypes;
+    IEnumerable<Lab> labs;
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        // Set default page title and button text
-        public string pagetitle = "Добавить новое оборудование";
-        public string buttontext = "Добавить";
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новое оборудование";
+    public string buttontext = "Добавить";
 
-        //Executes on page open, set defaults on page.
-        protected override async Task OnInitializedAsync()
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        instrumtypes = await InstrumTypeService.InstrumTypeList();
+        labs = await LabService.LabList();
+        /// Если Id ноль то будет добавлено новое значение
+        if (id != 0)
         {
-            instrumtypes = await InstrumTypeService.InstrumTypeList();
-            labs = await LabService.LabList();
-            // ============ If the passed-in id is zero, assume new data.
-            if (id != 0)
-            {
-                instrument = await InstrumentService.Instrument_GetOne(id);
-                // Change page title and button text since this is an edit.
-                pagetitle = "Изменить данные оборудования";
-                buttontext = "Изменить";
-            }
-        }
-
-        protected async Task InstrumentSave()
-        {
-            if (instrument.Id == 0)
-            {
-                // Insert if id is zero.
-                instrument = await InstrumentService.InstrumentInsert(instrument);
-            }
-            else
-            {
-                // Update is id > 0
-                await InstrumentService.InstrumentUpdate(instrument);
-            }
-            NavigationManager.NavigateTo("/config/instrumentlist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("/config/instrumentlist");
+            instrument = await InstrumentService.Instrument_GetOne(id);
+            pagetitle = "Изменить данные оборудования";
+            buttontext = "Изменить";
         }
     }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task InstrumentSave()
+    {
+        if (instrument.Id == 0)
+        {
+            instrument = await InstrumentService.InstrumentInsert(instrument);
+        }
+        else
+        {
+            await InstrumentService.InstrumentUpdate(instrument);
+        }
+        NavigationManager.NavigateTo("/config/instrumentlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/instrumentlist");
+    }
+}

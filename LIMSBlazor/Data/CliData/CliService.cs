@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class CliService : ICliService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public CliService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> CliInsert(Cli cli)
         {
             try
@@ -30,12 +29,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("FullName", cli.FullName, DbType.String);
                     parametrs.Add("PhoneNumber", cli.PhoneNumber, DbType.String);
                     parametrs.Add("Organization", cli.Organization, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spClis_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
                 }
                 
             }
@@ -46,6 +40,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<Cli>> CliList()
         {
             IEnumerable<Cli> clis;
@@ -57,7 +52,7 @@ namespace LIMSBlazor.Data
         }
 
 
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<Cli> Cli_GetOne(int id)
         {
             Cli cli = new Cli();
@@ -70,7 +65,7 @@ namespace LIMSBlazor.Data
             return cli;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> CliUpdate(Cli cli)
         {
             try
@@ -93,7 +88,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> CliDelete(int id)
         {
             var parameters = new DynamicParameters();

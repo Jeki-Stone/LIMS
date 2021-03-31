@@ -50,7 +50,14 @@
 </DataView>
 
 @code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     IEnumerable<User> users;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         users = await UserService.UserList();

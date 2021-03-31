@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class UserRoleService : IUserRoleService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public UserRoleService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> UserRoleInsert(UserRole userrole, int UserId)
         {
             try
@@ -29,10 +28,8 @@ namespace LIMSBlazor.Data
                     parametrs.Add("UserId", UserId, DbType.Int32);
                     parametrs.Add("LabId", userrole.LabId, DbType.Int32);
                     parametrs.Add("RoleId", userrole.RoleId, DbType.Int32);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spUserRoles_Insert", parametrs, commandType: CommandType.StoredProcedure);
-                }
-                
+                }                
             }
             catch (Exception e)
             {
@@ -41,6 +38,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<UserRole>> UserRoleList(int UserId)
         {
             IEnumerable<UserRole> userroles;
@@ -53,8 +51,7 @@ namespace LIMSBlazor.Data
             return userroles;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<UserRole> UserRole_GetOne(int UserId, int LabId, int RoleId)
         {
             UserRole userrole = new UserRole();
@@ -69,7 +66,7 @@ namespace LIMSBlazor.Data
             return userrole;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> UserRoleUpdate(UserRole userrole)
         {
             try
@@ -92,7 +89,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> UserRoleDelete(int UserId, int LabId, int RoleId)
         {
             var parameters = new DynamicParameters();

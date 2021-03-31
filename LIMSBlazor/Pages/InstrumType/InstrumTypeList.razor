@@ -46,7 +46,14 @@
 </DataView>
 
 @code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     IEnumerable<InstrumType> instrumtypes;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         instrumtypes = await InstrumTypeService.InstrumTypeList();

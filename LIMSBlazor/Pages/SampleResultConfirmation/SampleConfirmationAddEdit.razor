@@ -26,7 +26,7 @@
             <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
-            <td>Тип образца:</td>
+            <td>Тип пробы:</td>
             <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
@@ -58,7 +58,7 @@
             <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.Note"></textarea></td>
         </tr>
         <tr>
-            <td>Место взятия образца:</td>
+            <td>Место взятия пробы:</td>
             <td>@locs?.Where(x => x.Id == sample.LocationId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
@@ -69,7 +69,9 @@
 </DataEdit>
 
 @code {
-    // Create a new, empty object
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     Sample sample = new Sample();
     SampleAnalytical sampleanalytical = new SampleAnalytical();
     List<FinalResult> finres = new List<FinalResult>();
@@ -82,13 +84,17 @@
     [Parameter]
     public int Id { get; set; }
 
-    // Set default page title and button text
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
     public string pagetitle = "Изменить статус испытания";
     public string buttontext = "Изменить";
     public string Visibl = "none";
     public int Status;
 
-    //Executes on page open, set defaults on page.
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         clis = await CliService.CliList();
@@ -99,13 +105,15 @@
         Status = sample.Status;
     }
 
+    /// <summary>
+    /// Задача обновляющая данные в БД
+    /// </summary>
     protected async Task SampleSave()
     {
         if (sample.Status != (int)GlobalConstant.SampleStatus.Final)
         {
             sample.UpdateTime = DateTime.Now;
             sample.UpdateUser = "Обновивший пользователь пользователь";
-            // Update is id > 0
             if (sample.Status == (int)GlobalConstant.SampleStatus.Final)
             {
                 sample.IsFinal = true;
@@ -126,7 +134,6 @@
             sample.UpdateTime = DateTime.Now;
             sample.UpdateUser = "Обновивший пользователь пользователь";
             sample.FinalizeTime = DateTime.Now;
-            // Update is id > 0
             if (sample.Status == (int)GlobalConstant.SampleStatus.Final)
             {
                 sample.IsFinal = true;
@@ -138,9 +145,11 @@
             await SampleService.SampleUpdate(sample);
             NavigationManager.NavigateTo("confirmation/samplelist");
         }
-
-
     }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
     void Cancel()
     {
         NavigationManager.NavigateTo("confirmation/samplelist");

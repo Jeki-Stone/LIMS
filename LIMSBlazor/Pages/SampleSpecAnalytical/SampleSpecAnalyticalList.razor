@@ -46,10 +46,16 @@
 </DataView>
 
 @code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     IEnumerable<SampleSpecAnalytical> samplespecanalyticals;
     IEnumerable<SampleSpec> samplespecs;
     IEnumerable<AnalyticalServ> analyticalservs;
 
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         samplespecanalyticals = await SampleSpecAnalyticalService.SampleSpecAnalyticalList();

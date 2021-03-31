@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class FinalResultService : IFinalResultService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public FinalResultService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> FinalResultInsert(FinalResult finalresult)
         {
             try
@@ -36,12 +35,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("UpdateTime", finalresult.UpdateTime, DbType.DateTime);
                     parametrs.Add("CreateUser", finalresult.CreateUser, DbType.String);
                     parametrs.Add("UpdateUser", finalresult.UpdateUser, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spFinalResults_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
                 }
                 
             }
@@ -52,6 +46,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные соответствующие sampleId из БД
         public async Task<IEnumerable<FinalResult>> FinalResultList(int sampleId)
         {
             IEnumerable<FinalResult> finalresults;
@@ -64,8 +59,7 @@ namespace LIMSBlazor.Data
             return finalresults;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<FinalResult> FinalResult_GetOne(int id)
         {
             FinalResult finalresult = new FinalResult();
@@ -78,7 +72,7 @@ namespace LIMSBlazor.Data
             return finalresult;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> FinalResultUpdate(FinalResult finalresult)
         {
             try
@@ -107,7 +101,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> FinalResultDelete(int id)
         {
             var parameters = new DynamicParameters();
@@ -119,7 +113,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete All Data SamplId and AnaliticalId
+        /// Удалить все строки таблицы с данными SampleId и AnalyticalServiceId из БД
         public async Task<bool> FinalResultDeleteAll(int SampleId, int AnalyticalServiceId)
         {
             var parameters = new DynamicParameters();

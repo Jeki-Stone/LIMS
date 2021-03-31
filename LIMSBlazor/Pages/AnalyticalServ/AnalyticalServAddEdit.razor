@@ -50,7 +50,9 @@
 </DataEdit>
 
     @code {
-        // Create a new, empty object
+        /// <summary>
+        /// Создаём необходимые компоненты
+        /// </summary>
         AnalyticalServ analyticalserv = new AnalyticalServ();
 
         IEnumerable<Category> сategorys;
@@ -59,39 +61,47 @@
         [Parameter]
         public int id { get; set; }
 
-        // Set default page title and button text
+        /// <summary>
+        /// Задаём базовые значения
+        /// </summary>
         public string pagetitle = "Добавить новый аналитический сервис";
         public string buttontext = "Добавить";
 
-        //Executes on page open, set defaults on page.
+        /// <summary>
+        /// Исполняемая при запуске страницы задача
+        /// </summary>
         protected override async Task OnInitializedAsync()
         {
             сategorys = await CategoryService.CategoryList();
             units = await UnitService.UnitList();
-            // ============ If the passed-in id is zero, assume new data.
+            /// Если Id ноль то будет добавлено новое значение
             if (id != 0)
             {
                 analyticalserv = await AnalyticalServService.AnalyticalServ_GetOne(id);
-                // Change page title and button text since this is an edit.
                 pagetitle = "Изменить данные аналитического сервиса";
                 buttontext = "Изменить";
             }
         }
 
+        /// <summary>
+        /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+        /// </summary>
         protected async Task AnalyticalServSave()
         {
             if (analyticalserv.Id == 0)
             {
-                // Insert if id is zero.
                 await AnalyticalServService.AnalyticalServInsert(analyticalserv);
             }
             else
             {
-                // Update is id > 0
                 await AnalyticalServService.AnalyticalServUpdate(analyticalserv);
             }
             NavigationManager.NavigateTo("config/analyticalservlist");
         }
+
+        /// <summary>
+        /// Отмена изменений и возвращение на прошлую страницу
+        /// </summary>
         void Cancel()
         {
             NavigationManager.NavigateTo("config/analyticalservlist");

@@ -40,7 +40,7 @@
             <th>Id</th>
             <td>Id испытания</td>
             <td>Аналитический сервис</td>
-            <td>Номер образца</td>
+            <td>Номер пробы</td>
             <td>Результат</td>
             <td>В оценке</td>
             <td>Записка</td>
@@ -104,6 +104,9 @@
 
 
 @code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     IEnumerable<Result> results;
     IEnumerable<AnalyticalServ> analyticalservs;
 
@@ -112,11 +115,18 @@
     [Parameter]
     public string UrlSampleId { get; set; }
 
-    public int changsort = 0;
-    public int resId = 0;
     FinalResult finalresult = new FinalResult();
     List<Result> GrupItem;
 
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public int changsort = 0;
+    public int resId = 0;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         results = await ResultService.ResultList(SampleId);
@@ -125,6 +135,9 @@
         UrlSampleId = "/analysis/sample/resultaddedit/" + SampleId;
     }
 
+    /// <summary>
+    /// Задача формирующая значение для финального результата и сохраняющая его в БД
+    /// </summary>
     protected async Task AddUpdateFinalResult()
     {
         @foreach (var itemGrup in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort).GroupBy(e => e.AnalyticalServiceId))
@@ -156,6 +169,9 @@
         }
     }
 
+    /// <summary>
+    /// Сохранает изменение чек боксов в БД
+    /// </summary>
     protected async Task SaveData()
     {
         foreach (var item in results)

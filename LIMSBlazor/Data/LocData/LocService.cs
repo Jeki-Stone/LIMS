@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class LocService : ILocService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public LocService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> LocInsert(Loc loc)
         {
             try
@@ -28,14 +27,8 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("Name", loc.Name, DbType.String);
                     parametrs.Add("Description", loc.Description, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spLocs_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
-                }
-                
+                }  
             }
             catch (Exception e)
             {
@@ -44,6 +37,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<Loc>> LocList()
         {
             IEnumerable<Loc> locs;
@@ -54,8 +48,7 @@ namespace LIMSBlazor.Data
             return locs;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<Loc> Loc_GetOne(int id)
         {
             Loc loc = new Loc();
@@ -68,7 +61,7 @@ namespace LIMSBlazor.Data
             return loc;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> LocUpdate(Loc loc)
         {
             try
@@ -89,7 +82,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> LocDelete(int id)
         {
             var parameters = new DynamicParameters();

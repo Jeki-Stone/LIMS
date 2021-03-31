@@ -17,46 +17,56 @@
     </table>
 </DataEdit>
 
-    @code {
-        // Create a new, empty object
-        InstrumType instrumtype = new InstrumType();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    InstrumType instrumtype = new InstrumType();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        // Set default page title and button text
-        public string pagetitle = "Добавить новый тип оборудования";
-        public string buttontext = "Добавить";
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новый тип оборудования";
+    public string buttontext = "Добавить";
 
-        //Executes on page open, set defaults on page.
-        protected override async Task OnInitializedAsync()
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        /// Если Id ноль то будет добавлено новое значение
+        if (id != 0)
         {
-            // ============ If the passed-in id is zero, assume new data.
-            if (id != 0)
-            {
-                instrumtype = await InstrumTypeService.InstrumType_GetOne(id);
-                // Change page title and button text since this is an edit.
-                pagetitle = "Изменить данные типа оборудования";
-                buttontext = "Изменить";
-            }
-        }
-
-        protected async Task InstrumTypeSave()
-        {
-            if (instrumtype.Id == 0)
-            {
-                // Insert if id is zero.
-                await InstrumTypeService.InstrumTypeInsert(instrumtype);
-            }
-            else
-            {
-                // Update is id > 0
-                await InstrumTypeService.InstrumTypeUpdate(instrumtype);
-            }
-            NavigationManager.NavigateTo("/config/instrumtypelist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("/config/instrumtypelist");
+            instrumtype = await InstrumTypeService.InstrumType_GetOne(id);
+            pagetitle = "Изменить данные типа оборудования";
+            buttontext = "Изменить";
         }
     }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task InstrumTypeSave()
+    {
+        if (instrumtype.Id == 0)
+        {
+            await InstrumTypeService.InstrumTypeInsert(instrumtype);
+        }
+        else
+        {
+            await InstrumTypeService.InstrumTypeUpdate(instrumtype);
+        }
+        NavigationManager.NavigateTo("/config/instrumtypelist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/instrumtypelist");
+    }
+}

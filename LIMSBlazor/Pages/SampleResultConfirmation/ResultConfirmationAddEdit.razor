@@ -16,7 +16,7 @@
             <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
-            <td>Номер образца:</td>
+            <td>Номер пробы:</td>
             <td>@result.ValueNo</td>
         </tr>
         <tr>
@@ -40,7 +40,9 @@
 </DataEdit>
 
 @code {
-    // Create a new, empty object
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     Result result = new Result();
 
     IEnumerable<Sample> samples;
@@ -51,11 +53,15 @@
     [Parameter]
     public int id { get; set; }
 
-    // Set default page title and button text
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
     public string pagetitle = "Редактирование записи результата испытания";
     public string buttontext = "Изменить";
 
-    //Executes on page open, set defaults on page.
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         samples = await SampleService.SampleList();
@@ -63,14 +69,20 @@
         result = await ResultService.Result_GetOne(id);
     }
 
+    /// <summary>
+    /// Задача обновляющая данные в БД
+    /// </summary>
     protected async Task ResultSave()
     {
         result.UpdateTime = DateTime.Now;
         result.UpdateUser = "Обновивший пользователь пользователь";
-        // Update is id > 0
         await ResultService.ResultUpdate(result);
         NavigationManager.NavigateTo("confirmation/sample/resultlist/" + SampleId);
     }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
     void Cancel()
     {
         NavigationManager.NavigateTo("confirmation/sample/resultlist/" + SampleId);

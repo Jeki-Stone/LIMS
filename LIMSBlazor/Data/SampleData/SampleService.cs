@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class SampleService : ISampleService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public SampleService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<Sample> SampleInsert(Sample sample)
         {
             try
@@ -43,13 +42,10 @@ namespace LIMSBlazor.Data
                     parametrs.Add("FinalizeUser", sample.FinalizeUser, DbType.String);
                     parametrs.Add("FinalizeTime", sample.FinalizeTime, DbType.DateTime);
                     parametrs.Add("Id", sample.Id, DbType.Int32, ParameterDirection.Output);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spSamples_Insert", parametrs, commandType: CommandType.StoredProcedure);
                     var Id = parametrs.Get<int>("Id");
                     return await Sample_GetOne(Id);
                 }
-
-
             }
             catch (Exception e)
             {
@@ -58,6 +54,7 @@ namespace LIMSBlazor.Data
             return null;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<Sample>> SampleList()
         {
             IEnumerable<Sample> samples;
@@ -68,8 +65,7 @@ namespace LIMSBlazor.Data
             return samples;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<Sample> Sample_GetOne(int id)
         {
             Sample sample = new Sample();
@@ -82,7 +78,7 @@ namespace LIMSBlazor.Data
             return sample;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> SampleUpdate(Sample sample)
         {
             try
@@ -117,7 +113,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> SampleDelete(int id)
         {
             var parameters = new DynamicParameters();

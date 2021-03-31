@@ -27,32 +27,44 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty  object
-        SampleSpecAnalytical samplespecanalytical = new SampleSpecAnalytical();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleSpecAnalytical samplespecanalytical = new SampleSpecAnalytical();
 
-        [Parameter]
-        public int SampleSpecId { get; set; }
-        [Parameter]
-        public int AnalyticalServiceId { get; set; }
+    [Parameter]
+    public int SampleSpecId { get; set; }
+    [Parameter]
+    public int AnalyticalServiceId { get; set; }
 
-        IEnumerable<SampleSpec> samplespecs;
-        IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<SampleSpec> samplespecs;
+    IEnumerable<AnalyticalServ> analyticalservs;
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            samplespecanalytical = await SampleSpecAnalyticalService.SampleSpecAnalytical_GetOne(SampleSpecId, AnalyticalServiceId);
-            samplespecs = await SampleSpecService.SampleSpecList();
-            analyticalservs = await AnalyticalServService.AnalyticalServList();
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        samplespecanalytical = await SampleSpecAnalyticalService.SampleSpecAnalytical_GetOne(SampleSpecId, AnalyticalServiceId);
+        samplespecs = await SampleSpecService.SampleSpecList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await SampleSpecAnalyticalService.SampleSpecAnalyticalDelete(SampleSpecId, AnalyticalServiceId);
-            NavigationManager.NavigateTo("config/samplespecanalyticallist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/samplespecanalyticallist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await SampleSpecAnalyticalService.SampleSpecAnalyticalDelete(SampleSpecId, AnalyticalServiceId);
+        NavigationManager.NavigateTo("config/samplespecanalyticallist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/samplespecanalyticallist");
+    }
+}

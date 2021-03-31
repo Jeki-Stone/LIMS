@@ -16,7 +16,7 @@
             <td>@analyticalservs?.Where(x => x.Id == finalresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
-            <td>Номер образца:</td>
+            <td>Номер пробы:</td>
             <td>@finalresult.ValueNo</td>
         </tr>
         <tr>
@@ -40,7 +40,10 @@
 </DataEdit>
 
 
-@code { // Create a new, empty  object
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     FinalResult finalresult = new FinalResult();
 
     IEnumerable<Sample> samples;
@@ -51,7 +54,9 @@
     [Parameter]
     public int id { get; set; }
 
-    //Executes on page open..
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         samples = await SampleService.SampleList();
@@ -59,13 +64,22 @@
         finalresult = await FinalResultService.FinalResult_GetOne(id);
     }
 
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
     protected async Task Delete()
     {
         // Insert if id is zero.
         await FinalResultService.FinalResultDelete(id);
         NavigationManager.NavigateTo("/analysis/sample/finalresultlist/" + SampleId);
     }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
     void Cancel()
     {
         NavigationManager.NavigateTo("/analysis/sample/finalresultlist/" + SampleId);
-    } }
+    }
+}

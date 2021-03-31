@@ -9,7 +9,7 @@
 <DataEdit PageTitle="@pagetitle" Model="@sampletypeanalytical" BtnSaveText="@buttontext" OnValidSubmit="@SampleTypeAnalyticalSave" OnClickCancel="@Cancel">
     <table>
         <tr>
-            <td>Тип образца:</td>
+            <td>Тип пробы:</td>
             <td>@sampletypes?.Where(x => x.Id == SampleTypeId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
@@ -30,55 +30,64 @@
     </table>
 </DataEdit>
 
-    @code {
-        // Create a new, empty object
-        SampleTypeAnalytical sampletypeanalytical = new SampleTypeAnalytical();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleTypeAnalytical sampletypeanalytical = new SampleTypeAnalytical();
 
-        IEnumerable<SampleType> sampletypes;
-        IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<AnalyticalServ> analyticalservs;
 
-        [Parameter]
-        public int SampleTypeId { get; set; }
-        [Parameter]
-        public int AnalyticalServiceId { get; set; }
+    [Parameter]
+    public int SampleTypeId { get; set; }
+    [Parameter]
+    public int AnalyticalServiceId { get; set; }
 
-        // Set default page title and button text
-        public string pagetitle = "Добавить новый аналитический сервис типа испытания";
-        public string buttontext = "Добавить";
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новый аналитический сервис типа испытания";
+    public string buttontext = "Добавить";
 
-        //Executes on page open, set defaults on page.
-        protected override async Task OnInitializedAsync()
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        sampletypes = await SampleTypeService.SampleTypeList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        /// Если Id ноль то будет добавлено новое значение
+        if ((SampleTypeId != 0) & (AnalyticalServiceId != 0))
         {
-            sampletypes = await SampleTypeService.SampleTypeList();
-            analyticalservs = await AnalyticalServService.AnalyticalServList();
-            // ============ If the passed-in id is zero, assume new data.
-            if ((SampleTypeId != 0) & (AnalyticalServiceId != 0))
-            {
-                sampletypeanalytical = await SampleTypeAnalyticalService.SampleTypeAnalytical_GetOne(SampleTypeId, AnalyticalServiceId);
-                // Change page title and button text since this is an edit.
-
-                pagetitle = "Изменить данные аналитического сервиса типа испытания";
-                buttontext = "Изменить";
-            }
-        }
-
-        protected async Task SampleTypeAnalyticalSave()
-        {
-            if ((sampletypeanalytical.SampleTypeId != 0) & (sampletypeanalytical.AnalyticalServiceId != 0))
-            {
-                // Update is id > 0
-                sampletypeanalytical.OldAnalyticalServiceId = AnalyticalServiceId;
-                await SampleTypeAnalyticalService.SampleTypeAnalyticalUpdate(sampletypeanalytical);                
-            }
-            else
-            {
-                // Insert if id is zero.
-                await SampleTypeAnalyticalService.SampleTypeAnalyticalInsert(sampletypeanalytical, SampleTypeId);
-            }
-            NavigationManager.NavigateTo("config/sampletype/sampletypeanalyticallist/" + SampleTypeId);
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/sampletype/sampletypeanalyticallist/" + SampleTypeId);
+            sampletypeanalytical = await SampleTypeAnalyticalService.SampleTypeAnalytical_GetOne(SampleTypeId, AnalyticalServiceId);
+            pagetitle = "Изменить данные аналитического сервиса типа испытания";
+            buttontext = "Изменить";
         }
     }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task SampleTypeAnalyticalSave()
+    {
+        if ((sampletypeanalytical.SampleTypeId != 0) & (sampletypeanalytical.AnalyticalServiceId != 0))
+        {
+            sampletypeanalytical.OldAnalyticalServiceId = AnalyticalServiceId;
+            await SampleTypeAnalyticalService.SampleTypeAnalyticalUpdate(sampletypeanalytical);
+        }
+        else
+        {
+            await SampleTypeAnalyticalService.SampleTypeAnalyticalInsert(sampletypeanalytical, SampleTypeId);
+        }
+        NavigationManager.NavigateTo("config/sampletype/sampletypeanalyticallist/" + SampleTypeId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/sampletype/sampletypeanalyticallist/" + SampleTypeId);
+    }
+}

@@ -8,7 +8,7 @@
 <DataEdit FormType="Delete" PageTitle="Удалить атрибут для типа испытания" DeleteWarning="Вы уверены что хотите удалить этот атрибут для типа испытания? Данные нельзя будет вернуть!" Model="@sampletypeattr" OnClickDelete="@Delete" OnClickCancel="@Cancel">
     <table>
         <tr>
-            <td>Тип образца:</td>
+            <td>Тип пробы:</td>
             <td>@sampletypes?.Where(x => x.Id == sampletypeattr.SampleTypeId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
@@ -19,32 +19,44 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty  object
-        SampleTypeAttr sampletypeattr = new SampleTypeAttr();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleTypeAttr sampletypeattr = new SampleTypeAttr();
 
-        IEnumerable<SampleType> sampletypes;
-        IEnumerable<Attr> attrs;
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<Attr> attrs;
 
-        [Parameter]
-        public int SampleTypeId { get; set; }
-        [Parameter]
-        public int AttrId { get; set; }
+    [Parameter]
+    public int SampleTypeId { get; set; }
+    [Parameter]
+    public int AttrId { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            sampletypeattr = await SampleTypeAttrService.SampleTypeAttr_GetOne(SampleTypeId, AttrId);
-            sampletypes = await SampleTypeService.SampleTypeList();
-            attrs = await AttrService.AttrList();
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        sampletypeattr = await SampleTypeAttrService.SampleTypeAttr_GetOne(SampleTypeId, AttrId);
+        sampletypes = await SampleTypeService.SampleTypeList();
+        attrs = await AttrService.AttrList();
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await SampleTypeAttrService.SampleTypeAttrDelete(SampleTypeId, AttrId);
-            NavigationManager.NavigateTo("config/sampletype/sampletypeattrlist/" + SampleTypeId);
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/sampletype/sampletypeattrlist/" + SampleTypeId);
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await SampleTypeAttrService.SampleTypeAttrDelete(SampleTypeId, AttrId);
+        NavigationManager.NavigateTo("config/sampletype/sampletypeattrlist/" + SampleTypeId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/sampletype/sampletypeattrlist/" + SampleTypeId);
+    }
+}

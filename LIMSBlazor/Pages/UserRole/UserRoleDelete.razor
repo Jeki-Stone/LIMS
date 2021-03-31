@@ -24,36 +24,49 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty  object
-        UserRole userrole = new UserRole();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    UserRole userrole = new UserRole();
 
-        IEnumerable<User> users;
-        IEnumerable<Lab> labs;
-        IEnumerable<Role> roles;
+    IEnumerable<User> users;
+    IEnumerable<Lab> labs;
+    IEnumerable<Role> roles;
 
-        [Parameter]
-        public int UserId { get; set; }
-        [Parameter]
-        public int LabId { get; set; }
-        [Parameter]
-        public int RoleId { get; set; }
+    [Parameter]
+    public int UserId { get; set; }
+    [Parameter]
+    public int LabId { get; set; }
+    [Parameter]
+    public int RoleId { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            userrole = await UserRoleService.UserRole_GetOne(UserId, LabId, RoleId);
-            users = await UserService.UserList();
-            labs = await LabService.LabList();
-            roles = await RoleService.RoleList();
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        userrole = await UserRoleService.UserRole_GetOne(UserId, LabId, RoleId);
+        users = await UserService.UserList();
+        labs = await LabService.LabList();
+        roles = await RoleService.RoleList();
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await UserRoleService.UserRoleDelete(UserId, LabId, RoleId);
-            NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await UserRoleService.UserRoleDelete(UserId, LabId, RoleId);
+        NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
+    }
+}

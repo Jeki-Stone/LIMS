@@ -26,28 +26,40 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty  object
-        Lab lab = new Lab();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Lab lab = new Lab();
 
-        IEnumerable<Loc> locs;
+    IEnumerable<Loc> locs;
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            locs = await LocService.LocList();
-            lab = await LabService.Lab_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        locs = await LocService.LocList();
+        lab = await LabService.Lab_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await LabService.LabDelete(id);
-            NavigationManager.NavigateTo("config/lablist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/lablist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await LabService.LabDelete(id);
+        NavigationManager.NavigateTo("config/lablist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/lablist");
+    }
+}

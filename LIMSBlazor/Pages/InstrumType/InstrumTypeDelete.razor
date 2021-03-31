@@ -21,25 +21,38 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty object
-                InstrumType instrumtype = new InstrumType();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    InstrumType instrumtype = new InstrumType();
 
-                [Parameter]
-                public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-                //Executes on page open..
-                protected override async Task OnInitializedAsync()
-                {
-                    instrumtype = await InstrumTypeService.InstrumType_GetOne(id);
-                }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        instrumtype = await InstrumTypeService.InstrumType_GetOne(id);
+    }
 
-                protected async Task Delete()
-                {
-                    // Insert if id is zero.
-                    await InstrumTypeService.InstrumTypeDelete(id);
-                    NavigationManager.NavigateTo("/config/instrumtypelist");
-                }
-                void Cancel()
-                {
-                    NavigationManager.NavigateTo("/config/instrumtypelist");
-                } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await InstrumTypeService.InstrumTypeDelete(id);
+        NavigationManager.NavigateTo("/config/instrumtypelist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/instrumtypelist");
+    }
+}

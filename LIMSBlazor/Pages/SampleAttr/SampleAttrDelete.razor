@@ -23,32 +23,44 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty  object
-        SampleAttr sampleattr = new SampleAttr();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleAttr sampleattr = new SampleAttr();
 
-        IEnumerable<Sample> samples;
-        IEnumerable<Attr> attrs;
+    IEnumerable<Sample> samples;
+    IEnumerable<Attr> attrs;
 
-        [Parameter]
-        public int SampleId { get; set; }
-        [Parameter]
-        public int AttrId { get; set; }
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int AttrId { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            sampleattr = await SampleAttrService.SampleAttr_GetOne(SampleId, AttrId);
-            samples = await SampleService.SampleList();
-            attrs = await AttrService.AttrList();
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        sampleattr = await SampleAttrService.SampleAttr_GetOne(SampleId, AttrId);
+        samples = await SampleService.SampleList();
+        attrs = await AttrService.AttrList();
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await SampleAttrService.SampleAttrDelete(SampleId, AttrId);
-            NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await SampleAttrService.SampleAttrDelete(SampleId, AttrId);
+        NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
+    }
+}

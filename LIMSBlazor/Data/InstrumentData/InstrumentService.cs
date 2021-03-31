@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class InstrumentService : IInstrumentService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public InstrumentService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<Instrument> InstrumentInsert(Instrument instrument)
         {
             try
@@ -33,7 +32,6 @@ namespace LIMSBlazor.Data
                     parametrs.Add("LabId", instrument.LabId, DbType.Int32);
                     parametrs.Add("Status", instrument.Status, DbType.Int32);
                     parametrs.Add("Id", instrument.Id, DbType.Int32, ParameterDirection.Output);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spInstruments_Insert", parametrs, commandType: CommandType.StoredProcedure);
                     var Id = parametrs.Get<int>("Id");
                     return await Instrument_GetOne(Id);
@@ -47,6 +45,7 @@ namespace LIMSBlazor.Data
             return null;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<Instrument>> InstrumentList()
         {
             IEnumerable<Instrument> instruments;
@@ -57,8 +56,7 @@ namespace LIMSBlazor.Data
             return instruments;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<Instrument> Instrument_GetOne(int id)
         {
             Instrument instrument = new Instrument();
@@ -71,7 +69,7 @@ namespace LIMSBlazor.Data
             return instrument;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> InstrumentUpdate(Instrument instrument)
         {
             try
@@ -96,7 +94,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> InstrumentDelete(int id)
         {
             var parameters = new DynamicParameters();

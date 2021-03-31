@@ -17,25 +17,37 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty object
-        Category category = new Category();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Category category = new Category();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            category = await CategoryService.Category_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        category = await CategoryService.Category_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await CategoryService.CategoryDelete(id);
-            NavigationManager.NavigateTo("config/categorylist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/categorylist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await CategoryService.CategoryDelete(id);
+        NavigationManager.NavigateTo("config/categorylist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/categorylist");
+    }
+}

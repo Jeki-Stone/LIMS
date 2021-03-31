@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class UserService : IUserService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public UserService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> UserInsert(User user)
         {
             try
@@ -30,14 +29,8 @@ namespace LIMSBlazor.Data
                     parametrs.Add("FullName", user.FullName, DbType.String);
                     parametrs.Add("PhoneNumber", user.PhoneNumber, DbType.String);
                     parametrs.Add("Password", user.Password, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spUsers_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
-                }
-                
+                }                
             }
             catch (Exception e)
             {
@@ -46,6 +39,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<User>> UserList()
         {
             IEnumerable<User> users;
@@ -56,8 +50,7 @@ namespace LIMSBlazor.Data
             return users;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<User> User_GetOne(int id)
         {
             User user = new User();
@@ -70,7 +63,7 @@ namespace LIMSBlazor.Data
             return user;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> UserUpdate(User user)
         {
             try
@@ -93,7 +86,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> UserDelete(int id)
         {
             var parameters = new DynamicParameters();

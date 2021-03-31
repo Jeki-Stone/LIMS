@@ -35,7 +35,9 @@
 </DataEdit>
 
 @code {
-    // Create a new, empty object
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     SampleAttr sampleattr = new SampleAttr();
 
     IEnumerable<Sample> samples;
@@ -46,31 +48,35 @@
     [Parameter]
     public int AttrId { get; set; }
 
-    // Set default page title and button text
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
     public string pagetitle = "Добавить новый атрибут испытания";
     public string buttontext = "Добавить";
 
-    //Executes on page open, set defaults on page.
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         samples = await SampleService.SampleList();
         attrs = await AttrService.AttrList();
-        // ============ If the passed-in id is zero, assume new data.
+        /// Если Id ноль то будет добавлено новое значение
         if ((SampleId != 0) & (AttrId != 0))
         {
             sampleattr = await SampleAttrService.SampleAttr_GetOne(SampleId, AttrId);
-            // Change page title and button text since this is an edit.
-
             pagetitle = "Изменить данные атрибута испытания";
             buttontext = "Изменить";
         }
     }
 
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
     protected async Task SampleAttrSave()
     {
         if ((sampleattr.SampleId != 0) & (sampleattr.AttrId != 0))
         {
-            // Update is id > 0
             sampleattr.UpdateUser = "Изменивший пользователь";
             sampleattr.UpdateTime = DateTime.Now;
             sampleattr.OldAttrId = AttrId;
@@ -78,13 +84,16 @@
         }
         else
         {
-            // Insert if id is zero.
             sampleattr.UpdateUser = "Создавший пользователь";
             await SampleAttrService.SampleAttrInsert(sampleattr, SampleId);
         }
 
         NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
     }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
     void Cancel()
     {
         NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);

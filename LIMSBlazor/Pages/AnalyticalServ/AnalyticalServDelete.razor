@@ -27,30 +27,42 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty  object
-        AnalyticalServ analyticalserv = new AnalyticalServ();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    AnalyticalServ analyticalserv = new AnalyticalServ();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        IEnumerable<Category> сategorys;
-        IEnumerable<Unit> units;
+    IEnumerable<Category> сategorys;
+    IEnumerable<Unit> units;
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            сategorys = await CategoryService.CategoryList();
-            units = await UnitService.UnitList();
-            analyticalserv = await AnalyticalServService.AnalyticalServ_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        сategorys = await CategoryService.CategoryList();
+        units = await UnitService.UnitList();
+        analyticalserv = await AnalyticalServService.AnalyticalServ_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await AnalyticalServService.AnalyticalServDelete(id);
-            NavigationManager.NavigateTo("config/analyticalservlist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/analyticalservlist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await AnalyticalServService.AnalyticalServDelete(id);
+        NavigationManager.NavigateTo("config/analyticalservlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/analyticalservlist");
+    } 
+}

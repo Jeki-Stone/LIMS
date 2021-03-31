@@ -36,31 +36,43 @@
 
 
 @code { 
-// Create a new, empty  object
-        Instrument instrument = new Instrument();
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Instrument instrument = new Instrument();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        IEnumerable<InstrumType> instrumtypes;
-        IEnumerable<Lab> labs;
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            instrument = await InstrumentService.Instrument_GetOne(id);
-            instrumtypes = await InstrumTypeService.InstrumTypeList();
-            labs = await LabService.LabList();
-        }
+    IEnumerable<InstrumType> instrumtypes;
+    IEnumerable<Lab> labs;
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await InstrumentService.InstrumentDelete(id);
-            NavigationManager.NavigateTo("/config/instrumentlist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("/config/instrumentlist");
-        } 
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        instrument = await InstrumentService.Instrument_GetOne(id);
+        instrumtypes = await InstrumTypeService.InstrumTypeList();
+        labs = await LabService.LabList();
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await InstrumentService.InstrumentDelete(id);
+        NavigationManager.NavigateTo("/config/instrumentlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/instrumentlist");
+    }
 }

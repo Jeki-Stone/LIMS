@@ -35,32 +35,44 @@
     </DataEdit>
 
 
-    @code { // Create a new, empty  object
-        Result result = new Result();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Result result = new Result();
 
-        IEnumerable<Sample> samples;
-        IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Sample> samples;
+    IEnumerable<AnalyticalServ> analyticalservs;
 
-        [Parameter]
-        public int SampleId { get; set; }
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            samples = await SampleService.SampleList();
-            analyticalservs = await AnalyticalServService.AnalyticalServList();
-            result = await ResultService.Result_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        samples = await SampleService.SampleList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        result = await ResultService.Result_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await ResultService.ResultDelete(id);
-            NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await ResultService.ResultDelete(id);
+        NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
+    }
+}

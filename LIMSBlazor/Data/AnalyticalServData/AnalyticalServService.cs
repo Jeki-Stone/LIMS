@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class AnalyticalServService : IAnalyticalServService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public AnalyticalServService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> AnalyticalServInsert(AnalyticalServ analyticalserv)
         {
             try
@@ -30,12 +29,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("CategoryId", analyticalserv.CategoryId, DbType.Int32);
                     parametrs.Add("UnitId", analyticalserv.UnitId, DbType.Int32);
                     parametrs.Add("Description", analyticalserv.Description, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spAnalyticalServices_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
                 }
                 
             }
@@ -46,6 +40,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<AnalyticalServ>> AnalyticalServList()
         {
             IEnumerable<AnalyticalServ> analyticalservs;
@@ -56,8 +51,7 @@ namespace LIMSBlazor.Data
             return analyticalservs;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<AnalyticalServ> AnalyticalServ_GetOne(int id)
         {
             AnalyticalServ analyticalserv = new AnalyticalServ();
@@ -70,7 +64,7 @@ namespace LIMSBlazor.Data
             return analyticalserv;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> AnalyticalServUpdate(AnalyticalServ analyticalserv)
         {
             try
@@ -93,7 +87,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> AnalyticalServDelete(int id)
         {
             var parameters = new DynamicParameters();

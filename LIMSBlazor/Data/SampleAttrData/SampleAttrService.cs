@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class SampleAttrService : ISampleAttrService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public SampleAttrService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> SampleAttrInsert(SampleAttr sampleattr, int SampleId)
         {
             try
@@ -33,12 +32,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("UpdateTime", sampleattr.UpdateTime, DbType.DateTime);
                     parametrs.Add("CreateUser", sampleattr.CreateUser, DbType.String);
                     parametrs.Add("UpdateUser", sampleattr.UpdateUser, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spSampleAttrs_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
                 }
                 
             }
@@ -49,6 +43,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<SampleAttr>> SampleAttrList(int SampleId)
         {
             IEnumerable<SampleAttr> sampleattrs;
@@ -61,8 +56,7 @@ namespace LIMSBlazor.Data
             return sampleattrs;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<SampleAttr> SampleAttr_GetOne(int SampleId, int AttrId)
         {
             SampleAttr sampleattr = new SampleAttr();
@@ -76,7 +70,7 @@ namespace LIMSBlazor.Data
             return sampleattr;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> SampleAttrUpdate(SampleAttr sampleattr)
         {
             try
@@ -102,7 +96,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> SampleAttrDelete(int SampleId, int AttrId)
         {
             var parameters = new DynamicParameters();

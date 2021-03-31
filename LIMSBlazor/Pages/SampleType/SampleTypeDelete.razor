@@ -16,25 +16,38 @@
     </table>
 </DataEdit>
 
-    @code { // Create a new, empty object
-        SampleType sampletype = new SampleType();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleType sampletype = new SampleType();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            sampletype = await SampleTypeService.SampleType_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        sampletype = await SampleTypeService.SampleType_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await SampleTypeService.SampleTypeDelete(id);
-            NavigationManager.NavigateTo("config/sampletypelist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/sampletypelist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await SampleTypeService.SampleTypeDelete(id);
+        NavigationManager.NavigateTo("config/sampletypelist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/sampletypelist");
+    }
+}

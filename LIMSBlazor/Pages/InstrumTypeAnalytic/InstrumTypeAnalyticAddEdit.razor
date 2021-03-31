@@ -30,55 +30,64 @@
     </table>
 </DataEdit>
 
-    @code {
-        // Create a new, empty object
-        InstrumTypeAnalytic instrumtypeanalytic = new InstrumTypeAnalytic();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    InstrumTypeAnalytic instrumtypeanalytic = new InstrumTypeAnalytic();
 
-        IEnumerable<InstrumType> instrumtypes;
-        IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<InstrumType> instrumtypes;
+    IEnumerable<AnalyticalServ> analyticalservs;
 
-        [Parameter]
-        public int InstrumentTypeId { get; set; }
-        [Parameter]
-        public int AnalyticalServiceId { get; set; }
+    [Parameter]
+    public int InstrumentTypeId { get; set; }
+    [Parameter]
+    public int AnalyticalServiceId { get; set; }
 
-        // Set default page title and button text
-        public string pagetitle = "Добавить новый аналитический сервис типа";
-        public string buttontext = "Добавить";
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новый аналитический сервис типа";
+    public string buttontext = "Добавить";
 
-        //Executes on page open, set defaults on page.
-        protected override async Task OnInitializedAsync()
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        instrumtypes = await InstrumTypeService.InstrumTypeList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        /// Если Id ноль то будет добавлено новое значение
+        if ((InstrumentTypeId != 0) & (AnalyticalServiceId != 0))
         {
-            instrumtypes = await InstrumTypeService.InstrumTypeList();
-            analyticalservs = await AnalyticalServService.AnalyticalServList();
-            // ============ If the passed-in id is zero, assume new data.
-            if ((InstrumentTypeId != 0) & (AnalyticalServiceId != 0))
-            {
-                instrumtypeanalytic = await InstrumTypeAnalyticService.InstrumTypeAnalytic_GetOne(InstrumentTypeId, AnalyticalServiceId);
-                // Change page title and button text since this is an edit.
-
-                pagetitle = "Изменить данные аналитического сервиса типа";
-                buttontext = "Изменить";
-            }
-        }
-
-        protected async Task InstrumTypeAnalyticSave()
-        {
-            if ((InstrumentTypeId != 0) & (AnalyticalServiceId != 0))
-            {
-                // Update is id > 0
-                instrumtypeanalytic.OldAnalyticalServiceId = AnalyticalServiceId;
-                await InstrumTypeAnalyticService.InstrumTypeAnalyticUpdate(instrumtypeanalytic);
-            }
-            else
-            {
-                // Insert if id is zero.
-                await InstrumTypeAnalyticService.InstrumTypeAnalyticInsert(instrumtypeanalytic, InstrumentTypeId);
-            }
-            NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+            instrumtypeanalytic = await InstrumTypeAnalyticService.InstrumTypeAnalytic_GetOne(InstrumentTypeId, AnalyticalServiceId);
+            pagetitle = "Изменить данные аналитического сервиса типа";
+            buttontext = "Изменить";
         }
     }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task InstrumTypeAnalyticSave()
+    {
+        if ((InstrumentTypeId != 0) & (AnalyticalServiceId != 0))
+        {
+            instrumtypeanalytic.OldAnalyticalServiceId = AnalyticalServiceId;
+            await InstrumTypeAnalyticService.InstrumTypeAnalyticUpdate(instrumtypeanalytic);
+        }
+        else
+        {
+            await InstrumTypeAnalyticService.InstrumTypeAnalyticInsert(instrumtypeanalytic, InstrumentTypeId);
+        }
+        NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+    }
+}

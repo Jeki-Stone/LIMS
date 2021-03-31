@@ -169,19 +169,6 @@
             foreach(var row in rows)
                 options.Add(new SelectListItem { Value = row.Id, Text = row.Text });
         }
-
-        //if (Attr?.Value != null && _attr.Type == 3)
-        //{
-        //    string phrase = _attr.Options;
-        //    string[] words = phrase.Split(';');
-        //    foreach (var word in words)
-        //    {
-        //        string[] parVals = word.Split(':');
-        //        if (parVals.Length == 2)
-        //            new SelectListItem { Value = parVals[0], Text = parVals[1] };
-        //    }
-        //}
-
     }
 
     void dateTimeChange(ChangeEventArgs e)

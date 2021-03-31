@@ -22,7 +22,7 @@
             <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
-            <td>Тип образца:</td>
+            <td>Тип пробы:</td>
             <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
@@ -54,7 +54,7 @@
             <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.Note"></textarea></td>
         </tr>
         <tr>
-            <td>Место взятия образца:</td>
+            <td>Место взятия пробы:</td>
             <td>@locs?.Where(x => x.Id == sample.LocationId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
@@ -65,7 +65,9 @@
 </DataEdit>
 
 @code {
-    // Create a new, empty object
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     Sample sample = new Sample();
     SampleAnalytical sampleanalytical = new SampleAnalytical();
 
@@ -76,11 +78,15 @@
     [Parameter]
     public int? Id { get; set; }
 
-    // Set default page title and button text
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
     public string pagetitle = "Изменить статус испытания";
     public string buttontext = "Изменить";
 
-    //Executes on page open, set defaults on page.
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         clis = await CliService.CliList();
@@ -89,17 +95,23 @@
         sample = await SampleService.Sample_GetOne((int)Id);
     }
 
+    /// <summary>
+    /// Задача обновляющая данные в БД
+    /// </summary>
     protected async Task SampleSave()
     {
         if (Id != null)
         {
             sample.UpdateTime = DateTime.Now;
             sample.UpdateUser = "Обновивший пользователь пользователь";
-            // Update is id > 0
             await SampleService.SampleUpdate(sample);
         }
         NavigationManager.NavigateTo("/test/samplelist");
     }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
     void Cancel()
     {
         NavigationManager.NavigateTo("/test/samplelist");

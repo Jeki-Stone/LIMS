@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class InstrumTypeService : IInstrumTypeService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public InstrumTypeService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> InstrumTypeInsert(InstrumType instrumtype)
         {
             try
@@ -28,7 +27,6 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("Name", instrumtype.Name, DbType.String);
                     parametrs.Add("Description", instrumtype.Description, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spInstrumentTypes_Insert", parametrs, commandType: CommandType.StoredProcedure);
                 }
                 
@@ -40,7 +38,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        // Get List 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<InstrumType>> InstrumTypeList()
         {
             IEnumerable<InstrumType> instrumtypes;
@@ -51,8 +49,7 @@ namespace LIMSBlazor.Data
             return instrumtypes;
         }
 
-
-        // Get one data based on its Id
+        /// Получите одни данные на основе его идентификатора
         public async Task<InstrumType> InstrumType_GetOne(int id)
         {
             InstrumType instrumtype = new InstrumType();
@@ -65,7 +62,7 @@ namespace LIMSBlazor.Data
             return instrumtype;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> InstrumTypeUpdate(InstrumType instrumtype)
         {
             try
@@ -86,8 +83,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> InstrumTypeDelete(int id)
         {
             var parameters = new DynamicParameters();

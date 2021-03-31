@@ -21,25 +21,38 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty object
-        SampleSpec samplespec = new SampleSpec();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleSpec samplespec = new SampleSpec();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            samplespec = await SampleSpecService.SampleSpec_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        samplespec = await SampleSpecService.SampleSpec_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await SampleSpecService.SampleSpecDelete(id);
-            NavigationManager.NavigateTo("config/samplespeclist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("config/samplespeclist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await SampleSpecService.SampleSpecDelete(id);
+        NavigationManager.NavigateTo("config/samplespeclist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/samplespeclist");
+    }
+}

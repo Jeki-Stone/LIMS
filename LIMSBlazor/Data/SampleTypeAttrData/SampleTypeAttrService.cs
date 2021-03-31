@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class SampleTypeAttrService : ISampleTypeAttrService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public SampleTypeAttrService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> SampleTypeAttrInsert(SampleTypeAttr sampletypeattr, int SampleTypeId)
         {
             try
@@ -28,14 +27,8 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("SampleTypeId", SampleTypeId, DbType.Int32);
                     parametrs.Add("AttrId", sampletypeattr.AttrId, DbType.Int32);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spSampleTypeAttrs_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
-                }
-                
+                }                
             }
             catch (Exception e)
             {
@@ -44,6 +37,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<SampleTypeAttr>> SampleTypeAttrList(int SampleTypeId)
         {
             IEnumerable<SampleTypeAttr> sampletypeattrs;
@@ -56,8 +50,7 @@ namespace LIMSBlazor.Data
             return sampletypeattrs;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<SampleTypeAttr> SampleTypeAttr_GetOne(int SampleTypeId, int AttrId)
         {
             SampleTypeAttr sampletypeattr = new SampleTypeAttr();
@@ -71,7 +64,7 @@ namespace LIMSBlazor.Data
             return sampletypeattr;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> SampleTypeAttrUpdate(SampleTypeAttr sampletypeattr)
         {
             try
@@ -92,7 +85,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> SampleTypeAttrDelete(int SampleTypeId, int AttrId)
         {
             var parameters = new DynamicParameters();

@@ -17,25 +17,38 @@
 </DataEdit>
 
 
-    @code { // Create a new, empty object
-        Role role = new Role();
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Role role = new Role();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            role = await RoleService.Role_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        role = await RoleService.Role_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await RoleService.RoleDelete(id);
-            NavigationManager.NavigateTo("/config/rolelist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("/config/rolelist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await RoleService.RoleDelete(id);
+        NavigationManager.NavigateTo("/config/rolelist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/rolelist");
+    }
+}

@@ -45,6 +45,9 @@
 </DataView>
 
 @code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     IEnumerable<UserRole> userroles;
     IEnumerable<User> users;
     IEnumerable<Lab> labs;
@@ -55,7 +58,9 @@
     [Parameter]
     public string UrlUserId { get; set; }
 
-
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         userroles = await UserRoleService.UserRoleList(UserId);

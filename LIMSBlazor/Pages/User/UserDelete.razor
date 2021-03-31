@@ -24,25 +24,37 @@
     </table>
 </DataEdit>
 
-    @code { // Create a new, empty object
-        User user = new User();
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    User user = new User();
 
-        [Parameter]
-        public int id { get; set; }
+    [Parameter]
+    public int id { get; set; }
 
-        //Executes on page open..
-        protected override async Task OnInitializedAsync()
-        {
-            user = await UserService.User_GetOne(id);
-        }
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserService.User_GetOne(id);
+    }
 
-        protected async Task Delete()
-        {
-            // Insert if id is zero.
-            await UserService.UserDelete(id);
-            NavigationManager.NavigateTo("/config/userlist");
-        }
-        void Cancel()
-        {
-            NavigationManager.NavigateTo("/config/userlist");
-        } }
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await UserService.UserDelete(id);
+        NavigationManager.NavigateTo("/config/userlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/userlist");
+    }
+}

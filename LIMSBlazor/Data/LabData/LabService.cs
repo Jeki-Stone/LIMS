@@ -10,15 +10,14 @@ namespace LIMSBlazor.Data
 {
     public class LabService : ILabService
     {
-        // Database connection
+        /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
         public LabService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        // Add (create) a data in table row (SQL Insert)
-
+        /// Добавить (создать) данные в строке таблицы 
         public async Task<bool> LabInsert(Lab lab)
         {
             try
@@ -30,14 +29,8 @@ namespace LIMSBlazor.Data
                     parametrs.Add("Name", lab.Name, DbType.String);
                     parametrs.Add("LocId", lab.LocId, DbType.Int32);
                     parametrs.Add("Description", lab.Description, DbType.String);
-                    // Stored procedure method
                     await conn.ExecuteAsync("spLabs_Insert", parametrs, commandType: CommandType.StoredProcedure);
-
-                    // Raw SQL method.
-                    //const string query = @"INSERT INTO Labs(Code, Name, Location, Description) VALUES(@Code, @Name, @Location, @Description)";
-                    //await conn.ExecuteAsync(query, new { lab.Code, lab.Name, lab.Location, lab.Description }, commandType: CommandType.Text);
                 }
-                
             }
             catch (Exception e)
             {
@@ -46,6 +39,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// Запросить все денные из БД
         public async Task<IEnumerable<Lab>> LabList()
         {
             IEnumerable<Lab> labs;
@@ -56,8 +50,7 @@ namespace LIMSBlazor.Data
             return labs;
         }
 
-
-        // Get one data based on its ID
+        /// Получите одни данные на основе его идентификатора
         public async Task<Lab> Lab_GetOne(int id)
         {
             Lab lab = new Lab();
@@ -70,7 +63,7 @@ namespace LIMSBlazor.Data
             return lab;
         }
 
-        // Add (create) a data table row (SQL Update)
+        /// Обновить строку таблицы данных в БД
         public async Task<bool> LabUpdate(Lab lab)
         {
             try
@@ -93,7 +86,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        //Delete Data
+        /// Удалить строку таблицы данных из БД
         public async Task<bool> LabDelete(int id)
         {
             var parameters = new DynamicParameters();

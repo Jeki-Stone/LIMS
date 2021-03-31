@@ -8,7 +8,7 @@
 <DataEdit FormType="Delete" PageTitle="Удалить аналитический сервис типа испытания" DeleteWarning="Вы уверены что хотите удалить этот аналитический сервис типа испытания? Данные нельзя будет вернуть!" Model="@sampletypeanalytical" OnClickDelete="@Delete" OnClickCancel="@Cancel">
     <table>
         <tr>
-            <td>Тип образца:</td>
+            <td>Тип пробы:</td>
             <td>@sampletypes?.Where(x => x.Id == sampletypeanalytical.SampleTypeId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
@@ -18,7 +18,10 @@
     </table>
 </DataEdit>
 
-@code { // Create a new, empty object
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     SampleTypeAnalytical sampletypeanalytical = new SampleTypeAnalytical();
     IEnumerable<SampleType> sampletypes;
     IEnumerable<AnalyticalServ> analyticalservs;
@@ -28,7 +31,9 @@
     [Parameter]
     public int AnalyticalServiceId { get; set; }
 
-    //Executes on page open..
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         sampletypeanalytical = await SampleTypeAnalyticalService.SampleTypeAnalytical_GetOne(SampleTypeId, AnalyticalServiceId);
@@ -36,13 +41,21 @@
         analyticalservs = await AnalyticalServService.AnalyticalServList();
     }
 
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
     protected async Task Delete()
     {
         // Insert if id is zero.
         await SampleTypeAnalyticalService.SampleTypeAnalyticalDelete(SampleTypeId, AnalyticalServiceId);
         NavigationManager.NavigateTo("config/sampletype/sampletypeanalyticallist/" + SampleTypeId);
     }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
     void Cancel()
     {
         NavigationManager.NavigateTo("config/sampletype/sampletypeanalyticallist/" + SampleTypeId);
-    } }
+    } 
+}

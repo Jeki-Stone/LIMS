@@ -8,7 +8,7 @@
     <Header>
         <tr>
             <th style="text-align:center">#</th>
-            <th>Тип образца:</th>
+            <th>Тип пробы:</th>
             <th>Атрибут:</th>
         </tr>
     </Header>
@@ -42,6 +42,9 @@
 </DataView>
 
 @code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
     IEnumerable<SampleTypeAttr> sampletypeattrs;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Attr> attrs;
@@ -51,6 +54,9 @@
     [Parameter]
     public string UrlSampleTypeId { get; set; }
 
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         sampletypeattrs = await SampleTypeAttrService.SampleTypeAttrList(SampleTypeId);
