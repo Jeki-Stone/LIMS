@@ -66,6 +66,10 @@
                         <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
+                        &nbsp
+                        <a href="/analysis/sample/result/resultattrlist/@SampleId/@result.AnalyticalServiceId">
+                            <img src="../images/downArrow.png" title="Add attr" width="20" height="20" />
+                        </a>
                     </td>
                     <td>@result.Id</td>
                     <td>@result.SampleId</td>
@@ -89,12 +93,15 @@
         {
             <div class="container-fluid">
                 <div class="row">
-                    @foreach (var item in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort).GroupBy(e => e.AnalyticalServiceId))
+                    @foreach (var itemValNo in results.GroupBy(e => e.ValueNo))
                     {
-                        var title = analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name;
-                        <div style="min-width: 500px;">
-                            <ChartEdit AnalyticalTrue="1" Title=@title SampleId=@SampleId GrupItem=@item.Where(x => x.IsFinal == true).ToList() />
-                        </div>
+                        @foreach (var item in itemValNo.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort).GroupBy(e => e.AnalyticalServiceId))
+                        {
+                            var title = analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name;
+                            <div style="min-width: 500px;">
+                                <ChartEdit AnalyticalTrue="1" Title=@title SampleId=@SampleId GrupItem=@item.Where(x => x.IsFinal == true).ToList() />
+                            </div>
+                        }
                     }
                 </div>
             </div>
@@ -132,7 +139,7 @@
         results = await ResultService.ResultList(SampleId);
         //samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
-        UrlSampleId = "/analysis/sample/resultaddedit/" + SampleId;
+        UrlSampleId = "/confirmation/sample/resultaddedit/" + SampleId;
     }
 
     /// <summary>
@@ -152,10 +159,7 @@
                 {
                     finalresult.SampleId = item.SampleId;
                     finalresult.AnalyticalServiceId = item.AnalyticalServiceId;
-                    if (itemName == "")
-                        itemName = item.ValueNo.ToString();
-                    else
-                        itemName = itemName + "," + item.ValueNo.ToString();
+                    itemName = item.ValueNo.ToString();
                     itemValue += item.Value;
                 }
 

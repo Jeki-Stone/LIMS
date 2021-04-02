@@ -8,29 +8,29 @@
 @inject IResultService ResultService
 
 <Button Clicked="@(async () => await HandleRedraw())">Перерисовать</Button>
-<RadarChart @ref="radarChart" TItem="double" Clicked="@OnClicked" />
+<BarChart @ref="barChart" TItem="double" />
 
 @code {
-        /// <summary>
-        /// Задаются параметры графиков
-        /// </summary>
+    /// <summary>
+    /// Задаются параметры графиков
+    /// </summary>
 
 
-        IEnumerable<FinalResult> finalresults;
+    IEnumerable<FinalResult> finalresults;
 
-        [Parameter]
-        public List<Result> GrupItem { get; set; }
-        [Parameter]
-        public string Title { get; set; }
-        [Parameter]
-        public int SampleId { get; set; }
-        [Parameter]
-        public int AnalyticalTrue { get; set; }
+    [Parameter]
+    public List<Result> GrupItem { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int AnalyticalTrue { get; set; }
 
-        RadarChart<double> radarChart;
-        List<string> Labels = new List<string>();
-        Result result = new Result();
-        List<FinalResult> FinalResults = new List<FinalResult>();
+    BarChart<double> barChart;
+    List<string> Labels = new List<string>();
+    Result result = new Result();
+    List<FinalResult> FinalResults = new List<FinalResult>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -46,40 +46,40 @@
 
     async Task HandleRedraw()
     {
-        await radarChart.Clear();
+        await barChart.Clear();
         Labels.Clear();
 
 
         if (GrupItem.Count >= 2)
         {
-            
 
-            await radarChart.AddLabelsDatasetsAndUpdate(Labels, GetRadarChartDataset());
-            var options = new RadarChartOptions
+
+            await barChart.AddLabelsDatasetsAndUpdate(Labels, GetBarChartDataset());
+            var options = new BarChartOptions
             {
                 AspectRatio = 1,
             };
-            await radarChart.SetOptions(options);
+            await barChart.SetOptions(options);
         }
     }
 
 
-    RadarChartDataset<double>[] GetRadarChartDataset()
+    BarChartDataset<double>[] GetBarChartDataset()
     {
         List<string> backgroundColors = new List<string> { ChartColor.FromRgba(255, 99, 132, 0.2f), ChartColor.FromRgba(54, 162, 235, 0.2f), ChartColor.FromRgba(255, 206, 86, 0.2f), ChartColor.FromRgba(75, 192, 192, 0.2f), ChartColor.FromRgba(153, 102, 255, 0.2f), ChartColor.FromRgba(255, 159, 64, 0.2f) };
         List<string> borderColors = new List<string> { ChartColor.FromRgba(255, 99, 132, 1f), ChartColor.FromRgba(54, 162, 235, 1f), ChartColor.FromRgba(255, 206, 86, 1f), ChartColor.FromRgba(75, 192, 192, 1f), ChartColor.FromRgba(153, 102, 255, 1f), ChartColor.FromRgba(255, 159, 64, 1f) };
-        return new RadarChartDataset<double>[]
+        return new BarChartDataset<double>[]
         {
-            new RadarChartDataset<double>
+            new BarChartDataset<double>
             {
                 Label = Title,
                 Data = GetData(),
                 BackgroundColor = backgroundColors,
                 BorderColor = borderColors,
-                Fill = true,
-                LineTension = 0,
+                //Fill = true,
+                //LineTension = 0,
             }
-                    };
+        };
     }
 
 
@@ -87,27 +87,19 @@
     {
         var data = new List<double>();
         float itemValue = 0;
-        string itemName = "";
+        string itemName = "Финальный результат";
 
         foreach (var item in GrupItem)
         {
-            if (!Labels.Contains(item.ValueNo.ToString()))
-                Labels.Add(item.ValueNo.ToString());
+            //if (!Labels.Contains(item.ValueNo.ToString()))
+            //    Labels.Add(item.ValueNo.ToString());
+            Labels.Add(item.Id.ToString());
             data.Add(item.Value);
-            if (itemName == "")
-                itemName = item.ValueNo.ToString();
-            else
-                itemName = itemName + "," + item.ValueNo.ToString();
             itemValue += item.Value;
         }
         itemValue = itemValue / GrupItem.Count;
         Labels.Add(itemName);
         data.Add(itemValue);
         return data;
-    }
-
-    void OnClicked(ChartMouseEventArgs e)
-    {
-        int index = e.Index;
     }
 }

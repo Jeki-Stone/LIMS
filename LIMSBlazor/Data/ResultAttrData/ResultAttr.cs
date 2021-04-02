@@ -7,22 +7,20 @@ using System.Threading.Tasks;
 namespace LIMSBlazor.Data
 {
     /// <summary>
-    /// Результаты испытаний
+    /// Атрибут результата испытания
     /// </summary>
-    public class Result : IResult
+    public class ResultAttr : IAttr
     {
-        public int Id { get; set; }
         public int SampleId { get; set; }
         public int AnalyticalServiceId { get; set; }
-        public int ValueNo { get; set; }
-        public float Value { get; set; }
-        public bool? IsFinal { get; set; }
-        public string Note { get; set; }
+        public int AttrId { get; set; }
+        public string Value { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:nn}", ApplyFormatInEditMode = true)]
-        public DateTime CreateTime { get; set; } = DateTime.Now;
+        public DateTime CreateTime { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:nn}", ApplyFormatInEditMode = true)]
-        public DateTime? UpdateTime { get; set; }
+        public DateTime UpdateTime { get; set; }
         public string CreateUser { get; set; }
         public string UpdateUser { get; set; }
+
     }
 }

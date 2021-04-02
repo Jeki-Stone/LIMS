@@ -60,6 +60,7 @@ namespace LIMSBlazor
             services.AddScoped<ISampleAnalyticalService, SampleAnalyticalService>(); 
             services.AddScoped<IInstrumAnalyticService, InstrumAnalyticService>();
             services.AddScoped<IAnalyticalServiceAttrService, AnalyticalServiceAttrService>();
+            services.AddScoped<IResultAttrService, ResultAttrService>();
             services.AddSingleton<WeatherForecastService>();
 
             // SQL database connection (name  defined in appsettings. json).

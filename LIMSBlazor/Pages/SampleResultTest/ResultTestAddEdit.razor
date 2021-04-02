@@ -36,7 +36,7 @@
                         <option value="0">Выберите значение</option>
                         foreach (var item in samples)
                         {
-                            if (item.Id == result.SampleId)
+                            if (item.Id == SampleId)
                                 for (int i = 1; i <= item.NumSamples; i++)
                                 {
                                     <option value="@i">@i</option>
