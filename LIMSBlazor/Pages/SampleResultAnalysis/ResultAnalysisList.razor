@@ -4,6 +4,7 @@
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IFinalResultService FinalResultService
+@inject IUnitService UnitServiceService
 @inject NavigationManager NavigationManager
 
 <ul class="nav nav-tabs">
@@ -20,10 +21,10 @@
             <select @bind="changsort" id="sort" required class="form-control">
                 @if (analyticalservs != null)
                 {
-                    <option value="0">Без фильтров</option>
-                    foreach (var item in analyticalservs)
+                    <option value="0">Выберите значение</option>
+                    foreach (var item in results.GroupBy(e => e.AnalyticalServiceId))
                     {
-                        <option value="@item.Id">@item.Name</option>
+                        <option value="@item.Key">@analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name</option>
                     }
                 }
             </select>
@@ -42,6 +43,7 @@
             <td>Аналитический сервис</td>
             <td>Номер пробы</td>
             <td>Результат</td>
+            <td>Ед.изм.</td>
             <td>В оценке</td>
             <td>Записка</td>
             <td>Время создания</td>
@@ -61,30 +63,31 @@
         {
             @foreach (var result in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort))
             {
-                <tr>
-                    <td style="text-align:center">
-                        <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="/analysis/sample/result/resultattrlist/@SampleId/@result.AnalyticalServiceId">
-                            <img src="../images/downArrow.png" title="Add attr" width="20" height="20" />
-                        </a>
-                    </td>
-                    <td>@result.Id</td>
-                    <td>@result.SampleId</td>
-                    <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                    <td>@result.ValueNo</td>
-                    <td>@result.Value</td>
-                    <td style="text-align:center">
-                        <input type="checkbox" @bind="result.IsFinal" @oninput=SaveData>
-                    </td>
-                    <td>@result.Note</td>
-                    <td>@result.CreateTime</td>
-                    <td>@result.UpdateTime</td>
-                    <td>@result.CreateUser</td>
-                    <td>@result.UpdateUser</td>
-                </tr>
+    <tr>
+        <td style="text-align:center">
+            <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
+                <img src="../images/iEdit.png" width="20" height="20" />
+            </a>
+            &nbsp
+            <a href="/analysis/sample/result/resultattrlist/@SampleId/@result.AnalyticalServiceId">
+                <img src="../images/downArrow.png" title="Add attr" width="20" height="20" />
+            </a>
+        </td>
+        <td>@result.Id</td>
+        <td>@result.SampleId</td>
+        <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        <td>@result.ValueNo</td>
+        <td>@result.Value</td>
+        <td>@units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
+        <td style="text-align:center">
+            <input type="checkbox" @bind="result.IsFinal" @oninput=SaveData>
+        </td>
+        <td>@result.Note</td>
+        <td>@result.CreateTime</td>
+        <td>@result.UpdateTime</td>
+        <td>@result.CreateUser</td>
+        <td>@result.UpdateUser</td>
+    </tr>
             }
         }
     </Rows>
@@ -116,6 +119,7 @@
     /// </summary>
     IEnumerable<Result> results;
     IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Unit> units;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -137,8 +141,8 @@
     protected override async Task OnInitializedAsync()
     {
         results = await ResultService.ResultList(SampleId);
-        //samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
+        units = await UnitServiceService.UnitList();
         UrlSampleId = "/confirmation/sample/resultaddedit/" + SampleId;
     }
 

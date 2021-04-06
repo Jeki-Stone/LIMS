@@ -42,7 +42,7 @@
                     <td>@instrument.Name</td>
                     <td>@instrumtypes.Where(x => x.Id == instrument.InstrumentTypeId).FirstOrDefault()?.Name</td>
                     <td>@instrument.SerialNumber</td>
-                    <td>@instrument.Status</td>
+                    <td>@GlobalConstant.InstrumentStatus.Where(x => x.Value == Convert.ToString(instrument.Status)).FirstOrDefault()?.Text</td>
                     <td>@labs.Where(x => x.Id == instrument.LabId).FirstOrDefault()?.Name</td>
                     <td>@instrument.Description</td>
                 </tr>

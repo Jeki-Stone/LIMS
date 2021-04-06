@@ -21,14 +21,11 @@ namespace LIMSBlazor.Data
             Cancel = 6
         }
 
-        //public static List<SelectListItem> SampleStatusModel = new List<SelectListItem> {
-        //    new SelectListItem { Value = "1", Text = "Начало" },
-        //    new SelectListItem { Value = "2", Text = "В работе" },
-        //    new SelectListItem { Value = "3", Text = "Анализ" },
-        //    new SelectListItem { Value = "4", Text = "Ожидание подтверждения" },
-        //    new SelectListItem { Value = "5", Text = "Готов" },
-        //    new SelectListItem { Value = "6", Text = "Отмена" }
-        //};
+        public static List<SelectListItem> InstrumentStatus = new List<SelectListItem> {
+            new SelectListItem { Value = "1", Text = "В работе" },
+            new SelectListItem { Value = "2", Text = "Не работает" },
+        };
+
         public static List<SelectListItem> SampleStatusModel = new List<SelectListItem> {
             new SelectListItem { Value = Convert.ToInt32(SampleStatus.New).ToString(), Text = "Начало" },
             new SelectListItem { Value = Convert.ToInt32(SampleStatus.Work).ToString(), Text = "В работе" },

@@ -14,8 +14,10 @@ namespace LIMSBlazor.Data
         public int Id { get; set; }
         public int SampleId { get; set; }
         public int AnalyticalServiceId { get; set; }
+        public int InstrumentId { get; set; }
         public string ValueNo { get; set; }
         public float Value { get; set; }
+        public int UnitId { get; set; }
         public bool? IsFinal { get; set; }
         public string Note { get; set; }
         public DateTime CreateTime { get; set; } = DateTime.Now;

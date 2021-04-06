@@ -52,7 +52,6 @@ namespace LIMSBlazor
             services.AddScoped<ISampleSpecAnalyticalService, SampleSpecAnalyticalService>();
             services.AddScoped<IInstrumTypeAnalyticService, InstrumTypeAnalyticService>();
             services.AddScoped<IUserRoleService, UserRoleService>(); 
-            services.AddScoped<ISampleTypeAnalyticalService, SampleTypeAnalyticalService>();
             services.AddScoped<ISampleTypeAttrService, SampleTypeAttrService>();
             services.AddScoped<IResultService, ResultService>();
             services.AddScoped<IFinalResultService, FinalResultService>();

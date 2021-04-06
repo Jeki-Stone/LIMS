@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-@page "/config/samplespecanalyticaldelete/{SampleSpecId:int}/{AnalyticalServiceId:int}"
+@page "/config/samplespec/samplespecanalyticaldelete/{SampleSpecId:int}/{AnalyticalServiceId:int}"
 @inject ISampleSpecAnalyticalService SampleSpecAnalyticalService
 @inject ISampleSpecService SampleSpecService
 @inject IAnalyticalServService AnalyticalServService
@@ -57,7 +57,7 @@
     protected async Task Delete()
     {
         await SampleSpecAnalyticalService.SampleSpecAnalyticalDelete(SampleSpecId, AnalyticalServiceId);
-        NavigationManager.NavigateTo("config/samplespecanalyticallist");
+        NavigationManager.NavigateTo("/config/samplespec/samplespecanalyticallist/" + SampleSpecId);
     }
 
     /// <summary>
@@ -65,6 +65,6 @@
     /// </summary>
     void Cancel()
     {
-        NavigationManager.NavigateTo("config/samplespecanalyticallist");
+        NavigationManager.NavigateTo("/config/samplespec/samplespecanalyticallist/" + SampleSpecId);
     }
 }

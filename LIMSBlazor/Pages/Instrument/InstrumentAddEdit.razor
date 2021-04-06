@@ -33,7 +33,15 @@
         </tr>
         <tr>
             <td>Статус:</td>
-            <td><input type="text" @bind="instrument.Status" class="form-control" required></td>
+            <td>
+                <select @bind="instrument.Status" required class="form-control">
+                    <option value="0">Выберите значение</option>
+                    @foreach (var item in GlobalConstant.InstrumentStatus)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </td>
         </tr>
         <tr>
             <td>Лаборатория:</td>

@@ -27,6 +27,7 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("SampleId", result.SampleId, DbType.Int32);
                     parametrs.Add("AnalyticalServiceId", result.AnalyticalServiceId, DbType.Int32);
+                    parametrs.Add("InstrumentId", result.InstrumentId, DbType.Int32);
                     parametrs.Add("ValueNo", result.ValueNo, DbType.Int32);
                     parametrs.Add("Value", result.Value, DbType.Int32);
                     parametrs.Add("IsFinal", result.IsFinal, DbType.Boolean);
@@ -82,6 +83,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("Id", result.Id, DbType.Int32);
                     parametrs.Add("SampleId", result.SampleId, DbType.Int32);
                     parametrs.Add("AnalyticalServiceId", result.AnalyticalServiceId, DbType.Int32);
+                    parametrs.Add("InstrumentId", result.InstrumentId, DbType.Int32);
                     parametrs.Add("ValueNo", result.ValueNo, DbType.Int32);
                     parametrs.Add("Value", result.Value, DbType.Int32);
                     parametrs.Add("IsFinal", result.IsFinal, DbType.Boolean);

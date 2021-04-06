@@ -27,7 +27,7 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("Name", unit.Name, DbType.String);
                     parametrs.Add("Scale", unit.Scale, DbType.String);
-                    parametrs.Add("BaseUnitId", unit.BaseUnitId, DbType.String);
+                    parametrs.Add("BaseUnitId", unit.BaseUnitId, DbType.Int32);
                     await conn.ExecuteAsync("spUnits_Insert", parametrs, commandType: CommandType.StoredProcedure);
                 }                
             }
@@ -73,7 +73,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("Id", unit.Id, DbType.Int32);
                     parametrs.Add("Name", unit.Name, DbType.String);
                     parametrs.Add("Scale", unit.Scale, DbType.String);
-                    parametrs.Add("BaseUnitId", unit.BaseUnitId, DbType.String);
+                    parametrs.Add("BaseUnitId", unit.BaseUnitId, DbType.Int32);
                     await conn.ExecuteAsync("spUnits_Update", parametrs, commandType: CommandType.StoredProcedure);
                 }
             }

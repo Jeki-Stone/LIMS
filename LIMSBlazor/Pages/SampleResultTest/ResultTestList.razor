@@ -3,6 +3,7 @@
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject IUnitService UnitServiceService
 @inject NavigationManager NavigationManager
 
 <DataView PageTitle="Список результатов испытания" UrlAdd=@UrlSampleId UrlBack="/test/samplelist" UrlAddText="Добавить новый результат испытания" UrlBackText="Вернуться к списку испытаний">
@@ -14,6 +15,7 @@
             <td>Аналитический сервис</td>
             <td>Номер пробы</td>
             <td>Результат</td>
+            <td>Ед.изм.</td>
             <td>В оценке</td>
             <td>Записка</td>
             <td>Время создания</td>
@@ -33,37 +35,38 @@
         {
             @foreach (var result in results)
             {
-                <tr>
-                    <td style="text-align:center">
-                        <a href="/test/sample/resultaddedit/@SampleId/@result.Id">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="/test/sample/resultdelete/@SampleId/@result.Id">
-                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="test/sample/result/resultattrlist/@SampleId/@result.AnalyticalServiceId">
-                            <img src="../images/downArrow.png" title="Add attr" width="20" height="20" />
-                        </a>
-                    </td>
-                    <td>@result.Id</td>
-                    <td>@result.SampleId</td>
-                    <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                    <td>@result.ValueNo</td>
-                    <td>@result.Value</td>
-                    <td style="text-align:center">
-                        @if (result.IsFinal == true)
-                        {<img src="../images/iGreenCheck.png" width="25" height="25" />}
-                        else
-                        {<img src="../images/iRedX.png" width="25" height="25" />}
-                    </td>
-                    <td>@result.Note</td>
-                    <td>@result.CreateTime</td>
-                    <td>@result.UpdateTime</td>
-                    <td>@result.CreateUser</td>
-                    <td>@result.UpdateUser</td>
-                </tr>
+    <tr>
+        <td style="text-align:center">
+            <a href="/test/sample/resultaddedit/@SampleId/@result.Id">
+                <img src="../images/iEdit.png" width="20" height="20" />
+            </a>
+            &nbsp
+            <a href="/test/sample/resultdelete/@SampleId/@result.Id">
+                <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+            </a>
+            &nbsp
+            <a href="test/sample/result/resultattrlist/@SampleId/@result.AnalyticalServiceId">
+                <img src="../images/downArrow.png" title="Add attr" width="20" height="20" />
+            </a>
+        </td>
+        <td>@result.Id</td>
+        <td>@result.SampleId</td>
+        <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        <td>@result.ValueNo</td>
+        <td>@result.Value</td>
+        <td>@units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
+        <td style="text-align:center">
+            @if (result.IsFinal == true)
+            {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+            else
+            {<img src="../images/iRedX.png" width="25" height="25" />}
+        </td>
+        <td>@result.Note</td>
+        <td>@result.CreateTime</td>
+        <td>@result.UpdateTime</td>
+        <td>@result.CreateUser</td>
+        <td>@result.UpdateUser</td>
+    </tr>
             }
         }
     </Rows>
@@ -76,6 +79,7 @@
     IEnumerable<Result> results;
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Unit> units;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -90,6 +94,7 @@
         results = await ResultService.ResultList(SampleId);
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
+        units = await UnitServiceService.UnitList();
         UrlSampleId = "/test/sample/resultaddedit/" + SampleId;
     }
 }

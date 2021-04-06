@@ -13,6 +13,6 @@ namespace LIMSBlazor.Data
         public int Id { get; set; }
         public string Name { get; set; }
         public string Scale { get; set; }
-        public string BaseUnitId { get; set; }
+        public int BaseUnitId { get; set; }
     }
 }

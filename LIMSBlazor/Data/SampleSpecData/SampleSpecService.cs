@@ -45,8 +45,8 @@ namespace LIMSBlazor.Data
             using (var conn = new SqlConnection(_configuration.Value))
             {
                 samplespecs = await conn.QueryAsync<SampleSpec>("spSampleSpecs_GetAll", commandType: CommandType.StoredProcedure);
+                return samplespecs;
             }
-            return samplespecs;
         }
 
         /// Получите одни данные на основе его идентификатора

@@ -3,6 +3,8 @@
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
 
 <DataView PageTitle="Список результатов испытания" UrlAdd=@UrlSampleId UrlBack="samplelog/samplelist" UrlAddText="Добавить новый результат испытания" UrlBackText="Вернуться к списку испытаний">
     <Header>
@@ -11,8 +13,9 @@
             <th>Id</th>
             <td>Id испытания</td>
             <td>Аналитический сервис</td>
-            <td>Номер результатов</td>
-            <td>Результат</td>
+            <td>Испытательная машина</td>
+            <td>Номер пробы</td>
+            <td>Ед.изм.</td>
             <td>Готовность</td>
             <td>Записка</td>
             <td>Время создания</td>
@@ -45,8 +48,9 @@
                     <td>@result.Id</td>
                     <td>@result.SampleId</td>
                     <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
                     <td>@result.ValueNo</td>
-                    <td>@result.Value</td>
+                    <td>@units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
                     <td>@result.IsFinal</td>
                     <td>@result.Note</td>
                     <td>@result.CreateTime</td>
@@ -66,6 +70,8 @@
     IEnumerable<Result> results;
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -80,6 +86,8 @@
         results = await ResultService.ResultList(SampleId);
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
+        units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
         UrlSampleId = "/samplelog/sample/resultaddedit/" + SampleId;
     }
 }

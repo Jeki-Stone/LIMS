@@ -3,6 +3,7 @@
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject IUnitService UnitServiceService
 @inject NavigationManager NavigationManager
 
 <DataEdit PageTitle="@pagetitle" Model="@result" BtnSaveText="@buttontext" OnValidSubmit="@ResultSave" OnClickCancel="@Cancel">
@@ -21,7 +22,7 @@
         </tr>
         <tr>
             <td>Результат:</td>
-            <td>@result.Value</td>
+            <td>@result.Value @units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
             <td>В оценке:</td>
@@ -42,6 +43,7 @@
 
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Sample> samples;
+    IEnumerable<Unit> units;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -62,6 +64,7 @@
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         samples = await SampleService.SampleList();
         result = await ResultService.Result_GetOne(id);
+        units = await UnitServiceService.UnitList();
     }
 
     /// <summary>

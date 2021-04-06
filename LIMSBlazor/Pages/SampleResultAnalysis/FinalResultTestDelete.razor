@@ -3,6 +3,7 @@
 @inject IFinalResultService FinalResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject IUnitService UnitServiceService
 @inject NavigationManager NavigationManager
 
 <DataEdit FormType="Delete" PageTitle="Удалить финальный результат испытания" DeleteWarning="Вы уверены что хотите удалить этот финальный результат испытания? Данные нельзя будет вернуть!" Model="@finalresult" OnClickDelete="@Delete" OnClickCancel="@Cancel">
@@ -21,7 +22,7 @@
         </tr>
         <tr>
             <td>Результат:</td>
-            <td>@finalresult.Value</td>
+            <td>@finalresult.Value @units?.Where(x => x.Id == finalresult.UnitId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
             <td>В оценке:</td>
@@ -30,13 +31,13 @@
                 {<img src="../images/iGreenCheck.png" width="25" height="25" />}
                 else
                 {<img src="../images/iRedX.png" width="25" height="25" />}
-        </td>
-    </tr>
-    <tr>
-        <td>Записка:</td>
-        <td>@finalresult.Note</td>
-    </tr>
-</table>
+            </td>
+        </tr>
+        <tr>
+            <td>Записка:</td>
+            <td>@finalresult.Note</td>
+        </tr>
+    </table>
 </DataEdit>
 
 
@@ -48,6 +49,7 @@
 
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Unit> units;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -62,6 +64,7 @@
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         finalresult = await FinalResultService.FinalResult_GetOne(id);
+        units = await UnitServiceService.UnitList();
     }
 
 
@@ -81,5 +84,4 @@
     void Cancel()
     {
         NavigationManager.NavigateTo("/analysis/sample/finalresultlist/" + SampleId);
-    }
-}
+    } }

@@ -1,6 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/config/samplespecanalyticaladdedit"
-@page "/config/samplespecanalyticaladdedit/{SampleSpecId:int}/{AnalyticalServiceId:int}"
+@page "/config/samplespec/samplespecanalyticaladdedit/{SampleSpecId:int}"
+@page "/config/samplespec/samplespecanalyticaladdedit/{SampleSpecId:int}/{AnalyticalServiceId:int}"
 @inject ISampleSpecAnalyticalService SampleSpecAnalyticalService
 @inject ISampleSpecService SampleSpecService
 @inject IAnalyticalServService AnalyticalServService
@@ -10,18 +10,7 @@
     <table>
         <tr>
             <td>Спецификация:</td>
-            <td>
-                <select @bind="samplespecanalytical.SampleSpecId" class="form-control" required>
-                    @if (samplespecs != null)
-                    {
-                        <option value="0">Выберите значение</option>
-                        foreach (var item in samplespecs)
-                        {
-                            <option value="@item.Id">@item.Name</option>
-                        }
-                    }
-                </select>
-            </td>
+            <td>@samplespecs?.Where(x => x.Id == samplespecanalytical.SampleSpecId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
             <td>Аналитический сервис:</td>
@@ -76,6 +65,7 @@
     {
         samplespecs = await SampleSpecService.SampleSpecList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
+        samplespecanalytical.SampleSpecId = SampleSpecId;
         /// Если Id ноль то будет добавлено новое значение
         if ((SampleSpecId != 0) & (AnalyticalServiceId != 0))
         {
@@ -90,8 +80,9 @@
     /// </summary>
     protected async Task SampleSpecAnalyticalSave()
     {
-        if ((SampleSpecId == 0) & (AnalyticalServiceId == 0))
+        if (AnalyticalServiceId == 0)
         {
+            samplespecanalytical.SampleSpecId = SampleSpecId;
             await SampleSpecAnalyticalService.SampleSpecAnalyticalInsert(samplespecanalytical);
         }
         else
@@ -100,7 +91,7 @@
             samplespecanalytical.OldAnalyticalServiceId = AnalyticalServiceId;
             await SampleSpecAnalyticalService.SampleSpecAnalyticalUpdate(samplespecanalytical);
         }
-        NavigationManager.NavigateTo("config/samplespecanalyticallist");
+        NavigationManager.NavigateTo("/config/samplespec/samplespecanalyticallist/"+ SampleSpecId);
     }
 
     /// <summary>
@@ -108,6 +99,6 @@
     /// </summary>
     void Cancel()
     {
-        NavigationManager.NavigateTo("config/samplespecanalyticallist");
+        NavigationManager.NavigateTo("/config/samplespec/samplespecanalyticallist/"+ SampleSpecId);
     }
 }

@@ -4,6 +4,7 @@
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject IInstrumentService InstrumentService
 @inject NavigationManager NavigationManager
 
 <DataEdit PageTitle="@pagetitle" Model="@result" BtnSaveText="@buttontext" OnValidSubmit="@ResultSave" OnClickCancel="@Cancel">
@@ -28,12 +29,38 @@
             </td>
         </tr>
         <tr>
-            <td>Номер результатов:</td>
-            <td><input type="text" @bind="result.ValueNo" class="form-control" required></td>
+            <td>Наименование испытательного оборудования:</td>
+            <td>
+                <select @bind="result.InstrumentId" class="form-control" required>
+                    @if (instruments != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in instruments)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
         </tr>
         <tr>
-            <td>Результат:</td>
-            <td><input type="text" @bind="result.Value" class="form-control" required></td>
+            <td>Номер пробы:</td>
+            <td>
+                <select @bind="result.ValueNo" class="form-control" required>
+                    @if (samples != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in samples)
+                        {
+                            if (item.Id == SampleId)
+                                for (int i = 1; i <= item.NumSamples; i++)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                        }
+                    }
+                </select>
+            </td>
         </tr>
         <tr>
             <td>Готовность:</td>
@@ -54,6 +81,7 @@
 
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -73,6 +101,7 @@
     {
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
+        instruments = await InstrumentService.InstrumentList();
         /// Если Id ноль то будет добавлено новое значение
         if (id != 0)
         {

@@ -3,46 +3,47 @@
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject IInstrumentService InstrumentService
 @inject NavigationManager NavigationManager
 
-    <DataEdit FormType="Delete" PageTitle="Удалить результат испытания" DeleteWarning="Вы уверены что хотите удалить этот результат испытания? Данные нельзя будет вернуть!" Model="@result" OnClickDelete="@Delete" OnClickCancel="@Cancel">
-        <table>
-            <tr>
-                <td>Id испытания:</td>
-                <td>@result.SampleId</td>
-            </tr>
-            <tr>
-                <td>Аналитический сервис:</td>
-                <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-            </tr>
-            <tr>
-                <td>Номер результатов:</td>
-                <td>@result.ValueNo</td>
-            </tr>
-            <tr>
-                <td>Результат:</td>
-                <td>@result.Value</td>
-            </tr>
-            <tr>
-                <td>Готовность:</td>
-                <td>@result.IsFinal</td>
-            </tr>
-            <tr>
-                <td>Записка:</td>
-                <td>@result.Note</td>
-            </tr>
-        </table>
-    </DataEdit>
+<DataEdit FormType="Delete" PageTitle="Удалить результат испытания" DeleteWarning="Вы уверены что хотите удалить этот результат испытания? Данные нельзя будет вернуть!" Model="@result" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Id испытания:</td>
+            <td>@result.SampleId</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Наименование испытательного оборудования:</td>
+            <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Номер пробы:</td>
+            <td>@result.ValueNo</td>
+        </tr>
+        <tr>
+            <td>Готовность:</td>
+            <td>@result.IsFinal</td>
+        </tr>
+        <tr>
+            <td>Записка:</td>
+            <td>@result.Note</td>
+        </tr>
+    </table>
+</DataEdit>
 
 
-@code { 
-    /// <summary>
+@code { /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
     Result result = new Result();
 
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -57,6 +58,7 @@
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         result = await ResultService.Result_GetOne(id);
+        instruments = await InstrumentService.InstrumentList();
     }
 
     /// <summary>
@@ -74,5 +76,4 @@
     void Cancel()
     {
         NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
-    }
-}
+    } }

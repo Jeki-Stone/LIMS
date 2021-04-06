@@ -15,8 +15,19 @@
             <td><input type="text" @bind="unit.Scale" class="form-control" required></td>
         </tr>
         <tr>
-            <td>Базовая Ед.:</td>
-            <td><input type="text" @bind="unit.BaseUnitId" class="form-control" required></td>
+            <td>Базовая Ед:</td>
+            <td>
+                <select @bind="unit.BaseUnitId" class="form-control" required>
+                    @if (units != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in units)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
         </tr>
     </table>
 </DataEdit>
@@ -26,6 +37,8 @@
     /// Создаём необходимые компоненты
     /// </summary>
     Unit unit = new Unit();
+
+    IEnumerable<Unit> units;
 
     [Parameter]
     public int id { get; set; }
@@ -41,6 +54,7 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
+        units = await UnitService.UnitList();
         /// Если Id ноль то будет добавлено новое значение
         if (id != 0)
         {

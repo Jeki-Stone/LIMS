@@ -1,10 +1,10 @@
 ﻿@using LIMSBlazor.Data
-@page "/config/samplespecanalyticallist"
+@page "/config/samplespec/samplespecanalyticallist/{SampleSpecId:int}"
 @inject ISampleSpecAnalyticalService SampleSpecAnalyticalService
 @inject ISampleSpecService SampleSpecService
 @inject IAnalyticalServService AnalyticalServService
 
-<DataView PageTitle="Список элементов спецификации" UrlAdd="config/samplespecanalyticaladdedit" UrlAddText="Добавить новый элемент спецификации">
+<DataView PageTitle="Список элементов спецификации" UrlAdd=@UrlAdd UrlBack="/config/samplespeclist" UrlAddText="Добавить новый элемент спецификации" UrlBackText="Вернуться к списоку спецификаций">
     <Header>
         <tr>
             <th style="text-align:center">#</th>
@@ -27,11 +27,11 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="config/samplespecanalyticaladdedit/@samplespecanalytical.SampleSpecId/@samplespecanalytical.AnalyticalServiceId">
+                        <a href="/config/samplespec/samplespecanalyticaladdedit/@SampleSpecId/@samplespecanalytical.AnalyticalServiceId">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="config/samplespecanalyticaldelete/@samplespecanalytical.SampleSpecId/@samplespecanalytical.AnalyticalServiceId">
+                        <a href="/config/samplespec/samplespecanalyticaldelete/@SampleSpecId/@samplespecanalytical.AnalyticalServiceId">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>
@@ -49,6 +49,12 @@
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
+
+    [Parameter]
+    public int SampleSpecId { get; set; }
+    [Parameter]
+    public string UrlAdd { get; set; }
+
     IEnumerable<SampleSpecAnalytical> samplespecanalyticals;
     IEnumerable<SampleSpec> samplespecs;
     IEnumerable<AnalyticalServ> analyticalservs;
@@ -58,8 +64,9 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        samplespecanalyticals = await SampleSpecAnalyticalService.SampleSpecAnalyticalList();
+        samplespecanalyticals = await SampleSpecAnalyticalService.SampleSpecAnalyticalList(SampleSpecId);
         samplespecs = await SampleSpecService.SampleSpecList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
+        UrlAdd = "/config/samplespec/samplespecanalyticaladdedit/" + SampleSpecId;
     }
 }

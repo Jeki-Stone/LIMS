@@ -40,12 +40,14 @@ namespace LIMSBlazor.Data
         }
 
         /// Запросить все денные из БД
-        public async Task<IEnumerable<SampleSpecAnalytical>> SampleSpecAnalyticalList()
+        public async Task<IEnumerable<SampleSpecAnalytical>> SampleSpecAnalyticalList(int SampleSpecId)
         {
             IEnumerable<SampleSpecAnalytical> samplespecanalyticals;
+            var parameters = new DynamicParameters();
+            parameters.Add("SampleSpecId", SampleSpecId, DbType.Int32);
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                samplespecanalyticals = await conn.QueryAsync<SampleSpecAnalytical>("spSampleSpecAnalyticals_GetAll", commandType: CommandType.StoredProcedure);
+                samplespecanalyticals = await conn.QueryAsync<SampleSpecAnalytical>("spSampleSpecAnalyticals_GetAll", parameters, commandType: CommandType.StoredProcedure);
             }
             return samplespecanalyticals;
         }

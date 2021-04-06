@@ -3,6 +3,7 @@
 @inject IFinalResultService FinalResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject IUnitService UnitServiceService
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
@@ -21,6 +22,7 @@
             <td>Аналитический сервис</td>
             <td>Номер пробы</td>
             <td>Результат</td>
+            <td>Ед.изм.</td>
             <td>Подтвержден</td>
             <td>Записка</td>
             <td>Время создания</td>
@@ -55,6 +57,7 @@
                     <td>@analyticalservs?.Where(x => x.Id == finaresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
                     <td>@finaresult.ValueNo</td>
                     <td>@finaresult.Value</td>
+                    <td>@units?.Where(x => x.Id == finaresult.UnitId).FirstOrDefault()?.Name</td>
                     <td>
                         @if (finaresult.IsFinal == true)
                         {<img src="../images/iGreenCheck.png" width="25" height="25" />}
@@ -79,6 +82,7 @@
     IEnumerable<FinalResult> finalresults;
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Unit> units;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -91,5 +95,6 @@
         finalresults = await FinalResultService.FinalResultList(SampleId);
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
+        units = await UnitServiceService.UnitList();
     }
 }
