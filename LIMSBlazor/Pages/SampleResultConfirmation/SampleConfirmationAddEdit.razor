@@ -33,7 +33,7 @@
             <td>Статус:</td>
             <td>
                 <select @bind="sample.Status" required class="form-control">
-                    <option value="0">Выберете значение</option>
+                    <option value="0">Выберите значение</option>
                     @foreach (var item in GlobalConstant.SampleStatusModel)
                     {
                         if (item.Value != "1")

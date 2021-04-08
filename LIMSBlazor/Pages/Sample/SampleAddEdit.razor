@@ -74,7 +74,7 @@
             <td>Статус:</td>
             <td>
                 <select @bind="sample.Status" required class="form-control">
-                    <option value="0">Выберете значение</option>
+                    <option value="0">Выберите значение</option>
                     @foreach (var item in GlobalConstant.SampleStatusModel)
                     {
                         if ((item.Value == "1") || (item.Value == "2"))
@@ -90,7 +90,7 @@
             <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.Note"></textarea></td>
         </tr>
         <tr>
-            <td>Место взятия проб:</td>
+            <td>Место взятия пробы:</td>
             <td>
                 <select @bind="sample.LocationId" required class="form-control">
                     @if (locs != null)

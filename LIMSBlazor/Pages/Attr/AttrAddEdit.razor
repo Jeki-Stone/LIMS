@@ -18,7 +18,7 @@
             <td>Тип:</td>
             <td>
                 <select @bind="attr.Type" required class="form-control">
-                    <option value="0">Выберете значение</option>
+                    <option value="0">Выберите значение</option>
                     @foreach (var item in GlobalConstant.AttrTypeModel)
                     {
                         <option value="@item.Value">@item.Text</option>
@@ -45,7 +45,7 @@
         /// <summary>
         /// Задаём базовые значения
         /// </summary>
-        public string pagetitle = "Добавить новый аттрибут";
+        public string pagetitle = "Добавить новый атрибут";
         public string buttontext = "Добавить";
 
         /// <summary>
@@ -57,7 +57,7 @@
             if (id != 0)
             {
                 attr = await AttrService.Attr_GetOne(id);
-                pagetitle = "Изменить данные аттрибута";
+                pagetitle = "Изменить данные атрибута";
                 buttontext = "Изменить";
             }
         }

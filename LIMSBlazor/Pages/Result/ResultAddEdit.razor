@@ -58,17 +58,13 @@
             <td>Номер пробы:</td>
             <td>
                 <select @bind="result.ValueNo" class="form-control" required>
-                    @if (samples != null)
+                    @if (sample != null)
                     {
                         <option value="0">Выберите значение</option>
-                        foreach (var item in samples)
-                        {
-                            if (item.Id == SampleId)
-                                for (int i = 1; i <= item.NumSamples; i++)
-                                {
-                                    <option value="@i">@i</option>
-                                }
-                        }
+                             for (int i = 1; i <= sample.NumSamples; i++)
+                             {
+                                 <option value="@i">@i</option>
+                             }
                     }
                 </select>
             </td>
@@ -90,12 +86,12 @@
     /// </summary>
     Result result = new Result();
 
-    IEnumerable<Sample> samples;
+    Sample sample;
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Instrument> instruments;
     IEnumerable<InstrumAnalytic> instrumanalytics;
 
-    List<int> insitem = new List<int>();
+    List<int> insitem = new List<int>();//ДОДЕЛАЙ ВЫБОР ИНСТРУМЕНТА
 
     [Parameter]
     public int SampleId { get; set; }
@@ -113,7 +109,7 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        samples = await SampleService.SampleList();
+        sample = await SampleService.Sample_GetOne(SampleId);
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         instruments = await InstrumentService.InstrumentList();
         instrumanalytics = await InstrumAnalyticService.InstrumAnalyticList(SampleId);
