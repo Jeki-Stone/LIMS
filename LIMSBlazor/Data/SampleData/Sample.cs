@@ -19,6 +19,7 @@ namespace LIMSBlazor.Data
         [Required]
         [Range(1, 10000000, ErrorMessage = "Age must be between 18 and 80.")]
         public int ClientId { get; set; }
+        public int LabId { get; set; }
         public int SampleTypeId { get; set; }
         public int NumSamples { get; set; }
         [Required]

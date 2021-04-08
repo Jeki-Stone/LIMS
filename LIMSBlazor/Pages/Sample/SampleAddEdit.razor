@@ -6,6 +6,7 @@
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
 @inject ISampleAnalyticalService SampleAnalyticalService
+@inject ILabService LabService
 @inject NavigationManager NavigationManager
 
 <DataEdit PageTitle="@pagetitle" Model="@sample" BtnSaveText="@buttontext" OnValidSubmit="@SampleSave" OnClickCancel="@Cancel">
@@ -28,6 +29,21 @@
                     {
                         <option value="0">Выберите значение</option>
                         foreach (var item in clis)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Лаборатория:</td>
+            <td>
+                <select @bind="sample.LabId" required class="form-control">
+                    @if (labs != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in labs)
                         {
                             <option value="@item.Id">@item.Name</option>
                         }
@@ -62,10 +78,10 @@
                     @foreach (var item in GlobalConstant.SampleStatusModel)
                     {
                         if ((item.Value == "1") || (item.Value == "2"))
-                                {
-                        <option value="@item.Value">@item.Text</option>
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
                     }
-                }
                 </select>
             </td>
         </tr>
@@ -78,13 +94,13 @@
             <td>
                 <select @bind="sample.LocationId" required class="form-control">
                     @if (locs != null)
-                                                            {
-                    <option value="0">Выберите значение</option>
-                                                                foreach (var item in locs)
-                                                                {
-                    <option value="@item.Id">@item.Name</option>
-                                                                }
-}
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in locs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
                 </select>
             </td>
         </tr>
@@ -105,6 +121,7 @@
     IEnumerable<Cli> clis;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
+    IEnumerable<Lab> labs;
 
     [Parameter]
     public int? Id { get; set; }
@@ -124,6 +141,7 @@
         clis = await CliService.CliList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
+        labs = await LabService.LabList();
         /// Если Id ноль то будет добавлено новое значение
         if (Id != null)
         {

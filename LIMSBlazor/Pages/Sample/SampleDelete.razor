@@ -4,6 +4,7 @@
 @inject ICliService CliService
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
+@inject ILabService LabService
 @inject NavigationManager NavigationManager
 
 <DataEdit FormType="Delete" PageTitle="Удалить пробу" DeleteWarning="Вы уверены что хотите удалить эту пробу? Данные нельзя будет вернуть!" Model="@sample" OnClickDelete="@Delete" OnClickCancel="@Cancel">
@@ -19,6 +20,10 @@
         <tr>
             <td>Клиент:</td>
             <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Лаборатория:</td>
+            <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
             <td>Тип испытаний:</td>
@@ -56,8 +61,7 @@
     </table>
 </DataEdit>
 
-@code {
-    /// <summary>
+@code { /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
     Sample sample = new Sample();
@@ -65,6 +69,7 @@
     IEnumerable<Cli> clis;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
+    IEnumerable<Lab> labs;
 
     [Parameter]
     public int id { get; set; }
@@ -78,6 +83,7 @@
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         sample = await SampleService.Sample_GetOne(id);
+        labs = await LabService.LabList();
     }
 
     /// <summary>
@@ -95,5 +101,4 @@
     void Cancel()
     {
         NavigationManager.NavigateTo("samplelog/samplelist");
-    }
-}
+    } }

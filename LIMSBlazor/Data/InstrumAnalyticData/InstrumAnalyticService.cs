@@ -38,13 +38,15 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        /// Запросить все денные из БД
-        public async Task<IEnumerable<InstrumAnalytic>> InstrumAnalyticList()
+        /// Запросить все данные из БД
+        public async Task<IEnumerable<InstrumAnalytic>> InstrumAnalyticList(int SampleId)
         {
             IEnumerable<InstrumAnalytic> instrumanalitics;
+            var parameters = new DynamicParameters();
+            parameters.Add("SampleId", SampleId, DbType.Int32);
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                instrumanalitics = await conn.QueryAsync<InstrumAnalytic>("spInstrumentAnalyticals_GetAll", commandType: CommandType.StoredProcedure);
+                instrumanalitics = await conn.QueryAsync<InstrumAnalytic>("spInstrumentAnalyticals_GetAll", parameters, commandType: CommandType.StoredProcedure);
             }
             return instrumanalitics;
         }

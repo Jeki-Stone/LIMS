@@ -47,7 +47,7 @@ namespace LIMSBlazor.Data
             return true;
         }
 
-        /// Запросить все денные соответствующие sampleId из БД
+        /// Запросить все данные соответствующие sampleId из БД
         public async Task<IEnumerable<FinalResult>> FinalResultList(int sampleId)
         {
             IEnumerable<FinalResult> finalresults;

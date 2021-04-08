@@ -28,6 +28,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("RecieveTime", sample.RecieveTime, DbType.DateTime);
                     parametrs.Add("TestTime", sample.TestTime, DbType.DateTime);
                     parametrs.Add("ClientId", sample.ClientId, DbType.Int32);
+                    parametrs.Add("LabId", sample.LabId, DbType.Int32);
                     parametrs.Add("SampleTypeId", sample.SampleTypeId, DbType.Int32);
                     parametrs.Add("NumSamples", sample.NumSamples, DbType.Int32);
                     parametrs.Add("Status", sample.Status, DbType.Int32);
@@ -90,6 +91,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("RecieveTime", sample.RecieveTime, DbType.DateTime);
                     parametrs.Add("TestTime", sample.TestTime, DbType.DateTime);
                     parametrs.Add("ClientId", sample.ClientId, DbType.Int32);
+                    parametrs.Add("LabId", sample.LabId, DbType.Int32);
                     parametrs.Add("SampleTypeId", sample.SampleTypeId, DbType.Int32);
                     parametrs.Add("NumSamples", sample.NumSamples, DbType.Int32);
                     parametrs.Add("Status", sample.Status, DbType.Int32);

@@ -5,6 +5,7 @@
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IInstrumentService InstrumentService
+@inject IInstrumAnalyticService InstrumAnalyticService
 @inject NavigationManager NavigationManager
 
 <DataEdit PageTitle="@pagetitle" Model="@result" BtnSaveText="@buttontext" OnValidSubmit="@ResultSave" OnClickCancel="@Cancel">
@@ -13,36 +14,46 @@
             <td>Id испытания:</td>
             <td>@SampleId</td>
         </tr>
-        <tr>
-            <td>Аналитический сервис:</td>
-            <td>
-                <select @bind="result.AnalyticalServiceId" class="form-control" required>
-                    @if (analyticalservs != null)
-                    {
-                        <option value="0">Выберите значение</option>
-                        foreach (var item in analyticalservs)
+        @if (id == 0)
+        {
+            <tr>
+                <td>Аналитический сервис:</td>
+                <td>
+                    <select @bind="result.AnalyticalServiceId" class="form-control" required>
+                        @if (instrumanalytics != null)
                         {
-                            <option value="@item.Id">@item.Name</option>
+                            <option value="0">Выберите значение</option>
+                            foreach (var item in instrumanalytics.GroupBy(e => e.AnalyticalServiceId))
+                            {
+                                <option value="@item.Key">@analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name</option>
+                            }
                         }
-                    }
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Наименование испытательного оборудования:</td>
-            <td>
-                <select @bind="result.InstrumentId" class="form-control" required>
-                    @if (instruments != null)
-                    {
-                        <option value="0">Выберите значение</option>
-                        foreach (var item in instruments)
+                    </select>
+                </td>
+            </tr>
+        }
+        @if (id != 0)
+        {
+            <tr>
+                <td>Аналитический сервис:</td>
+                <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+            </tr>
+            <tr>
+                <td>Наименование испытательного оборудования:</td>
+                <td>
+                    <select @bind="result.InstrumentId" class="form-control" required>
+                        @if (insitem != null)
                         {
-                            <option value="@item.Id">@item.Name</option>
+                            <option value="0">Выберите значение</option>
+                            foreach (var item in insitem)
+                            {
+                                <option value="@item">@instruments?.Where(x => x.Id == item).FirstOrDefault()?.Name</option>
+                            }
                         }
-                    }
-                </select>
-            </td>
-        </tr>
+                    </select>
+                </td>
+            </tr>
+        }
         <tr>
             <td>Номер пробы:</td>
             <td>
@@ -82,6 +93,9 @@
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Instrument> instruments;
+    IEnumerable<InstrumAnalytic> instrumanalytics;
+
+    List<int> insitem = new List<int>();
 
     [Parameter]
     public int SampleId { get; set; }
@@ -102,12 +116,21 @@
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         instruments = await InstrumentService.InstrumentList();
+        instrumanalytics = await InstrumAnalyticService.InstrumAnalyticList(SampleId);
         /// Если Id ноль то будет добавлено новое значение
         if (id != 0)
         {
             result = await ResultService.Result_GetOne(id);
             pagetitle = "Изменить данные результата испытания";
             buttontext = "Изменить";
+
+            foreach (var item in instrumanalytics)
+            {
+                if (item.AnalyticalServiceId == result.AnalyticalServiceId)
+                {
+                    insitem.Add(item.InstrumentId);
+                }
+            }
         }
     }
 

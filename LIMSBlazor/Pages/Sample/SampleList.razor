@@ -4,6 +4,7 @@
 @inject ICliService CliService
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
+@inject ILabService LabService
 
 <DataView PageTitle="Список проб" UrlAdd="samplelog/sampleaddedit" UrlAddText="Добавить новую пробу">
     <Header>
@@ -13,6 +14,7 @@
             <td>Время получения</td>
             <td>Время начала тестов</td>
             <td>Клиент</td>
+            <td>Лаборатория</td>
             <td>Тип пробы</td>
             <td>Количество проб</td>
             <td>Статус</td>
@@ -61,6 +63,7 @@
                     <td>@sample.RecieveTime</td>
                     <td>@sample.TestTime</td>
                     <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
+                    <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
                     <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
                     <td>@sample.NumSamples</td>
                     <td>@GlobalConstant.SampleStatusModel.Where(x => x.Value == Convert.ToString(sample.Status)).FirstOrDefault()?.Text</td>
@@ -93,6 +96,7 @@
     IEnumerable<Cli> clis;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
+    IEnumerable<Lab> labs;
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
@@ -103,5 +107,6 @@
         clis = await CliService.CliList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
+        labs = await LabService.LabList();
     }
 }
