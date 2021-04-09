@@ -4,6 +4,7 @@
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
@@ -33,6 +34,7 @@
             <th>Id</th>
             <td>Id испытания</td>
             <td>Аналитический сервис</td>
+            <td>Испытательная машина</td>
             <td>Номер пробы</td>
             <td>Результат</td>
             <td>Ед.изм.</td>
@@ -68,6 +70,7 @@
                     <td>@result.Id</td>
                     <td>@result.SampleId</td>
                     <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
                     <td>@result.ValueNo</td>
                     <td>@result.Value</td>
                     <td>@units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
@@ -122,6 +125,7 @@
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -140,5 +144,6 @@
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
     }
 }

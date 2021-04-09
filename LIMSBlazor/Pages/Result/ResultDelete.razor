@@ -1,7 +1,6 @@
 ﻿@using LIMSBlazor.Data
 @page "/samplelog/sample/resultdelete/{SampleId:int}/{id:int}"
 @inject IResultService ResultService
-@inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IInstrumentService InstrumentService
 @inject NavigationManager NavigationManager
@@ -41,7 +40,6 @@
     /// </summary>
     Result result = new Result();
 
-    IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Instrument> instruments;
 
@@ -55,7 +53,6 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         result = await ResultService.Result_GetOne(id);
         instruments = await InstrumentService.InstrumentList();

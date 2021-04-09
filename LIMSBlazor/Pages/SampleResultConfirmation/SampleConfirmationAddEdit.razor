@@ -6,6 +6,7 @@
 @inject ILocService LocService
 @inject ISampleAnalyticalService SampleAnalyticalService
 @inject IFinalResultService FinalResultService
+@inject ILabService LabService
 @inject NavigationManager NavigationManager
 
 <DataEdit PageTitle="@pagetitle" Model="@sample" BtnSaveText="@buttontext" OnValidSubmit="@SampleSave" OnClickCancel="@Cancel">
@@ -26,6 +27,10 @@
             <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
+            <td>Лаборатория:</td>
+            <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
             <td>Тип пробы:</td>
             <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
         </tr>
@@ -39,7 +44,7 @@
                         if (item.Value != "1")
                         {
                             <option value="@item.Value">@item.Text</option>
-}
+                        }
                     }
                 </select>
             </td>
@@ -80,6 +85,7 @@
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
     IEnumerable<FinalResult> finalresults;
+    IEnumerable<Lab> labs;
 
     [Parameter]
     public int Id { get; set; }
@@ -102,6 +108,7 @@
         locs = await LocService.LocList();
         finalresults = await FinalResultService.FinalResultList(Id);
         sample = await SampleService.Sample_GetOne((int)Id);
+        labs = await LabService.LabList();
         Status = sample.Status;
     }
 

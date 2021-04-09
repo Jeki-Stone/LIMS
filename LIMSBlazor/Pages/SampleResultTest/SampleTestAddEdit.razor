@@ -5,6 +5,7 @@
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
 @inject ISampleAnalyticalService SampleAnalyticalService
+@inject ILabService LabService
 @inject NavigationManager NavigationManager
 
 <DataEdit PageTitle="@pagetitle" Model="@sample" BtnSaveText="@buttontext" OnValidSubmit="@SampleSave" OnClickCancel="@Cancel">
@@ -20,6 +21,10 @@
         <tr>
             <td>Клиент:</td>
             <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Лаборатория:</td>
+            <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
             <td>Тип пробы:</td>
@@ -74,6 +79,7 @@
     IEnumerable<Cli> clis;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
+    IEnumerable<Lab> labs;
 
     [Parameter]
     public int? Id { get; set; }
@@ -93,6 +99,7 @@
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         sample = await SampleService.Sample_GetOne((int)Id);
+        labs = await LabService.LabList();
     }
 
     /// <summary>

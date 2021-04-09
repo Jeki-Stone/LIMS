@@ -15,7 +15,6 @@
     /// Задаются параметры графиков
     /// </summary>
 
-
     IEnumerable<FinalResult> finalresults;
 
     [Parameter]
@@ -49,11 +48,8 @@
         await barChart.Clear();
         Labels.Clear();
 
-
         if (GrupItem.Count >= 2)
         {
-
-
             await barChart.AddLabelsDatasetsAndUpdate(Labels, GetBarChartDataset());
             var options = new BarChartOptions
             {

@@ -1,12 +1,25 @@
 ﻿@using LIMSBlazor.Data
 @page "/samplelog/sample/resultlist/{SampleId:int}"
 @inject IResultService ResultService
-@inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IUnitService UnitServiceService
 @inject IInstrumentService InstrumentService
 
 <DataView PageTitle="Список результатов испытания" UrlAdd=@UrlSampleId UrlBack="samplelog/samplelist" UrlAddText="Добавить новый результат испытания" UrlBackText="Вернуться к списку испытаний">
+    <Filtr>
+        <li class="nav-item">
+            <select @bind="changsort" id="sort" required class="form-control">
+                @if (analyticalservs != null)
+                {
+                    <option value="0">Выберите значение</option>
+                    foreach (var item in results.GroupBy(e => e.AnalyticalServiceId))
+                    {
+                        <option value="@item.Key">@analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name</option>
+                    }
+                }
+            </select>
+        </li>
+    </Filtr>
     <Header>
         <tr>
             <th style="text-align:center">#</th>
@@ -33,7 +46,7 @@
         }
         else
         {
-            @foreach (var result in results)
+            @foreach (var result in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort))
             {
                 <tr>
                     <td style="text-align:center">
@@ -51,7 +64,12 @@
                     <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
                     <td>@result.ValueNo</td>
                     <td>@units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
-                    <td>@result.IsFinal</td>
+                    <td style="text-align:center">
+                        @if (result.IsFinal == true)
+                        {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                        else
+                        {<img src="../images/iRedX.png" width="25" height="25" />}
+                    </td>
                     <td>@result.Note</td>
                     <td>@result.CreateTime</td>
                     <td>@result.UpdateTime</td>
@@ -68,7 +86,6 @@
     /// Создаём необходимые компоненты
     /// </summary>
     IEnumerable<Result> results;
-    IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Unit> units;
     IEnumerable<Instrument> instruments;
@@ -79,12 +96,16 @@
     public string UrlSampleId { get; set; }
 
     /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public int changsort = 0;
+
+    /// <summary>
     /// Исполняемая при запуске страницы задача
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
         results = await ResultService.ResultList(SampleId);
-        samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         units = await UnitServiceService.UnitList();
         instruments = await InstrumentService.InstrumentList();

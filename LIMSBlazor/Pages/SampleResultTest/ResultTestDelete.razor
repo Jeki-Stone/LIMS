@@ -4,6 +4,7 @@
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
 @inject NavigationManager NavigationManager
 
 <DataEdit FormType="Delete" PageTitle="Удалить результат испытания" DeleteWarning="Вы уверены что хотите удалить этот результат испытания? Данные нельзя будет вернуть!" Model="@result" OnClickDelete="@Delete" OnClickCancel="@Cancel">
@@ -15,6 +16,10 @@
         <tr>
             <td>Аналитический сервис:</td>
             <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Наименование испытательного оборудования:</td>
+            <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
             <td>Номер пробы:</td>
@@ -31,17 +36,17 @@
                 {<img src="../images/iGreenCheck.png" width="25" height="25" />}
                 else
                 {<img src="../images/iRedX.png" width="25" height="25" />}
-        </td>
-    </tr>
-    <tr>
-        <td>Записка:</td>
-        <td>@result.Note</td>
-    </tr>
-</table>
+            </td>
+        </tr>
+        <tr>
+            <td>Записка:</td>
+            <td>@result.Note</td>
+        </tr>
+    </table>
 </DataEdit>
 
 
-@code {
+@code { 
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
@@ -50,6 +55,7 @@
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -65,6 +71,7 @@
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         result = await ResultService.Result_GetOne(id);
         units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
     }
 
     /// <summary>

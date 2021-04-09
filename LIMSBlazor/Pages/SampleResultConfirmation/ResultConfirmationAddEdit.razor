@@ -3,6 +3,7 @@
 @inject IResultService ResultService
 @inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
+@inject IInstrumentService InstrumentService
 @inject NavigationManager NavigationManager
 
 <DataEdit PageTitle="@pagetitle" Model="@result" BtnSaveText="@buttontext" OnValidSubmit="@ResultSave" OnClickCancel="@Cancel">
@@ -14,6 +15,10 @@
         <tr>
             <td>Аналитический сервис:</td>
             <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Наименование испытательного оборудования:</td>
+            <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
             <td>Номер пробы:</td>
@@ -47,6 +52,7 @@
 
     IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -67,6 +73,7 @@
         samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         result = await ResultService.Result_GetOne(id);
+        instruments = await InstrumentService.InstrumentList();
     }
 
     /// <summary>

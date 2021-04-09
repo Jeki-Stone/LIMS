@@ -80,7 +80,6 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("SampleId", sampleattr.SampleId, DbType.Int32);
                     parametrs.Add("AttrId", sampleattr.AttrId, DbType.Int32);
-                    parametrs.Add("OldAttrId", sampleattr.OldAttrId, DbType.Int32);
                     parametrs.Add("Value", sampleattr.Value, DbType.String);
                     parametrs.Add("CreateTime", sampleattr.CreateTime, DbType.DateTime);
                     parametrs.Add("UpdateTime", sampleattr.UpdateTime, DbType.DateTime);

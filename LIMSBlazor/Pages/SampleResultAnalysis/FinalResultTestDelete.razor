@@ -1,9 +1,9 @@
 ﻿@using LIMSBlazor.Data
 @page "/analysis/sample/finalresultdelete/{SampleId:int}/{id:int}"
 @inject IFinalResultService FinalResultService
-@inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
 @inject NavigationManager NavigationManager
 
 <DataEdit FormType="Delete" PageTitle="Удалить финальный результат испытания" DeleteWarning="Вы уверены что хотите удалить этот финальный результат испытания? Данные нельзя будет вернуть!" Model="@finalresult" OnClickDelete="@Delete" OnClickCancel="@Cancel">
@@ -15,6 +15,10 @@
         <tr>
             <td>Аналитический сервис:</td>
             <td>@analyticalservs?.Where(x => x.Id == finalresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Наименование испытательного оборудования:</td>
+            <td>@instruments?.Where(x => x.Id == finalresult.InstrumentId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
             <td>Номер пробы:</td>
@@ -47,9 +51,9 @@
     /// </summary>
     FinalResult finalresult = new FinalResult();
 
-    IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -61,10 +65,10 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         finalresult = await FinalResultService.FinalResult_GetOne(id);
         units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
     }
 
 
@@ -73,7 +77,6 @@
     /// </summary>
     protected async Task Delete()
     {
-        // Insert if id is zero.
         await FinalResultService.FinalResultDelete(id);
         NavigationManager.NavigateTo("/analysis/sample/finalresultlist/" + SampleId);
     }
@@ -84,4 +87,5 @@
     void Cancel()
     {
         NavigationManager.NavigateTo("/analysis/sample/finalresultlist/" + SampleId);
-    } }
+    }
+}

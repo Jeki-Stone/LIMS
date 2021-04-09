@@ -1,9 +1,9 @@
 ﻿@using LIMSBlazor.Data
 @page "/analysis/sample/resultaddedit/{SampleId:int}/{id:int}"
 @inject IResultService ResultService
-@inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
 @inject NavigationManager NavigationManager
 
 <DataEdit PageTitle="@pagetitle" Model="@result" BtnSaveText="@buttontext" OnValidSubmit="@ResultSave" OnClickCancel="@Cancel">
@@ -15,6 +15,10 @@
         <tr>
             <td>Аналитический сервис:</td>
             <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Наименование испытательного оборудования:</td>
+            <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
         </tr>
         <tr>
             <td>Номер пробы:</td>
@@ -42,8 +46,8 @@
     Result result = new Result();
 
     IEnumerable<AnalyticalServ> analyticalservs;
-    IEnumerable<Sample> samples;
     IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -62,9 +66,9 @@
     protected override async Task OnInitializedAsync()
     {
         analyticalservs = await AnalyticalServService.AnalyticalServList();
-        samples = await SampleService.SampleList();
         result = await ResultService.Result_GetOne(id);
         units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
     }
 
     /// <summary>

@@ -4,6 +4,7 @@
 @inject ICliService CliService
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
+@inject ILabService LabService
 
 <DataView PageTitle="Список испытаний на анализе">
     <Header>
@@ -13,6 +14,7 @@
             <td>Время получения</td>
             <td>Время начала тестов</td>
             <td>Клиент</td>
+            <td>Лаборатория</td>
             <td>Тип пробы</td>
             <td>Количество проб</td>
             <td>Статус</td>
@@ -41,39 +43,40 @@
             {
                 if (sample.Status == 3)
                 {
-    <tr>
-        <td style="text-align:center">
-            <a href="analysis/sampleaddedit/@sample.Id">
-                <img src="../images/iEdit.png" width="20" height="20" />
-            </a>
-            &nbsp
-            <a href="analysis/sample/resultlist/@sample.Id">
-                <img src="../images/downArrow.png" title="Add result" width="20" height="20" />
-            </a>
-        </td>
-        <td>@sample.Id</td>
-        <td>@sample.RecieveTime</td>
-        <td>@sample.TestTime</td>
-        <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
-        <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
-        <td>@sample.NumSamples</td>
-        <td>@GlobalConstant.SampleStatusModel.Where(x => x.Value == Convert.ToString(sample.Status)).FirstOrDefault()?.Text</td>
-        <td style="text-align:center">
-            @if (sample.IsFinal == true)
-            {<img src="../images/iGreenCheck.png" width="25" height="25" />}
-            else
-            {<img src="../images/iRedX.png" width="25" height="25" />}
-        </td>
-        <td>@sample.Note</td>
-        <td>@locs?.Where(x => x.Id == sample.LocationId).FirstOrDefault()?.Name</td>
-        <td>@sample.LastEditComment</td>
-        <td>@sample.CreateTime</td>
-        <td>@sample.UpdateTime</td>
-        <td>@sample.CreateUser</td>
-        <td>@sample.UpdateUser</td>
-        <td>@sample.FinalizeTime</td>
-        <td>@sample.FinalizeUser</td>
-    </tr>
+                    <tr>
+                        <td style="text-align:center">
+                            <a href="analysis/sampleaddedit/@sample.Id">
+                                <img src="../images/iEdit.png" width="20" height="20" />
+                            </a>
+                            &nbsp
+                            <a href="analysis/sample/resultlist/@sample.Id">
+                                <img src="../images/downArrow.png" title="Add result" width="20" height="20" />
+                            </a>
+                        </td>
+                        <td>@sample.Id</td>
+                        <td>@sample.RecieveTime</td>
+                        <td>@sample.TestTime</td>
+                        <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
+                        <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
+                        <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
+                        <td>@sample.NumSamples</td>
+                        <td>@GlobalConstant.SampleStatusModel.Where(x => x.Value == Convert.ToString(sample.Status)).FirstOrDefault()?.Text</td>
+                        <td style="text-align:center">
+                            @if (sample.IsFinal == true)
+                            {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                            else
+                            {<img src="../images/iRedX.png" width="25" height="25" />}
+                        </td>
+                        <td>@sample.Note</td>
+                        <td>@locs?.Where(x => x.Id == sample.LocationId).FirstOrDefault()?.Name</td>
+                        <td>@sample.LastEditComment</td>
+                        <td>@sample.CreateTime</td>
+                        <td>@sample.UpdateTime</td>
+                        <td>@sample.CreateUser</td>
+                        <td>@sample.UpdateUser</td>
+                        <td>@sample.FinalizeTime</td>
+                        <td>@sample.FinalizeUser</td>
+                    </tr>
                 }
             }
         }
@@ -88,6 +91,7 @@
     IEnumerable<Cli> clis;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
+    IEnumerable<Lab> labs;
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
@@ -98,5 +102,6 @@
         clis = await CliService.CliList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
+        labs = await LabService.LabList();
     }
 }

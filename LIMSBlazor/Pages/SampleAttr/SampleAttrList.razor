@@ -31,9 +31,7 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="samplelog/sample/sampleattraddedit/@sampleattr.SampleId/@sampleattr.AttrId">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
+                            <img @onclick=@SaveData src="../images/Floppy.png" width="20" height="20" style="cursor: pointer;" />
                         &nbsp
                         <a href="samplelog/sample/sampleattrdelete/@sampleattr.SampleId/@sampleattr.AttrId">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
@@ -41,7 +39,7 @@
                     </td>
                     <td>@sampleattr.SampleId</td>
                     <td>@attrs.Where(x => x.Id == sampleattr.AttrId).FirstOrDefault()?.Name</td>
-                    <td style="text-align:center"><AttrEdit Attr="@sampleattr" ReadOnly="true" /></td>
+                    <td style="text-align:center"><AttrEdit Attr="@sampleattr" /></td>
                     <td>@sampleattr.CreateTime</td>
                     <td>@sampleattr.UpdateTime</td>
                     <td>@sampleattr.CreateUser</td>
@@ -57,6 +55,7 @@
     /// Создаём необходимые компоненты
     /// </summary>
     IEnumerable<SampleAttr> sampleattrs;
+    IEnumerable<SampleAttr> oldsampleattrs;
     IEnumerable<Sample> samples;
     IEnumerable<Attr> attrs;
 
@@ -71,8 +70,28 @@
     protected override async Task OnInitializedAsync()
     {
         sampleattrs = await SampleAttrService.SampleAttrList(SampleId);
+        oldsampleattrs = await SampleAttrService.SampleAttrList(SampleId);
         samples = await SampleService.SampleList();
         attrs = await AttrService.AttrList();
         UrlSampleId = "samplelog/sample/sampleattraddedit/" + SampleId;
+    }
+
+    /// <summary>
+    /// Сохранает изменение значений в textbox в БД
+    /// </summary>
+    protected async Task SaveData()
+    {
+        foreach (var item in sampleattrs)
+        {
+            foreach (var olditem in oldsampleattrs)
+            {
+                if (item.SampleId == olditem.SampleId && item.AttrId == olditem.AttrId && item.Value != olditem.Value)
+                {
+                    item.UpdateTime = DateTime.Now;
+                    item.UpdateUser = "Обновивший пользователь";
+                    await SampleAttrService.SampleAttrUpdate(item);
+                }
+            }
+        }
     }
 }

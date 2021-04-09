@@ -116,11 +116,12 @@ namespace LIMSBlazor.Data
         }
 
         /// Удалить все строки таблицы с данными SampleId и AnalyticalServiceId из БД
-        public async Task<bool> FinalResultDeleteAll(int SampleId, int AnalyticalServiceId)
+        public async Task<bool> FinalResultDeleteAll(int SampleId, int AnalyticalServiceId, int ValueNo)
         {
             var parameters = new DynamicParameters();
             parameters.Add("SampleId", SampleId, DbType.Int32);
             parameters.Add("AnalyticalServiceId", AnalyticalServiceId, DbType.Int32);
+            parameters.Add("ValueNo", ValueNo, DbType.Int32);
             using (var conn = new SqlConnection(_configuration.Value))
             {
                 await conn.ExecuteAsync("spFinalResults_DeleteAll", parameters, commandType: CommandType.StoredProcedure);

@@ -1,10 +1,10 @@
 ﻿@using LIMSBlazor.Data
 @page "/analysis/sample/resultlist/{SampleId:int}"
 @inject IResultService ResultService
-@inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IFinalResultService FinalResultService
 @inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
 @inject NavigationManager NavigationManager
 
 <ul class="nav nav-tabs">
@@ -41,6 +41,7 @@
             <th>Id</th>
             <td>Id испытания</td>
             <td>Аналитический сервис</td>
+            <td>Испытательная машина</td>
             <td>Номер пробы</td>
             <td>Результат</td>
             <td>Ед.изм.</td>
@@ -63,31 +64,32 @@
         {
             @foreach (var result in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort))
             {
-    <tr>
-        <td style="text-align:center">
-            <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
-                <img src="../images/iEdit.png" width="20" height="20" />
-            </a>
-            &nbsp
-            <a href="/analysis/sample/result/resultattrlist/@SampleId/@result.AnalyticalServiceId">
-                <img src="../images/downArrow.png" title="Add attr" width="20" height="20" />
-            </a>
-        </td>
-        <td>@result.Id</td>
-        <td>@result.SampleId</td>
-        <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-        <td>@result.ValueNo</td>
-        <td>@result.Value</td>
-        <td>@units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
-        <td style="text-align:center">
-            <input type="checkbox" @bind="result.IsFinal" @oninput=SaveData>
-        </td>
-        <td>@result.Note</td>
-        <td>@result.CreateTime</td>
-        <td>@result.UpdateTime</td>
-        <td>@result.CreateUser</td>
-        <td>@result.UpdateUser</td>
-    </tr>
+                <tr>
+                    <td style="text-align:center">
+                        <a href="/analysis/sample/resultaddedit/@SampleId/@result.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="/analysis/sample/result/resultattrlist/@SampleId/@result.AnalyticalServiceId">
+                            <img src="../images/downArrow.png" title="Add attr" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@result.Id</td>
+                    <td>@result.SampleId</td>
+                    <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
+                    <td>@result.ValueNo</td>
+                    <td>@result.Value</td>
+                    <td>@units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
+                    <td style="text-align:center">
+                        <input type="checkbox" @bind="result.IsFinal" @oninput=SaveData>
+                    </td>
+                    <td>@result.Note</td>
+                    <td>@result.CreateTime</td>
+                    <td>@result.UpdateTime</td>
+                    <td>@result.CreateUser</td>
+                    <td>@result.UpdateUser</td>
+                </tr>
             }
         }
     </Rows>
@@ -120,6 +122,7 @@
     IEnumerable<Result> results;
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
@@ -133,7 +136,6 @@
     /// Задаём базовые значения
     /// </summary>
     public int changsort = 0;
-    public int resId = 0;
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
@@ -143,6 +145,7 @@
         results = await ResultService.ResultList(SampleId);
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
         UrlSampleId = "/confirmation/sample/resultaddedit/" + SampleId;
     }
 
@@ -151,8 +154,24 @@
     /// </summary>
     protected async Task AddUpdateFinalResult()
     {
-        @foreach (var itemGrup in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort).GroupBy(e => e.AnalyticalServiceId))
+        @foreach (var itemGrup in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort).GroupBy(e => new { e.AnalyticalServiceId, e.ValueNo }))
         {
+            //var data = new List<double>();
+            //float itemValue = 0;
+            //string itemName = "Финальный результат";
+
+            //foreach (var item in GrupItem)
+            //{
+            //    //if (!Labels.Contains(item.ValueNo.ToString()))
+            //    //    Labels.Add(item.ValueNo.ToString());
+            //    Labels.Add(item.Id.ToString());
+            //    data.Add(item.Value);
+            //    itemValue += item.Value;
+            //}
+            //itemValue = itemValue / GrupItem.Count;
+            //Labels.Add(itemName);
+            //data.Add(itemValue);
+
             float itemValue = 0;
             string itemName = "";
 
@@ -163,6 +182,7 @@
                 {
                     finalresult.SampleId = item.SampleId;
                     finalresult.AnalyticalServiceId = item.AnalyticalServiceId;
+                    finalresult.InstrumentId = item.InstrumentId;
                     itemName = item.ValueNo.ToString();
                     itemValue += item.Value;
                 }
@@ -171,7 +191,7 @@
                 finalresult.Value = itemValue / GrupItem.Count;
                 finalresult.CreateTime = DateTime.Now;
                 finalresult.CreateUser = "Создавший пользователь";
-                await FinalResultService.FinalResultDeleteAll(finalresult.SampleId, finalresult.AnalyticalServiceId);
+                await FinalResultService.FinalResultDeleteAll(finalresult.SampleId, finalresult.AnalyticalServiceId, Convert.ToInt32(finalresult.ValueNo));
                 await FinalResultService.FinalResultInsert(finalresult);
             }
         }

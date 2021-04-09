@@ -6,11 +6,10 @@ namespace LIMSBlazor.Data
     public interface IFinalResultService
     {
         Task<bool> FinalResultInsert(FinalResult finalresult);
-
         Task<IEnumerable<FinalResult>> FinalResultList(int SampleId);
         Task<FinalResult> FinalResult_GetOne(int Id);
         Task<bool> FinalResultUpdate(FinalResult finalresult);
         Task<bool> FinalResultDelete(int id);
-        Task<bool> FinalResultDeleteAll(int SampleId, int AnalyticalServiceId);
+        Task<bool> FinalResultDeleteAll(int SampleId, int AnalyticalServiceId, int ValueNo);
     }
 }

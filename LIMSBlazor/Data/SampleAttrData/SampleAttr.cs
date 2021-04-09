@@ -11,7 +11,6 @@ namespace LIMSBlazor.Data
     public class SampleAttr : IAttr
     {
         public int SampleId { get; set; }
-        public int OldAttrId { get; set; }
         public int AttrId { get; set; }
         public string Value { get; set; }
         public DateTime CreateTime { get; set; } = DateTime.Now;

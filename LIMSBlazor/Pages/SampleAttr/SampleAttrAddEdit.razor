@@ -1,6 +1,5 @@
 ﻿@using LIMSBlazor.Data
 @page "/samplelog/sample/sampleattraddedit/{SampleId:int}"
-@page "/samplelog/sample/sampleattraddedit/{SampleId:int}/{AttrId:int}"
 @inject ISampleAttrService SampleAttrService
 @inject ISampleService SampleService
 @inject IAttrService AttrService
@@ -26,10 +25,6 @@
                     }
                 </select>
             </td>
-        </tr>
-        <tr>
-            <td>Значение:</td>
-            <AttrEdit Attr="@sampleattr" />
         </tr>
     </table>
 </DataEdit>
@@ -61,33 +56,15 @@
     {
         samples = await SampleService.SampleList();
         attrs = await AttrService.AttrList();
-        /// Если Id ноль то будет добавлено новое значение
-        if ((SampleId != 0) & (AttrId != 0))
-        {
-            sampleattr = await SampleAttrService.SampleAttr_GetOne(SampleId, AttrId);
-            pagetitle = "Изменить данные атрибута испытания";
-            buttontext = "Изменить";
-        }
     }
 
     /// <summary>
-    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// Задача сохраняющая в БД
     /// </summary>
     protected async Task SampleAttrSave()
     {
-        if ((sampleattr.SampleId != 0) & (sampleattr.AttrId != 0))
-        {
-            sampleattr.UpdateUser = "Изменивший пользователь";
-            sampleattr.UpdateTime = DateTime.Now;
-            sampleattr.OldAttrId = AttrId;
-            await SampleAttrService.SampleAttrUpdate(sampleattr);
-        }
-        else
-        {
-            sampleattr.UpdateUser = "Создавший пользователь";
-            await SampleAttrService.SampleAttrInsert(sampleattr, SampleId);
-        }
-
+        sampleattr.UpdateUser = "Создавший пользователь";
+        await SampleAttrService.SampleAttrInsert(sampleattr, SampleId);
         NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
     }
 

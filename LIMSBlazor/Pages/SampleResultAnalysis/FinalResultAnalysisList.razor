@@ -1,9 +1,9 @@
 ﻿@using LIMSBlazor.Data
 @page "/analysis/sample/finalresultlist/{SampleId:int}"
 @inject IFinalResultService FinalResultService
-@inject ISampleService SampleService
 @inject IAnalyticalServService AnalyticalServService
 @inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
@@ -14,12 +14,27 @@
     </li>
 </ul>
 <DataView PageTitle="Список финальных результатов испытания" UrlBack="analysis/samplelist" UrlBackText="Вернуться к списку испытаний">
+    <Filtr>
+        <li class="nav-item">
+            <select @bind="changsort" id="sort" required class="form-control">
+                @if (analyticalservs != null)
+                {
+                    <option value="0">Выберите значение</option>
+                    foreach (var item in finalresults.GroupBy(e => e.AnalyticalServiceId))
+                    {
+                        <option value="@item.Key">@analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name</option>
+                    }
+                }
+            </select>
+        </li>
+    </Filtr>
     <Header>
         <tr>
             <th style="text-align:center">#</th>
             <th>Id</th>
             <td>Id испытания</td>
             <td>Аналитический сервис</td>
+            <td>Испытательная машина</td>
             <td>Номер пробы</td>
             <td>Результат</td>
             <td>Ед.изм.</td>
@@ -40,35 +55,36 @@
         }
         else
         {
-            @foreach (var finaresult in finalresults)
+            @foreach (var finalresult in finalresults.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort))
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="analysis/sample/finalresultaddedit/@SampleId/@finaresult.Id">
+                        <a href="analysis/sample/finalresultaddedit/@SampleId/@finalresult.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="analysis/sample/finalresultdelete/@SampleId/@finaresult.Id">
+                        <a href="analysis/sample/finalresultdelete/@SampleId/@finalresult.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
                     </td>
-                    <td>@finaresult.Id</td>
-                    <td>@finaresult.SampleId</td>
-                    <td>@analyticalservs?.Where(x => x.Id == finaresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                    <td>@finaresult.ValueNo</td>
-                    <td>@finaresult.Value</td>
-                    <td>@units?.Where(x => x.Id == finaresult.UnitId).FirstOrDefault()?.Name</td>
+                    <td>@finalresult.Id</td>
+                    <td>@finalresult.SampleId</td>
+                    <td>@analyticalservs?.Where(x => x.Id == finalresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@instruments?.Where(x => x.Id == finalresult.InstrumentId).FirstOrDefault()?.Name</td>
+                    <td>@finalresult.ValueNo</td>
+                    <td>@finalresult.Value</td>
+                    <td>@units?.Where(x => x.Id == finalresult.UnitId).FirstOrDefault()?.Name</td>
                     <td>
-                        @if (finaresult.IsFinal == true)
+                        @if (finalresult.IsFinal == true)
                         {<img src="../images/iGreenCheck.png" width="25" height="25" />}
                         else
                         {<img src="../images/iRedX.png" width="25" height="25" />}
                     </td>
-                    <td>@finaresult.Note</td>
-                    <td>@finaresult.CreateTime</td>
-                    <td>@finaresult.UpdateTime</td>
-                    <td>@finaresult.CreateUser</td>
-                    <td>@finaresult.UpdateUser</td>
+                    <td>@finalresult.Note</td>
+                    <td>@finalresult.CreateTime</td>
+                    <td>@finalresult.UpdateTime</td>
+                    <td>@finalresult.CreateUser</td>
+                    <td>@finalresult.UpdateUser</td>
                 </tr>
             }
         }
@@ -80,12 +96,17 @@
     /// Создаём необходимые компоненты
     /// </summary>
     IEnumerable<FinalResult> finalresults;
-    IEnumerable<Sample> samples;
     IEnumerable<AnalyticalServ> analyticalservs;
     IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
 
     [Parameter]
     public int SampleId { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public int changsort = 0;
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
@@ -93,8 +114,8 @@
     protected override async Task OnInitializedAsync()
     {
         finalresults = await FinalResultService.FinalResultList(SampleId);
-        samples = await SampleService.SampleList();
         analyticalservs = await AnalyticalServService.AnalyticalServList();
         units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
     }
 }
