@@ -156,22 +156,6 @@
     {
         @foreach (var itemGrup in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort).GroupBy(e => new { e.AnalyticalServiceId, e.ValueNo }))
         {
-            //var data = new List<double>();
-            //float itemValue = 0;
-            //string itemName = "Финальный результат";
-
-            //foreach (var item in GrupItem)
-            //{
-            //    //if (!Labels.Contains(item.ValueNo.ToString()))
-            //    //    Labels.Add(item.ValueNo.ToString());
-            //    Labels.Add(item.Id.ToString());
-            //    data.Add(item.Value);
-            //    itemValue += item.Value;
-            //}
-            //itemValue = itemValue / GrupItem.Count;
-            //Labels.Add(itemName);
-            //data.Add(itemValue);
-
             float itemValue = 0;
             string itemName = "";
 
