@@ -1,14 +1,74 @@
-﻿@inherits LayoutComponentBase
+﻿@using LIMSBlazor.Data
+@inject ILabService LabService
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inherits LayoutComponentBase
+
 <div class="sidebar">
     <NavMenu />
 </div>
 
 <div class="main">
     <div class="top-row px-4" style="z-index:5">
-        <a href="#" target="_blank">Авторизация</a>
+        <select @bind="Labaratory" @oninput="OnInput" required class="form-control">
+            @if (labs != null)
+            {
+                <option value="0">Выберите значение</option>
+                foreach (var item in labs)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            }
+        </select>
+        <a href="/Login">Авторизация</a>
     </div>
 
     <div class="content px-4">
         @Body
     </div>
 </div>
+
+@code
+{
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<Lab> labs;
+
+    int Labaratory;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+
+    protected override async Task OnInitializedAsync()
+    {
+        labs = await LabService.LabList();
+    }
+
+    /// <summary>
+    /// Запрашиваем переменную лаборатории сессии
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var result = await ProtectedSessionStore.GetAsync<int>("LabaratoryId");
+                Labaratory = result.Success ? result.Value : 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Задаём переменную лаборатории сессии
+    /// </summary>
+    private async Task OnInput(ChangeEventArgs e)
+    {
+        await ProtectedSessionStore.SetAsync("LabaratoryId", int.Parse(e.Value.ToString()));
+    }
+}

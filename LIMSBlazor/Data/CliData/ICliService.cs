@@ -10,5 +10,6 @@ namespace LIMSBlazor.Data
         Task<Cli> Cli_GetOne(int Id);
         Task<bool> CliUpdate(Cli cli);
         Task<bool> CliDelete(int id);
+        Task<Cli> Cli_GetLogin(string Name, string Password);
     }
 }

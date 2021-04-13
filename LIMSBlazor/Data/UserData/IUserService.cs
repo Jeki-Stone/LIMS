@@ -11,5 +11,6 @@ namespace LIMSBlazor.Data
         Task<User> User_GetOne(int Id);
         Task<bool> UserUpdate(User user);
         Task<bool> UserDelete(int id);
+        Task<User> User_GetLogin(string Name, string Password);
     }
 }

@@ -12,6 +12,7 @@ using LIMSBlazor.Data;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace LIMSBlazor
 {
@@ -69,7 +70,7 @@ namespace LIMSBlazor
             //Optional for debugging
             services.AddServerSideBlazor(o => o.DetailedErrors = true);
 
-           
+            services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

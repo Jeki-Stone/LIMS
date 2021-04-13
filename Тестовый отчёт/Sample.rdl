@@ -22,11 +22,12 @@
             <Value>=Parameters!SampleId.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>SELECT        Samples.Id, Samples.RecieveTime, Samples.TestTime, Samples.NumSamples, Samples.FinalizeTime, Clients.FullName, Clients.PhoneNumber, Clients.Organization, Locs.Name AS LocName, 
-                         Clients.Name AS ClientName
+        <CommandText>SELECT        Samples.Id, Samples.RecieveTime, Samples.TestTime, Samples.NumSamples, Samples.FinalizeTime, Clients.FullName, Clients.PhoneNumber, Clients.Organization, Locs.Name AS LocName, Clients.Name AS ClientName, 
+                         Labs.Name AS LabName
 FROM            Samples INNER JOIN
                          Clients ON Samples.ClientId = Clients.Id INNER JOIN
-                         Locs ON Samples.LocationId = Locs.Id
+                         Locs ON Samples.LocationId = Locs.Id INNER JOIN
+                         Labs ON Samples.LabId = Labs.Id AND Locs.Id = Labs.LocId
 WHERE        (Samples.Id = @SampleId)</CommandText>
       </Query>
       <Fields>
@@ -70,6 +71,10 @@ WHERE        (Samples.Id = @SampleId)</CommandText>
           <DataField>ClientName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="LabName">
+          <DataField>LabName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="Result">
@@ -80,10 +85,11 @@ WHERE        (Samples.Id = @SampleId)</CommandText>
             <Value>=Parameters!SampleId.Value</Value>
           </QueryParameter>
         </QueryParameters>
-        <CommandText>SELECT        FinalResults.Id AS FinResId, FinalResults.Value, AnalyticalServices.Name AS AnalyticalSerName, Units.Name AS UnitName, FinalResults.SampleId
+        <CommandText>SELECT        FinalResults.Id AS FinResId, FinalResults.Value, AnalyticalServices.Name AS AnalyticalSerName, Units.Name AS UnitName, FinalResults.SampleId, FinalResults.ValueNo, Instruments.Name AS InstrumName
 FROM            FinalResults INNER JOIN
                          AnalyticalServices ON FinalResults.AnalyticalServiceId = AnalyticalServices.Id INNER JOIN
-                         Units ON AnalyticalServices.UnitId = Units.Id
+                         Units ON AnalyticalServices.UnitId = Units.Id INNER JOIN
+                         Instruments ON FinalResults.Id = Instruments.Id
 WHERE        (FinalResults.SampleId = @SampleId)</CommandText>
       </Query>
       <Fields>
@@ -107,9 +113,17 @@ WHERE        (FinalResults.SampleId = @SampleId)</CommandText>
           <DataField>SampleId</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
+        <Field Name="ValueNo">
+          <DataField>ValueNo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="InstrumName">
+          <DataField>InstrumName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
-    <DataSet Name="Sample">
+    <DataSet Name="SampleAttr">
       <Query>
         <DataSourceName>LIMS</DataSourceName>
         <QueryParameters>
@@ -183,7 +197,7 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
                   <Width>4.06073cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.85719cm</Width>
+                  <Width>3.94198cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -309,6 +323,73 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>TestTime</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Лаборатория:</Value>
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox4</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="LabName">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!LabName.Value</Value>
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>LabName</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -745,13 +826,14 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Smaples</DataSetName>
             <Top>1.82245cm</Top>
             <Left>0.26141cm</Left>
-            <Height>4.8cm</Height>
-            <Width>6.91792cm</Width>
+            <Height>5.4cm</Height>
+            <Width>8.00271cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -763,18 +845,24 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>7.60615cm</Width>
+                  <Width>6.91794cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.23094cm</Width>
+                  <Width>1.68716cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>3.37313cm</Width>
+                  <Width>4.73666cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.91823cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.95021cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.6cm</Height>
+                  <Height>0.94396cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -796,6 +884,72 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>№ пробы</Value>
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox5</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Испытательная машина</Value>
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -914,6 +1068,70 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="ValueNo">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ValueNo.Value</Value>
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ValueNo</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="InstrumName">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!InstrumName.Value</Value>
+                                  <Style>
+                                    <FontFamily>Times New Roman</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>InstrumName</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Value">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -989,6 +1207,8 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1002,10 +1222,10 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>Result</DataSetName>
-            <Top>8.54287cm</Top>
-            <Left>0.26141cm</Left>
-            <Height>1.2cm</Height>
-            <Width>17.21021cm</Width>
+            <Top>9.25725cm</Top>
+            <Left>0.26139cm</Left>
+            <Height>1.54396cm</Height>
+            <Width>17.2102cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -1032,8 +1252,8 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox16</rd:DefaultName>
-            <Top>10.05099cm</Top>
-            <Left>11.41329cm</Left>
+            <Top>11.40036cm</Top>
+            <Left>11.73016cm</Left>
             <Height>0.6cm</Height>
             <Width>2.68521cm</Width>
             <ZIndex>3</ZIndex>
@@ -1216,11 +1436,11 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>Sample</DataSetName>
-            <Top>6.92891cm</Top>
-            <Left>0.26141cm</Left>
+            <DataSetName>SampleAttr</DataSetName>
+            <Top>7.64328cm</Top>
+            <Left>0.26139cm</Left>
             <Height>1.2cm</Height>
-            <Width>17.21021cm</Width>
+            <Width>17.2102cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -1284,8 +1504,8 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>FinalizeTime</rd:DefaultName>
-            <Top>10.05099cm</Top>
-            <Left>13.78162cm</Left>
+            <Top>11.40036cm</Top>
+            <Left>14.09849cm</Left>
             <Height>0.6cm</Height>
             <Width>2.5cm</Width>
             <ZIndex>6</ZIndex>
@@ -1303,7 +1523,7 @@ WHERE        (SampleAttrs.SampleId = @SampleId)</CommandText>
         <Height>5.40164in</Height>
         <Style />
       </Body>
-      <Width>7.00359in</Width>
+      <Width>7.01908in</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>

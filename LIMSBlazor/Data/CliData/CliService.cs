@@ -99,5 +99,19 @@ namespace LIMSBlazor.Data
             }
             return true;
         }
+
+        /// Получите данные на основе его имени и пароля
+        public async Task<Cli> Cli_GetLogin(string Name, string Password)
+        {
+            Cli cli = new Cli();
+            var parameters = new DynamicParameters();
+            parameters.Add("Name", Name, DbType.Int32);
+            parameters.Add("Password", Password, DbType.Int32);
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+                cli = await conn.QueryFirstOrDefaultAsync<Cli>("spClients_GetOne", parameters, commandType: CommandType.StoredProcedure);
+            }
+            return cli;
+        }
     }
 }
