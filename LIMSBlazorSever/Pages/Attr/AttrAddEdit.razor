@@ -1,0 +1,88 @@
+﻿@using LIMSBlazor.Data
+@page "/config/attraddedit"
+@page "/config/attraddedit/{id:int}"
+@inject IAttrService AttrService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@attr" BtnSaveText="@buttontext" OnValidSubmit="@AttrSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Наименование:</td>
+            <td><input type="text" @bind="attr.Name" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="attr.Description"></textarea></td>
+        </tr>
+        <tr>
+            <td>Тип:</td>
+            <td>
+                <select @bind="attr.Type" required class="form-control">
+                    <option value="0">Выберите значение</option>
+                    @foreach (var item in GlobalConstant.AttrTypeModel)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Опция:</td>
+            <td><input type="text" @bind="attr.Options" class="form-control"></td>
+        </tr>
+    </table>
+</DataEdit>
+
+    @code {
+        /// <summary>
+        /// Создаём необходимые компоненты
+        /// </summary>
+        Attr attr = new Attr();
+
+        [Parameter]
+        public int id { get; set; }
+
+        /// <summary>
+        /// Задаём базовые значения
+        /// </summary>
+        public string pagetitle = "Добавить новый атрибут";
+        public string buttontext = "Добавить";
+
+        /// <summary>
+        /// Исполняемая при запуске страницы задача
+        /// </summary>
+        protected override async Task OnInitializedAsync()
+        {
+            /// Если Id ноль то будет добавлено новое значение
+            if (id != 0)
+            {
+                attr = await AttrService.Attr_GetOne(id);
+                pagetitle = "Изменить данные атрибута";
+                buttontext = "Изменить";
+            }
+        }
+
+        /// <summary>
+        /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+        /// </summary>
+        protected async Task AttrSave()
+        {
+            if (attr.Id == 0)
+            {
+                await AttrService.AttrInsert(attr);
+            }
+            else
+            {
+                await AttrService.AttrUpdate(attr);
+            }
+            NavigationManager.NavigateTo("config/attrlist");
+        }
+
+        /// <summary>
+        /// Отмена изменений и возвращение на прошлую страницу
+        /// </summary>
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("config/attrlist");
+        }
+    }

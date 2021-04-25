@@ -1,0 +1,125 @@
+﻿@using LIMSBlazor.Data
+@page "/config/instrumentaddedit"
+@page "/config/instrumentaddedit/{id:int}"
+@inject IInstrumentService InstrumentService
+@inject ILabService LabService
+@inject IInstrumTypeService InstrumTypeService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@instrument" BtnSaveText="@buttontext" OnValidSubmit="@InstrumentSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Название:</td>
+            <td><input type="text" @bind="instrument.Name" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Тип оборудования:</td>
+            <td>
+                <select @bind="instrument.InstrumentTypeId" class="form-control" required>
+                    @if (instrumtypes != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in instrumtypes)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Серийный номер:</td>
+            <td><input type="text" @bind="instrument.SerialNumber" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Статус:</td>
+            <td>
+                <select @bind="instrument.Status" required class="form-control">
+                    <option value="0">Выберите значение</option>
+                    @foreach (var item in GlobalConstant.InstrumentStatus)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Лаборатория:</td>
+            <td>
+                <select @bind="instrument.LabId" class="form-control" required>
+                    @if (labs != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in labs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="instrument.Description"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Instrument instrument = new Instrument();
+
+    IEnumerable<InstrumType> instrumtypes;
+    IEnumerable<Lab> labs;
+
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новое оборудование";
+    public string buttontext = "Добавить";
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        instrumtypes = await InstrumTypeService.InstrumTypeList();
+        labs = await LabService.LabList();
+        /// Если Id ноль то будет добавлено новое значение
+        if (id != 0)
+        {
+            instrument = await InstrumentService.Instrument_GetOne(id);
+            pagetitle = "Изменить данные оборудования";
+            buttontext = "Изменить";
+        }
+    }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task InstrumentSave()
+    {
+        if (instrument.Id == 0)
+        {
+            instrument = await InstrumentService.InstrumentInsert(instrument);
+        }
+        else
+        {
+            await InstrumentService.InstrumentUpdate(instrument);
+        }
+        NavigationManager.NavigateTo("/config/instrumentlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/instrumentlist");
+    }
+}

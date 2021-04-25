@@ -1,0 +1,195 @@
+﻿@using LIMSBlazor.Data
+@page "/samplelog/sampleaddedit"
+@page "/samplelog/sampleaddedit/{Id:int}"
+@inject ISampleService SampleService
+@inject ICliService CliService
+@inject ISampleTypeService SampleTypeService
+@inject ILocService LocService
+@inject ISampleAnalyticalService SampleAnalyticalService
+@inject ILabService LabService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@sample" BtnSaveText="@buttontext" OnValidSubmit="@SampleSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Время получения:</td>
+            <td>
+                <InputDate @bind-Value="sample.RecieveTime" />
+            </td>
+        </tr>
+        <tr>
+            <td>Время начала тестов:</td>
+            <td><InputDate @bind-Value="sample.TestTime" /></td>
+        </tr>
+        <tr>
+            <td>Клиент:</td>
+            <td>
+                <select @bind="sample.ClientId" required class="form-control">
+                    @if (clis != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in clis)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Лаборатория:</td>
+            <td>
+                <select @bind="sample.LabId" required class="form-control">
+                    @if (labs != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in labs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Тип пробы:</td>
+            <td>
+                <select @bind="sample.SampleTypeId" required class="form-control" disabled=@Type>
+                    @if (sampletypes != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in sampletypes)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Количество проб:</td>
+            <td><input type="number" @bind="sample.NumSamples" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Статус:</td>
+            <td>
+                <select @bind="sample.Status" required class="form-control">
+                    <option value="0">Выберите значение</option>
+                    @foreach (var item in GlobalConstant.SampleStatusModel)
+                    {
+                        if ((item.Value == "1") || (item.Value == "2"))
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Записка:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.Note"></textarea></td>
+        </tr>
+        <tr>
+            <td>Место взятия пробы:</td>
+            <td>
+                <select @bind="sample.LocationId" required class="form-control">
+                    @if (locs != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in locs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Причины изменений:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.LastEditComment"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Sample sample = new Sample();
+    SampleAnalytical sampleanalytical = new SampleAnalytical();
+
+    IEnumerable<Cli> clis;
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<Loc> locs;
+    IEnumerable<Lab> labs;
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новыую пробу";
+    public string buttontext = "Добавить";
+    public bool Type = false;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        clis = await CliService.CliList();
+        sampletypes = await SampleTypeService.SampleTypeList();
+        locs = await LocService.LocList();
+        labs = await LabService.LabList();
+        /// Если Id ноль то будет добавлено новое значение
+        if (Id != null)
+        {
+            sample = await SampleService.Sample_GetOne((int)Id);
+            pagetitle = "Изменить данные пробы";
+            buttontext = "Изменить";
+        }
+        if (sample.Status > 1)
+        {
+            Type = true;
+        }
+    }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task SampleSave()
+    {
+        if (Id == null)
+        {
+            sample.CreateTime = DateTime.Now;
+            sample.CreateUser = "Создавший пользователь";
+            // После вставки Insert возвращает новый обьект
+            sample.IsFinal = false;
+            sample = await SampleService.SampleInsert(sample);
+        }
+        else
+        {
+            sample.UpdateTime = DateTime.Now;
+            sample.UpdateUser = "Обновивший пользователь пользователь";
+            if (sample.Status == 5)
+            {
+                sample.IsFinal = true;
+            }
+            else
+            {
+                sample.IsFinal = false;
+            }
+            await SampleService.SampleUpdate(sample);
+        }
+        NavigationManager.NavigateTo("samplelog/samplelist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("samplelog/samplelist");
+    }
+}

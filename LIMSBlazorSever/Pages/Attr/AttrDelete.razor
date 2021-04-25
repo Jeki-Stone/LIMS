@@ -1,0 +1,61 @@
+﻿@using LIMSBlazor.Data
+@page "/config/attrdelete/{id:int}"
+@inject IAttrService AttrService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить атрибут из базы данных" DeleteWarning="Вы уверены что хотите удалить этот атрибут из базы данных? Данные нельзя будет вернуть!" Model="@attr" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table class="editform">
+        <tr>
+            <td>Наименование:</td>
+            <td>@attr.Name</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@attr.Description</td>
+        </tr>
+        <tr>
+            <td>Тип:</td>
+            <td>@attr.Type</td>
+        </tr>
+        <tr>
+            <td>Опция:</td>
+            <td>@attr.Options</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Attr attr = new Attr();
+
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        attr = await AttrService.Attr_GetOne(id);
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await AttrService.AttrDelete(id);
+        NavigationManager.NavigateTo("config/attrlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/attrlist");
+    }
+}

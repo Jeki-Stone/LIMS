@@ -1,0 +1,60 @@
+﻿@using LIMSBlazor.Data
+@page "/config/userdelete/{id:int}"
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить пользователя из базы данных" DeleteWarning="Вы уверены что хотите удалить этого пользователя? Данные нельзя будет вернуть!" Model="@user" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Имя Пользователя:</td>
+            <td>@user.Name</td>
+        </tr>
+        <tr>
+            <td>Полное имя Пользователя:</td>
+            <td>@user.FullName</td>
+        </tr>
+        <tr>
+            <td>Номер телефона Пользователя:</td>
+            <td>@user.PhoneNumber</td>
+        </tr>
+        <tr>
+            <td>Пароль:</td>
+            <td>@user.Password</td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    User user = new User();
+
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserService.User_GetOne(id);
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await UserService.UserDelete(id);
+        NavigationManager.NavigateTo("/config/userlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/userlist");
+    }
+}

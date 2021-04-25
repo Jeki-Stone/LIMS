@@ -1,0 +1,62 @@
+﻿@using LIMSBlazor.Data
+@page "/config/analyticalserv/analyticalserviceattrdelete/{AnalyticalServiceId:int}/{AttrId:int}"
+@inject IAnalyticalServiceAttrService AnalyticalServiceAttr
+@inject IAnalyticalServService AnalyticalServService
+@inject IAttrService AttrService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить атрибут аналитического сервиса из базы данных" DeleteWarning="Вы уверены что хотите удалить этот атрибут аналитического сервиса? Данные нельзя будет вернуть!" Model="@analyticalserviceattr" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table class="editform">
+        <tr>
+            <td>Id аналитического сервиса:</td>
+            <td>@analyticalservs?.Where(x => x.Id == AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Атребут:</td>
+            <td>@attrs?.Where(x => x.Id == analyticalserviceattr.AttrId).FirstOrDefault()?.Name</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    AnalyticalServiceAttr analyticalserviceattr = new AnalyticalServiceAttr();
+
+    IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Attr> attrs;
+
+    [Parameter]
+    public int AnalyticalServiceId { get; set; }
+    [Parameter]
+    public int AttrId { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        analyticalserviceattr = await AnalyticalServiceAttr.AnalyticalServiceAttr_GetOne(AnalyticalServiceId, AttrId);
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        attrs = await AttrService.AttrList();
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await AnalyticalServiceAttr.AnalyticalServiceAttrDelete(AnalyticalServiceId, AttrId);
+        NavigationManager.NavigateTo("config/analyticalserv/analyticalserviceattrlist/" + AnalyticalServiceId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/analyticalserv/analyticalserviceattrlist/" + AnalyticalServiceId);
+    }
+}

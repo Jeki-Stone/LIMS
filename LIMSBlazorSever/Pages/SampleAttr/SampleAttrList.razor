@@ -1,0 +1,97 @@
+﻿@using LIMSBlazor.Data
+@page "/samplelog/sample/sampleattrlist/{SampleId:int}"
+@inject ISampleAttrService SampleAttrService
+@inject ISampleService SampleService
+@inject IAttrService AttrService
+
+
+<DataView PageTitle="Список атрибутов испытания" UrlAdd=@UrlSampleId UrlBack="samplelog/samplelist" UrlAddText="Добавить новый атрибут испытания" UrlBackText="Вернуться к списку испытаний">
+    <Header>
+        <tr>
+            <th style="text-align:center">#</th>
+            <th>Id испытания</th>
+            <th>Атрибут</th>
+            <th>Значение</th>
+            <td>Время создания</td>
+            <td>Время последних изменений</td>
+            <td>Кем созданно</td>
+            <td>Кем изменено</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (sampleattrs == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
+        }
+        else
+        {
+            @foreach (var sampleattr in sampleattrs)
+            {
+                <tr>
+                    <td style="text-align:center">
+                            <img @onclick=@SaveData src="../images/Floppy.png" width="20" height="20" style="cursor: pointer;" />
+                        &nbsp
+                        <a href="samplelog/sample/sampleattrdelete/@sampleattr.SampleId/@sampleattr.AttrId">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@sampleattr.SampleId</td>
+                    <td>@attrs.Where(x => x.Id == sampleattr.AttrId).FirstOrDefault()?.Name</td>
+                    <td style="text-align:center"><AttrEdit Attr="@sampleattr" /></td>
+                    <td>@sampleattr.CreateTime</td>
+                    <td>@sampleattr.UpdateTime</td>
+                    <td>@sampleattr.CreateUser</td>
+                    <td>@sampleattr.UpdateUser</td>
+                </tr>
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<SampleAttr> sampleattrs;
+    IEnumerable<SampleAttr> oldsampleattrs;
+    IEnumerable<Sample> samples;
+    IEnumerable<Attr> attrs;
+
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public string UrlSampleId { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        sampleattrs = await SampleAttrService.SampleAttrList(SampleId);
+        oldsampleattrs = await SampleAttrService.SampleAttrList(SampleId);
+        samples = await SampleService.SampleList();
+        attrs = await AttrService.AttrList();
+        UrlSampleId = "samplelog/sample/sampleattraddedit/" + SampleId;
+    }
+
+    /// <summary>
+    /// Сохранает изменение значений в textbox в БД
+    /// </summary>
+    protected async Task SaveData()
+    {
+        foreach (var item in sampleattrs)
+        {
+            foreach (var olditem in oldsampleattrs)
+            {
+                if (item.SampleId == olditem.SampleId && item.AttrId == olditem.AttrId && item.Value != olditem.Value)
+                {
+                    item.UpdateTime = DateTime.Now;
+                    item.UpdateUser = "Обновивший пользователь";
+                    await SampleAttrService.SampleAttrUpdate(item);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,137 @@
+﻿@using LIMSBlazor.Data
+@page "/samplelog/samplelist"
+@inject ISampleService SampleService
+@inject ICliService CliService
+@inject ISampleTypeService SampleTypeService
+@inject ILocService LocService
+@inject ILabService LabService
+@inject ProtectedSessionStorage ProtectedSessionStore
+
+<DataView PageTitle="Журнал регистрации проб" UrlAdd="samplelog/sampleaddedit" UrlAddText="Добавить новую пробу">
+    <Header>
+        <tr>
+            <th style="text-align:center">#</th>
+            <th>Id</th>
+            <td>Время получения</td>
+            <td>Время начала тестов</td>
+            <td>Клиент</td>
+            <td>Лаборатория</td>
+            <td>Тип пробы</td>
+            <td>Количество проб</td>
+            <td>Статус</td>
+            <td>Готовность</td>
+            <td>Записка</td>
+            <td>Место взятия пробы</td>
+            <td>Причины изменений</td>
+            <td>Время создания</td>
+            <td>Время последних изменений</td>
+            <td>Кем созданно</td>
+            <td>Кем изменено</td>
+            <td>Дата готовности</td>
+            <td>Пользователь подтверждающий готовность</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (samples == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
+        }
+        else
+        {
+            @foreach (var sample in samples)
+            {
+                if (sample.LabId == Labaratory)
+                {
+                    <tr>
+                        <td style="text-align:center">
+                            <a href="samplelog/sampleaddedit/@sample.Id">
+                                <img src="../images/iEdit.png" width="20" height="20" />
+                            </a>
+                            &nbsp
+                            <a href="samplelog/sampledelete/@sample.Id">
+                                <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                            </a>
+                            &nbsp
+                            <a href="samplelog/sample/sampleattrlist/@sample.Id">
+                                <img src="../images/downArrow.png" title="Add attribute" width="20" height="20" />
+                            </a>
+                            &nbsp
+                            <a href="/samplelog/sample/resultlist/@sample.Id">
+                                <img src="../images/downArrow.png" title="Add analitical" width="20" height="20" />
+                            </a>
+                        </td>
+                        <td>@sample.Id</td>
+                        <td>@sample.RecieveTime</td>
+                        <td>@sample.TestTime</td>
+                        <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
+                        <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
+                        <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
+                        <td>@sample.NumSamples</td>
+                        <td>@GlobalConstant.SampleStatusModel.Where(x => x.Value == Convert.ToString(sample.Status)).FirstOrDefault()?.Text</td>
+                        <td style="text-align:center">
+                            @if (sample.IsFinal == true)
+                            {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                            else
+                            {<img src="../images/iRedX.png" width="25" height="25" />}
+                        </td>
+                        <td>@sample.Note</td>
+                        <td>@locs?.Where(x => x.Id == sample.LocationId).FirstOrDefault()?.Name</td>
+                        <td>@sample.LastEditComment</td>
+                        <td>@sample.CreateTime</td>
+                        <td>@sample.UpdateTime</td>
+                        <td>@sample.CreateUser</td>
+                        <td>@sample.UpdateUser</td>
+                        <td>@sample.FinalizeTime</td>
+                        <td>@sample.FinalizeUser</td>
+                    </tr>
+                }
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<Sample> samples;
+    IEnumerable<Cli> clis;
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<Loc> locs;
+    IEnumerable<Lab> labs;
+
+    int Labaratory;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        samples = await SampleService.SampleList();
+        clis = await CliService.CliList();
+        sampletypes = await SampleTypeService.SampleTypeList();
+        locs = await LocService.LocList();
+        labs = await LabService.LabList();
+    }
+
+    /// <summary>
+    /// Запрашиваем переменную лаборатории сессии
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var result = await ProtectedSessionStore.GetAsync<int>("LabaratoryId");
+                Labaratory = result.Success ? result.Value : 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+    }
+}

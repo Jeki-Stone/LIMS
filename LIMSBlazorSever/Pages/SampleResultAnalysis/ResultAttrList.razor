@@ -1,0 +1,75 @@
+﻿@using LIMSBlazor.Data
+@page "/analysis/sample/result/resultattrlist/{SampleId:int}/{AnalyticalServiceId:int}"
+@inject IResultAttrService ResultAttrService
+@inject IAttrService AttrService
+@inject IAnalyticalServService AnalyticalServService
+
+<DataView PageTitle="Список атрибутов испытания" UrlBack=@UrlBackSampleId UrlBackText="Вернуться к списку испытаний">
+    <Header>
+        <tr>
+            <th>Испытание</th>
+            <td>Аналетический сервис</td>
+            <td>Атрибут</td>
+            <td>Значение</td>
+            <td>Время создания</td>
+            <td>Время последних изменений</td>
+            <td>Кем созданно</td>
+            <td>Кем изменено</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (resultattrs == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
+        }
+        else
+        {
+            @foreach (var resultattr in resultattrs)
+            {
+                <tr>
+                    <td>@resultattr.SampleId</td>
+                    <td>@analyticalservs?.Where(x => x.Id == resultattr.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@attrs?.Where(x => x.Id == resultattr.AttrId).FirstOrDefault()?.Name</td>
+                    <td style="text-align:center"><AttrEdit Attr="@resultattr" ReadOnly="true" /></td>
+                    <td>@resultattr.CreateTime</td>
+                    <td>@resultattr.UpdateTime</td>
+                    <td>@resultattr.CreateUser</td>
+                    <td>@resultattr.UpdateUser</td>
+                </tr>
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<ResultAttr> resultattrs;
+    IEnumerable<ResultAttr> oldresultattrs;
+    IEnumerable<Attr> attrs;
+    IEnumerable<AnalyticalServ> analyticalservs;
+
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int AnalyticalServiceId { get; set; }
+    [Parameter]
+    public string UrlAddSampleId { get; set; }
+    [Parameter]
+    public string UrlBackSampleId { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        resultattrs = await ResultAttrService.ResultAttrList(SampleId, AnalyticalServiceId);
+        oldresultattrs = await ResultAttrService.ResultAttrList(SampleId, AnalyticalServiceId);
+        attrs = await AttrService.AttrList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        UrlBackSampleId = "/analysis/sample/resultlist/" + SampleId;
+    }
+}

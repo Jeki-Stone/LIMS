@@ -1,0 +1,186 @@
+﻿@using LIMSBlazor.Data
+@using Microsoft.AspNetCore.Mvc.Rendering;
+@using System.Collections.Generic;
+@inject IAttrService AttrService
+@inject ISampleAttrService SampleAttrService
+
+@if (_attr != null)
+{
+
+    @if (_attr.Type == 1)
+    {
+        if (ReadOnly)
+        {
+            @Attr.Value
+        }
+        else
+        {
+            <td><input type="number" @bind="Attr.Value" class="form-control" required placeholder="Введите число"></td>
+        }
+    }
+
+    @if (_attr.Type == 2)
+    {
+        if (ReadOnly)
+        {
+            @Attr.Value
+        }
+        else
+        {
+            <td><input type="text" @bind="Attr.Value" class="form-control" required placeholder="Введите текст"></td>
+        }
+    }
+
+    @if (_attr.Type == 3)
+    {
+        if (ReadOnly)
+        {
+            @options.Where(x => x.Value == Attr.Value).FirstOrDefault()?.Text
+        }
+        else
+        {
+            <td>
+                <select @bind="Attr.Value" class="form-control" required disabled="@(sampleattr.SampleId != 0)">
+                    @if (options != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in options)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    }
+                </select>
+            </td>
+        }
+    }
+
+    @if (_attr.Type == 4)
+    {
+        if (ReadOnly)
+        {
+            @options.Where(x => x.Value == Attr.Value).FirstOrDefault()?.Text
+        }
+        else
+        {
+            <td>
+                <select @bind="Attr.Value" class="form-control" required disabled="@(sampleattr.SampleId != 0)">
+                    @if (options != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in options)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    }
+                </select>
+            </td>
+        }
+    }
+
+    @if (_attr.Type == 5)
+    {
+        if (ReadOnly)
+        {
+            @if (Attr.Value == "True")
+            {
+                <img src="../images/iGreenCheck.png" width="25" height="25" />
+            }
+            else
+            {
+                <img src="../images/iRedX.png" width="25" height="25" />
+            }
+        }
+        else
+        {
+            <td>
+                <select @bind="Attr.Value" class="form-control" required disabled="@(sampleattr.SampleId != 0)">
+                    <option value="True">Да</option>
+                    <option value="False">Нет</option>
+                </select>
+            </td>
+        }
+    }
+
+    @if (_attr.Type == 6)
+    {
+        if (ReadOnly)
+        {
+            @dateTime.ToString(GlobalConstant.DATE_FORMAT)
+        }
+        else
+        {
+            <td><input type="date" @bind="dateTime" @oninput="dateTimeChange" class="form-control" required placeholder="Введите дату и время"></td>
+        }
+    }
+
+    @if (_attr.Type == 7)
+    {
+        if (ReadOnly)
+        {
+            @dateTime.ToString(GlobalConstant.DATETIME_FORMAT)
+        }
+        else
+        {
+            <td><input type="datetime-local" @bind="dateTime" @oninput="dateTimeChange" class="form-control" required placeholder="Введите дату и время"></td>
+        }
+    }
+}
+
+@code {
+    SampleAttr sampleattr = new SampleAttr();
+
+    IEnumerable<Attr> attrs;
+
+    [Parameter]
+    public IAttr Attr { get; set; }
+    [Parameter]
+    public Boolean ReadOnly { get; set; }
+
+    Attr _attr = null;
+    private DateTime dateTime;
+    bool checkBox;
+    List<SelectListItem> options = new List<SelectListItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _attr = await AttrService.Attr_GetOne(Attr.AttrId);
+
+        if (Attr?.Value != null && (_attr.Type == 6 || _attr.Type == 7))
+            DateTime.TryParse(Attr.Value, out dateTime);
+        if (Attr?.Value != null && _attr.Type == 5)
+            bool.TryParse(Attr.Value, out checkBox);
+
+        if (_attr?.Type == 3)
+        {
+            string phrase = _attr.Options;
+            string[] words = phrase.Split(';');
+            foreach (var word in words)
+            {
+                string[] parVals = word.Split(':');
+                if (parVals.Length == 2)
+                    options.Add(new SelectListItem { Value = parVals[0], Text = parVals[1] });
+            }
+        }
+
+        if (_attr?.Type == 4)
+        {
+            string sql = _attr.Options;
+            var rows = await AttrService.Attr_GetOptions(sql);
+            foreach(var row in rows)
+                options.Add(new SelectListItem { Value = row.Id, Text = row.Text });
+        }
+    }
+
+    void dateTimeChange(ChangeEventArgs e)
+    {
+        Attr.Value = e.Value.ToString();
+        DateTime.TryParse(Attr.Value, out dateTime);
+    }
+
+    void checkBoxChange(ChangeEventArgs e)
+    {
+        Attr.Value = e.Value.ToString();
+        bool.TryParse(Attr.Value, out checkBox);
+    }
+
+}

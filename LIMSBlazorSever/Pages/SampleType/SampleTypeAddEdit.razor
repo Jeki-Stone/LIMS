@@ -1,0 +1,72 @@
+﻿@using LIMSBlazor.Data
+@page "/config/sampletypeaddedit"
+@page "/config/sampletypeaddedit/{id:int}"
+@inject ISampleTypeService SampleTypeService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@sampletype" BtnSaveText="@buttontext" OnValidSubmit="@SampleTypeSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Наименование:</td>
+            <td><input type="text" @bind="sampletype.Name" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sampletype.Description"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleType sampletype = new SampleType();
+
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новый тип образца испытания";
+    public string buttontext = "Добавить";
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        /// Если Id ноль то будет добавлено новое значение
+        if (id != 0)
+        {
+            sampletype = await SampleTypeService.SampleType_GetOne(id);
+            pagetitle = "Изменить данные типа образца испытания";
+            buttontext = "Изменить";
+        }
+    }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task SampleTypeSave()
+    {
+        if (sampletype.Id != 0)
+        {
+            await SampleTypeService.SampleTypeUpdate(sampletype);
+        }
+        else
+        {
+            await SampleTypeService.SampleTypeInsert(sampletype);
+        }
+        NavigationManager.NavigateTo("config/sampletypelist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/sampletypelist");
+    }
+}

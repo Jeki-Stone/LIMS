@@ -1,0 +1,58 @@
+﻿@using LIMSBlazor.Data
+@page "/config/samplespecdelete/{id:int}"
+@inject ISampleSpecService SampleSpecService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить спецификацию из базы данных" DeleteWarning="Вы уверены что хотите удалить эту спецификацию из базы данных? Данные нельзя будет вернуть!" Model="@samplespec" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Наименование:</td>
+            <td>@samplespec.Name</td>
+        </tr>
+        <tr>
+            <td>Версия:</td>
+            <td>@samplespec.Version</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@samplespec.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleSpec samplespec = new SampleSpec();
+
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        samplespec = await SampleSpecService.SampleSpec_GetOne(id);
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        // Insert if id is zero.
+        await SampleSpecService.SampleSpecDelete(id);
+        NavigationManager.NavigateTo("config/samplespeclist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/samplespeclist");
+    }
+}

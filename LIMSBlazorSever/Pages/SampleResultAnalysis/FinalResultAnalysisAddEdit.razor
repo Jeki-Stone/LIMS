@@ -1,0 +1,89 @@
+﻿@using LIMSBlazor.Data
+@page "/analysis/sample/finalresultaddedit/{SampleId:int}/{id:int}"
+@inject IFinalResultService FinalResultService
+@inject IAnalyticalServService AnalyticalServService
+@inject IInstrumentService InstrumentService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@finalresult" BtnSaveText="@buttontext" OnValidSubmit="@FinalResultSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Id испытания:</td>
+            <td>@SampleId</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>@analyticalservs?.Where(x => x.Id == finalresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Испытательная машина</td>
+            <td>@instruments?.Where(x => x.Id == finalresult.InstrumentId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Номер пробы:</td>
+            <td>@finalresult.ValueNo</td>
+        </tr>
+        <tr>
+            <td>Результат:</td>
+            <td>@finalresult.Value</td>
+        </tr>
+        <tr>
+            <td>Одобрено:</td>
+            <td>@finalresult.IsFinal</td>
+        </tr>
+        <tr>
+            <td>Записка:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="finalresult.Note"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    FinalResult finalresult = new FinalResult();
+
+    IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Instrument> instruments;
+
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Редактирование записи финального результата испытания";
+    public string buttontext = "Изменить";
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        finalresult = await FinalResultService.FinalResult_GetOne(id);
+        instruments = await InstrumentService.InstrumentList();
+    }
+
+    /// <summary>
+    /// Задача обновляющая данные в БД
+    /// </summary>
+    protected async Task FinalResultSave()
+    {
+        finalresult.UpdateTime = DateTime.Now;
+        finalresult.UpdateUser = "Обновивший пользователь пользователь";
+        await FinalResultService.FinalResultUpdate(finalresult);
+        NavigationManager.NavigateTo("analysis/sample/finalresultlist/" + SampleId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("analysis/sample/finalresultlist/" + SampleId);
+    }
+}

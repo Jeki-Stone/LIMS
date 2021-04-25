@@ -1,0 +1,70 @@
+﻿@using LIMSBlazor.Data
+@page "/config/samplespec/samplespecanalyticaldelete/{SampleSpecId:int}/{AnalyticalServiceId:int}"
+@inject ISampleSpecAnalyticalService SampleSpecAnalyticalService
+@inject ISampleSpecService SampleSpecService
+@inject IAnalyticalServService AnalyticalServService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить элемент спецификации" DeleteWarning="Вы уверены что хотите удалить этот элемент спецификации? Данные нельзя будет вернуть!" Model="@samplespecanalytical" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Спецификация:</td>
+            <td>@samplespecs?.Where(x => x.Id == samplespecanalytical.SampleSpecId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>@analyticalservs?.Where(x => x.Id == samplespecanalytical.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Минимальное значение:</td>
+            <td>@samplespecanalytical.MinValue</td>
+        </tr>
+        <tr>
+            <td>Максимальное значение:</td>
+            <td>@samplespecanalytical.MaxValue</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleSpecAnalytical samplespecanalytical = new SampleSpecAnalytical();
+
+    [Parameter]
+    public int SampleSpecId { get; set; }
+    [Parameter]
+    public int AnalyticalServiceId { get; set; }
+
+    IEnumerable<SampleSpec> samplespecs;
+    IEnumerable<AnalyticalServ> analyticalservs;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        samplespecanalytical = await SampleSpecAnalyticalService.SampleSpecAnalytical_GetOne(SampleSpecId, AnalyticalServiceId);
+        samplespecs = await SampleSpecService.SampleSpecList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await SampleSpecAnalyticalService.SampleSpecAnalyticalDelete(SampleSpecId, AnalyticalServiceId);
+        NavigationManager.NavigateTo("/config/samplespec/samplespecanalyticallist/" + SampleSpecId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/samplespec/samplespecanalyticallist/" + SampleSpecId);
+    }
+}

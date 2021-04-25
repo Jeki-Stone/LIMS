@@ -1,0 +1,161 @@
+﻿@using LIMSBlazor.Data
+@page "/samplelog/sample/resultaddedit/{SampleId:int}"
+@page "/samplelog/sample/resultaddedit/{SampleId:int}/{id:int}"
+@inject IResultService ResultService
+@inject ISampleService SampleService
+@inject IAnalyticalServService AnalyticalServService
+@inject IInstrumentService InstrumentService
+@inject IInstrumAnalyticService InstrumAnalyticService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@result" BtnSaveText="@buttontext" OnValidSubmit="@ResultSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Id испытания:</td>
+            <td>@SampleId</td>
+        </tr>
+        @if (id == 0)
+        {
+            <tr>
+                <td>Аналитический сервис:</td>
+                <td>
+                    <select @bind="result.AnalyticalServiceId" class="form-control" required>
+                        @if (instrumanalytics != null)
+                        {
+                            <option value="0">Выберите значение</option>
+                            foreach (var item in instrumanalytics.GroupBy(e => e.AnalyticalServiceId))
+                            {
+                                <option value="@item.Key">@analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+        }
+        @if (id != 0)
+        {
+            <tr>
+                <td>Аналитический сервис:</td>
+                <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+            </tr>
+            <tr>
+                <td>Наименование испытательного оборудования:</td>
+                <td>
+                    <select @bind="result.InstrumentId" class="form-control" required>
+                        @if (insitem != null)
+                        {
+                            <option value="0">Выберите значение</option>
+                            foreach (var item in insitem)
+                            {
+                                <option value="@item">@instruments?.Where(x => x.Id == item).FirstOrDefault()?.Name</option>
+                            }
+                        }
+                    </select>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>Номер пробы:</td>
+            <td>
+                <select @bind="result.ValueNo" class="form-control" required>
+                    @if (sample != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                             for (int i = 1; i <= sample.NumSamples; i++)
+                             {
+                                 <option value="@i">@i</option>
+                             }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Готовность:</td>
+            <td><input type="checkbox" @bind="result.IsFinal"></td>
+        </tr>
+        <tr>
+            <td>Записка:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="result.Note"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Result result = new Result();
+
+    Sample sample;
+    IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Instrument> instruments;
+    IEnumerable<InstrumAnalytic> instrumanalytics;
+
+    List<int> insitem = new List<int>();
+
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новый результат испытания";
+    public string buttontext = "Добавить";
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        sample = await SampleService.Sample_GetOne(SampleId);
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        instruments = await InstrumentService.InstrumentList();
+        instrumanalytics = await InstrumAnalyticService.InstrumAnalyticList(SampleId);
+        /// Если Id ноль то будет добавлено новое значение
+        if (id != 0)
+        {
+            result = await ResultService.Result_GetOne(id);
+            pagetitle = "Изменить данные результата испытания";
+            buttontext = "Изменить";
+
+            foreach (var item in instrumanalytics)
+            {
+                if (item.AnalyticalServiceId == result.AnalyticalServiceId)
+                {
+                    insitem.Add(item.InstrumentId);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task ResultSave()
+    {
+        if (id != 0)
+        {
+            result.UpdateTime = DateTime.Now;
+            result.UpdateUser = "Обновивший пользователь пользователь";
+            await ResultService.ResultUpdate(result);
+        }
+        else
+        {
+            result.CreateTime = DateTime.Now;
+            result.CreateUser = "Создавший пользователь";
+            result.SampleId = SampleId;
+            await ResultService.ResultInsert(result);
+        }
+        NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
+    }
+}

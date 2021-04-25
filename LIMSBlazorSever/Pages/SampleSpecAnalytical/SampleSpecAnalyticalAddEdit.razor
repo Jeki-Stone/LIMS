@@ -1,0 +1,104 @@
+﻿@using LIMSBlazor.Data
+@page "/config/samplespec/samplespecanalyticaladdedit/{SampleSpecId:int}"
+@page "/config/samplespec/samplespecanalyticaladdedit/{SampleSpecId:int}/{AnalyticalServiceId:int}"
+@inject ISampleSpecAnalyticalService SampleSpecAnalyticalService
+@inject ISampleSpecService SampleSpecService
+@inject IAnalyticalServService AnalyticalServService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@samplespecanalytical" BtnSaveText="@buttontext" OnValidSubmit="@SampleSpecAnalyticalSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Спецификация:</td>
+            <td>@samplespecs?.Where(x => x.Id == samplespecanalytical.SampleSpecId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>
+                <select @bind="samplespecanalytical.AnalyticalServiceId" class="form-control" required>
+                    @if (analyticalservs != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in analyticalservs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Минимальное значение:</td>
+            <td><input type="text" @bind="samplespecanalytical.MinValue" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Максимальное значение:</td>
+            <td><input type="text" @bind="samplespecanalytical.MaxValue" class="form-control" required></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleSpecAnalytical samplespecanalytical = new SampleSpecAnalytical();
+
+    IEnumerable<SampleSpec> samplespecs;
+    IEnumerable<AnalyticalServ> analyticalservs;
+
+    [Parameter]
+    public int SampleSpecId { get; set; }
+    [Parameter]
+    public int AnalyticalServiceId { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новый элемент спецификации";
+    public string buttontext = "Добавить";
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        samplespecs = await SampleSpecService.SampleSpecList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        samplespecanalytical.SampleSpecId = SampleSpecId;
+        /// Если Id ноль то будет добавлено новое значение
+        if ((SampleSpecId != 0) & (AnalyticalServiceId != 0))
+        {
+            samplespecanalytical = await SampleSpecAnalyticalService.SampleSpecAnalytical_GetOne(SampleSpecId, AnalyticalServiceId);
+            pagetitle = "Изменить данные элемента спецификации";
+            buttontext = "Изменить";
+        }
+    }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task SampleSpecAnalyticalSave()
+    {
+        if (AnalyticalServiceId == 0)
+        {
+            samplespecanalytical.SampleSpecId = SampleSpecId;
+            await SampleSpecAnalyticalService.SampleSpecAnalyticalInsert(samplespecanalytical);
+        }
+        else
+        {
+            samplespecanalytical.OldSampleSpecId = SampleSpecId;
+            samplespecanalytical.OldAnalyticalServiceId = AnalyticalServiceId;
+            await SampleSpecAnalyticalService.SampleSpecAnalyticalUpdate(samplespecanalytical);
+        }
+        NavigationManager.NavigateTo("/config/samplespec/samplespecanalyticallist/"+ SampleSpecId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/samplespec/samplespecanalyticallist/"+ SampleSpecId);
+    }
+}

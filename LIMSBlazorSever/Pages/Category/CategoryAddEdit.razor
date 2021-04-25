@@ -1,0 +1,72 @@
+﻿@using LIMSBlazor.Data
+@page "/config/categoryaddedit"
+@page "/config/categoryaddedit/{id:int}"
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@category" BtnSaveText="@buttontext" OnValidSubmit="@CategorySave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Наименование:</td>
+            <td><input type="text" @bind="category.Name" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="category.Description"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+    @code {
+        /// <summary>
+        /// Создаём необходимые компоненты
+        /// </summary>
+        Category category = new Category();
+
+        [Parameter]
+        public int id { get; set; }
+
+        /// <summary>
+        /// Задаём базовые значения
+        /// </summary>
+        public string pagetitle = "Добавить новую категорию аналитических сервисов";
+        public string buttontext = "Добавить";
+
+        /// <summary>
+        /// Исполняемая при запуске страницы задача
+        /// </summary>
+        protected override async Task OnInitializedAsync()
+        {
+            /// Если Id ноль то будет добавлено новое значение
+            if (id != 0)
+            {
+                category = await CategoryService.Category_GetOne(id);
+                pagetitle = "Изменить данные аналитических сервисов";
+                buttontext = "Изменить";
+            }
+        }
+
+        /// <summary>
+        /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+        /// </summary>
+        protected async Task CategorySave()
+        {
+            if (category.Id == 0)
+            {
+                await CategoryService.CategoryInsert(category);
+            }
+            else
+            {
+                await CategoryService.CategoryUpdate(category);
+            }
+            NavigationManager.NavigateTo("config/categorylist");
+        }
+
+        /// <summary>
+        /// Отмена изменений и возвращение на прошлую страницу
+        /// </summary>
+        void Cancel()
+        {
+            NavigationManager.NavigateTo("config/categorylist");
+        }
+    }

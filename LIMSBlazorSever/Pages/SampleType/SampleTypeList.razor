@@ -1,0 +1,62 @@
+﻿@using LIMSBlazor.Data
+@page "/config/sampletypelist"
+@inject ISampleTypeService SampleTypeService
+
+<DataView PageTitle="Список типов образцов испытаний" UrlAdd="config/sampletypeaddedit" UrlAddText="Добавить новый тип образца испытания">
+    <Header>
+        <tr>
+            <td style="text-align:center">#</td>
+            <td>Id</td>
+            <td>Наименование</td>
+            <td>Описание</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (sampletypes == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" width="50" height="50" />
+            </p>
+        }
+        else
+        {
+            @foreach (var sampletype in sampletypes)
+            {
+
+                <tr>
+                    <td style="text-align:center">
+                        <a href="config/sampletypeaddedit/@sampletype.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="config/sampletypedelete/@sampletype.Id">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="config/sampletype/sampletypeattrlist/@sampletype.Id">
+                            <img src="../images/downArrow.png" title="Add attribute" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@sampletype.Id</td>
+                    <td>@sampletype.Name</td>
+                    <td>@sampletype.Description</td>
+                </tr>
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<SampleType> sampletypes;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        sampletypes = await SampleTypeService.SampleTypeList();
+    }
+}

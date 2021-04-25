@@ -1,0 +1,65 @@
+﻿@using LIMSBlazor.Data
+@page "/config/labdelete/{id:int}"
+@inject ILabService LabService
+@inject ILocService LocService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить лабораторию из базы данных" DeleteWarning="Вы уверены что хотите удалить эту лабораторию? Данные нельзя будет вернуть!" Model="@lab" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Код лаборатории:</td>
+            <td>@lab.Code</td>
+        </tr>
+        <tr>
+            <td>Наименование:</td>
+            <td>@lab.Name</td>
+        </tr>
+        <tr>
+            <td>Местоположение:</td>
+            <td>@locs?.Where(x => x.Id == lab.LocId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@lab.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Lab lab = new Lab();
+
+    IEnumerable<Loc> locs;
+
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        locs = await LocService.LocList();
+        lab = await LabService.Lab_GetOne(id);
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await LabService.LabDelete(id);
+        NavigationManager.NavigateTo("config/lablist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/lablist");
+    }
+}

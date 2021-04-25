@@ -1,0 +1,64 @@
+﻿@using LIMSBlazor.Data
+@page "/config/lablist"
+@inject ILabService LabService
+@inject ILocService LocService
+
+<DataView PageTitle="Список лабораторий" UrlAdd="/config/labaddedit" UrlAddText="Добавить новую лабораторию">
+    <Header>
+        <tr>
+            <th style="text-align:center">#</th>
+            <th>Id</th>
+            <th>Код</th>
+            <th>Наименование</th>
+            <th>Местоположение</th>
+            <th>Описание</th>
+        </tr>
+    </Header>
+    <Rows>
+        @if (labs == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
+        }
+        else
+        {
+            @foreach (var lab in labs)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        <a href="config/labaddedit/@lab.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="config/labdelete/@lab.Id">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@lab.Id</td>
+                    <td>@lab.Code</td>
+                    <td>@lab.Name</td>
+                    <td>@locs.Where(x => x.Id == lab.LocId).FirstOrDefault()?.Name</td>
+                    <td>@lab.Description</td>
+                </tr>
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<Lab> labs;
+    IEnumerable<Loc> locs;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        locs = await LocService.LocList();
+        labs = await LabService.LabList();
+    }
+}

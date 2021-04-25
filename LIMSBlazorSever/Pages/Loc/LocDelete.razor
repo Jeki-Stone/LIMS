@@ -1,0 +1,53 @@
+﻿@using LIMSBlazor.Data
+@page "/config/locdelete/{id:int}"
+@inject ILocService LocService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить место взятия пробы из базы данных" DeleteWarning="Вы уверены что хотите удалить это место взятия пробы? Данные нельзя будет вернуть!" Model="@loc" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Наименование:</td>
+            <td>@loc.Name</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@loc.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Loc loc = new Loc();
+
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        loc = await LocService.Loc_GetOne(id);
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await LocService.LocDelete(id);
+        NavigationManager.NavigateTo("config/loclist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/loclist");
+    }
+}

@@ -1,0 +1,68 @@
+﻿@using LIMSBlazor.Data
+@page "/config/analyticalservdelete/{id:int}"
+@inject IAnalyticalServService AnalyticalServService
+@inject ICategoryService CategoryService
+@inject IUnitService UnitService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить аналитический сервис" DeleteWarning="Вы уверены что хотите удалить этот аналитический сервис? Данные нельзя будет вернуть!" Model="@analyticalserv" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table class="editform">
+        <tr>
+            <td>Наименование:</td>
+            <td>@analyticalserv.Name</td>
+        </tr>
+        <tr>
+            <td>Категория:</td>
+            <td>@сategorys?.Where(x => x.Id == analyticalserv.CategoryId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Ед. измерения:</td>
+            <td>@units?.Where(x => x.Id == analyticalserv.UnitId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td>@analyticalserv.Description</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+@code { 
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    AnalyticalServ analyticalserv = new AnalyticalServ();
+
+    [Parameter]
+    public int id { get; set; }
+
+    IEnumerable<Category> сategorys;
+    IEnumerable<Unit> units;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        сategorys = await CategoryService.CategoryList();
+        units = await UnitService.UnitList();
+        analyticalserv = await AnalyticalServService.AnalyticalServ_GetOne(id);
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await AnalyticalServService.AnalyticalServDelete(id);
+        NavigationManager.NavigateTo("config/analyticalservlist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/analyticalservlist");
+    } 
+}

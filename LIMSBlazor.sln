@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIMSBlazor", "LIMSBlazor\LI
 EndProject
 Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "Тестовый отчёт", "Тестовый отчёт\Тестовый отчёт.rptproj", "{20B04425-9D12-426E-8215-40E87785D8F9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIMSBlazorSever", "LIMSBlazorSever\LIMSBlazorSever.csproj", "{3712F8F4-79E7-4B8E-ABE3-CD5FD87EF7B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,12 @@ Global
 		{20B04425-9D12-426E-8215-40E87785D8F9}.Release|Any CPU.ActiveCfg = Release
 		{20B04425-9D12-426E-8215-40E87785D8F9}.Release|Any CPU.Build.0 = Release
 		{20B04425-9D12-426E-8215-40E87785D8F9}.Release|Any CPU.Deploy.0 = Release
+		{3712F8F4-79E7-4B8E-ABE3-CD5FD87EF7B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3712F8F4-79E7-4B8E-ABE3-CD5FD87EF7B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3712F8F4-79E7-4B8E-ABE3-CD5FD87EF7B6}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{3712F8F4-79E7-4B8E-ABE3-CD5FD87EF7B6}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{3712F8F4-79E7-4B8E-ABE3-CD5FD87EF7B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3712F8F4-79E7-4B8E-ABE3-CD5FD87EF7B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

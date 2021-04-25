@@ -1,0 +1,93 @@
+﻿@using LIMSBlazor.Data
+@page "/config/sampletype/sampletypeattraddedit/{SampleTypeId:int}"
+@page "/config/sampletype/sampletypeattraddedit/{SampleTypeId:int}/{AttrId:int}"
+@inject ISampleTypeAttrService SampleTypeAttrService
+@inject ISampleTypeService SampleTypeService
+@inject IAttrService AttrService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@sampletypeattr" BtnSaveText="@buttontext" OnValidSubmit="@SampleTypeAttrSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Тип пробы:</td>
+            <td>@sampletypes?.Where(x => x.Id == SampleTypeId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Атрибут:</td>
+            <td>
+                <select @bind="sampletypeattr.AttrId" class="form-control" required>
+                    @if (attrs != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in attrs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    SampleTypeAttr sampletypeattr = new SampleTypeAttr();
+
+    IEnumerable<SampleType> sampletypes;
+    IEnumerable<Attr> attrs;
+
+    [Parameter]
+    public int SampleTypeId { get; set; }
+    [Parameter]
+    public int AttrId { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новый атрибут для типа испытания";
+    public string buttontext = "Добавить";
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        sampletypes = await SampleTypeService.SampleTypeList();
+        attrs = await AttrService.AttrList();
+        /// Если Id ноль то будет добавлено новое значение
+        if ((SampleTypeId != 0) & (AttrId != 0))
+        {
+            sampletypeattr = await SampleTypeAttrService.SampleTypeAttr_GetOne(SampleTypeId, AttrId);
+            pagetitle = "Изменить данные атрибута для типа испытания";
+            buttontext = "Изменить";
+        }
+    }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task SampleTypeAttrSave()
+    {
+        if ((sampletypeattr.SampleTypeId != 0) & (sampletypeattr.AttrId != 0))
+        {
+            sampletypeattr.OldAttrId = AttrId;
+            await SampleTypeAttrService.SampleTypeAttrUpdate(sampletypeattr);
+        }
+        else
+        {
+            await SampleTypeAttrService.SampleTypeAttrInsert(sampletypeattr, SampleTypeId);
+        }
+        NavigationManager.NavigateTo("config/sampletype/sampletypeattrlist/" + SampleTypeId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/sampletype/sampletypeattrlist/" + SampleTypeId);
+    }
+}

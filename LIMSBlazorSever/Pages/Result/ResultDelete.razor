@@ -1,0 +1,76 @@
+﻿@using LIMSBlazor.Data
+@page "/samplelog/sample/resultdelete/{SampleId:int}/{id:int}"
+@inject IResultService ResultService
+@inject IAnalyticalServService AnalyticalServService
+@inject IInstrumentService InstrumentService
+@inject NavigationManager NavigationManager
+
+<DataEdit FormType="Delete" PageTitle="Удалить результат испытания" DeleteWarning="Вы уверены что хотите удалить этот результат испытания? Данные нельзя будет вернуть!" Model="@result" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Id испытания:</td>
+            <td>@result.SampleId</td>
+        </tr>
+        <tr>
+            <td>Аналитический сервис:</td>
+            <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Наименование испытательного оборудования:</td>
+            <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
+        </tr>
+        <tr>
+            <td>Номер пробы:</td>
+            <td>@result.ValueNo</td>
+        </tr>
+        <tr>
+            <td>Готовность:</td>
+            <td>@result.IsFinal</td>
+        </tr>
+        <tr>
+            <td>Записка:</td>
+            <td>@result.Note</td>
+        </tr>
+    </table>
+</DataEdit>
+
+
+@code { /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Result result = new Result();
+
+    IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Instrument> instruments;
+
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        result = await ResultService.Result_GetOne(id);
+        instruments = await InstrumentService.InstrumentList();
+    }
+
+    /// <summary>
+    /// Задача удаляющая запись из БД
+    /// </summary>
+    protected async Task Delete()
+    {
+        await ResultService.ResultDelete(id);
+        NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/samplelog/sample/resultlist/" + SampleId);
+    } }

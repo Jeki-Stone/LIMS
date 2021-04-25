@@ -1,0 +1,57 @@
+﻿@using LIMSBlazor.Data
+@page "/config/rolelist"
+@inject IRoleService RoleService
+
+<DataView PageTitle="Список ролей" UrlAdd="/config/roleaddedit" UrlAddText="Добавить новую роль">
+    <Header>
+        <tr>
+            <td style="text-align:center">#</td>
+            <td>Id</td>
+            <td>Название</td>
+            <td>Описание</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (roles == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" width="50" height="50" />
+            </p>
+        }
+        else
+        {
+            @foreach (var role in roles)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        <a href="/config/roleaddedit/@role.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="/config/roledelete/@role.Id">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@role.Id</td>
+                    <td>@role.Name</td>
+                    <td>@role.Description</td>
+                </tr>
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<Role> roles;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        roles = await RoleService.RoleList();
+    }
+}

@@ -1,0 +1,182 @@
+﻿<div class="top-row pl-4 navbar navbar-dark ">
+    <a class="navbar-brand" href="/config/myusers">LIMSBlazor</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+<div class="@NavMenuCssClass">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="closeAllMenu">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="config/" Match="NavLinkMatch.Prefix" @onclick="selectConfigMenu">
+                <span class="oi oi-grid-three-up" aria-hidden="true"></span> Конфигурация
+            </NavLink>
+            @*<button class="btn btn-link" @onclick="selectConfigMenu">
+                    <span class="oi oi-grid-three-up" aria-hidden="true"></span> Конфигурация
+                </button>*@
+            @if (configMenuVisibl)
+            {
+                <NavLink class="nav-link" href="config/lablist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Лаборатории
+                </NavLink>
+                <NavLink class="nav-link" href="config/clilist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Клиенты
+                </NavLink>
+                <NavLink class="nav-link" href="config/userlist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Пользователи
+                </NavLink>
+                <NavLink class="nav-link" href="config/rolelist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Роли пользователей
+                </NavLink>
+                <NavLink class="nav-link" href="config/instrumtypelist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Типы исп. обор.
+                </NavLink>
+                <NavLink class="nav-link" href="config/instrumentlist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Оборудование
+                </NavLink>
+                <NavLink class="nav-link" href="config/loclist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Мест взятия проб
+                </NavLink>
+                <NavLink class="nav-link" href="config/categorylist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Кат. аналит. серв.
+                </NavLink>
+                <NavLink class="nav-link" href="config/unitlist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Ед измерения
+                </NavLink>
+                <NavLink class="nav-link" href="config/attrlist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Атрибуты
+                </NavLink>
+                <NavLink class="nav-link" href="config/sampletypelist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Типы обр. испытаний
+                </NavLink>
+                <NavLink class="nav-link" href="config/analyticalservlist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Аналит. сервисы
+                </NavLink>
+                <NavLink class="nav-link" href="config/samplespeclist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Спецификации
+                </NavLink>
+            }
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="samplelog/" Match="NavLinkMatch.Prefix" @onclick="selectSampleLog">
+                <span class="oi oi-grid-three-up" aria-hidden="true"></span> Пробы
+            </NavLink>
+            @if (sampleLogVisibl)
+            {
+                <NavLink class="nav-link" href="samplelog/samplelist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Регистр. проб
+                </NavLink>
+            }
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="test/" Match="NavLinkMatch.Prefix" @onclick="selectTest">
+                <span class="oi oi-grid-three-up" aria-hidden="true"></span> Испытания
+            </NavLink>
+            @if (testVisibl)
+            {
+                <NavLink class="nav-link" href="test/samplelist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Результаты
+                </NavLink>
+            }
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="analysis/" Match="NavLinkMatch.Prefix" @onclick="selectAnalysis">
+                <span class="oi oi-grid-three-up" aria-hidden="true"></span> Анализ
+            </NavLink>
+            @if (analysisVisibl)
+            {
+                <NavLink class="nav-link" href="analysis/samplelist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Рез. на анализ
+                </NavLink>
+            }
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="confirmation/" Match="NavLinkMatch.Prefix" @onclick="selectСonfirmation">
+                <span class="oi oi-grid-three-up" aria-hidden="true"></span> Подтверждение
+            </NavLink>
+            @if (confirmationVisibl)
+            {
+                <NavLink class="nav-link" href="confirmation/samplelist">
+                    <span class="oi oi-media-play" aria-hidden="true"></span> Заключение
+                </NavLink>
+            }
+        </li>
+        @*////////////////////////////////////////////////////////////////////////////////////*@
+    </ul>
+</div>
+
+@inject NavigationManager NavigationManager
+
+@code {
+    private bool collapseNavMenu = false;
+
+    public bool homeData = false;
+    public bool configMenuVisibl = false;
+    public bool sampleLogVisibl = false;
+    public bool testVisibl = false;
+    public bool analysisVisibl = false;
+    public bool confirmationVisibl = false;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    void closeAllMenu()
+    {
+        configMenuVisibl = false;
+        sampleLogVisibl = false;
+        testVisibl = false;
+        analysisVisibl = false;
+        confirmationVisibl = false;
+    }
+
+    void closeAllMenu(ref bool data)
+    {
+        var _data = !data;
+        closeAllMenu();
+        data = _data;
+    }
+
+    void selectConfigMenu()
+    {
+        closeAllMenu(ref configMenuVisibl);
+        if (!configMenuVisibl)
+            NavigationManager.NavigateTo("/");
+    }
+
+    void selectSampleLog()
+    {
+        closeAllMenu(ref sampleLogVisibl);
+        if (!sampleLogVisibl)
+            NavigationManager.NavigateTo("/");
+    }
+
+    void selectTest()
+    {
+        closeAllMenu(ref testVisibl);
+        if (!testVisibl)
+            NavigationManager.NavigateTo("/");
+    }
+
+    void selectAnalysis()
+    {
+        closeAllMenu(ref analysisVisibl);
+        if (!analysisVisibl)
+            NavigationManager.NavigateTo("/");
+    }
+
+    void selectСonfirmation()
+    {
+        closeAllMenu(ref confirmationVisibl);
+        if (!confirmationVisibl)
+            NavigationManager.NavigateTo("/");
+    }
+
+}

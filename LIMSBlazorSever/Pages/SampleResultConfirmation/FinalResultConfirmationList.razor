@@ -1,0 +1,98 @@
+﻿@using LIMSBlazor.Data
+@page "/confirmation/sample/finalresultlist/{SampleId:int}"
+@inject IFinalResultService FinalResultService
+@inject IAnalyticalServService AnalyticalServService
+@inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="/confirmation/sample/finalresultlist/@SampleId">Финальные результаты</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/confirmation/sample/resultlist/@SampleId">Результаты</a>
+    </li>
+</ul>
+<DataView PageTitle="Список финальных результатов испытания" UrlBack="confirmation/samplelist" UrlBackText="Вернуться к списку испытаний">
+    <Header>
+        <tr>
+            <th style="text-align:center">#</th>
+            <th>Id</th>
+            <td>Id испытания</td>
+            <td>Аналитический сервис</td>
+            <td>Испытательная машина</td>
+            <td>Номер пробы</td>
+            <td>Результат</td>
+            <td>Ед.изм.</td>
+            <td>Подтвержден</td>
+            <td>Записка</td>
+            <td>Время создания</td>
+            <td>Время последних изменений</td>
+            <td>Кем созданно</td>
+            <td>Кем изменено</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (finalresults == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
+        }
+        else
+        {
+            @foreach (var finalresult in finalresults)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        <a href="confirmation/sample/finalresultaddedit/@SampleId/@finalresult.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@finalresult.Id</td>
+                    <td>@finalresult.SampleId</td>
+                    <td>@analyticalservs?.Where(x => x.Id == finalresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@instruments?.Where(x => x.Id == finalresult.InstrumentId).FirstOrDefault()?.Name</td>
+                    <td>@finalresult.ValueNo</td>
+                    <td>@finalresult.Value</td>
+                    <td>@units?.Where(x => x.Id == finalresult.UnitId).FirstOrDefault()?.Name</td>
+                    <td>
+                        @if (finalresult.IsFinal == true)
+                        {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                        else
+                        {<img src="../images/iRedX.png" width="25" height="25" />}
+                    </td>
+                    <td>@finalresult.Note</td>
+                    <td>@finalresult.CreateTime</td>
+                    <td>@finalresult.UpdateTime</td>
+                    <td>@finalresult.CreateUser</td>
+                    <td>@finalresult.UpdateUser</td>
+                </tr>
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<FinalResult> finalresults;
+    IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
+
+    [Parameter]
+    public int SampleId { get; set; }
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        finalresults = await FinalResultService.FinalResultList(SampleId);
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
+    }
+}

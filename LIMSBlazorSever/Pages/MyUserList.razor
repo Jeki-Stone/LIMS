@@ -1,0 +1,50 @@
+﻿@page "/config/myusers"
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<IdentityUser> userManager;
+
+<h3>MyUserList</h3>
+<button type="submit" @onclick="AddUser" class="btn btn-primary">Add user</button>
+<table>
+    @if (userList == null)
+    {
+        <p style="text-align:center">
+            <img src="../images/loader.gif" />
+        </p>
+    }
+    else
+    {
+        @foreach (var item in userList)
+        {
+            <tr>
+                <td>@item.UserName</td>
+                <td>@item.Email</td>
+                <td>@item.PasswordHash</td>
+            </tr>
+        }
+    }
+</table>
+
+@code {
+    List<IdentityUser> userList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userList = userManager.Users.ToList();
+    }
+
+    async void AddUser()
+    {
+        try
+        {
+            IdentityUser identityUser = new IdentityUser();
+            identityUser.UserName = "TTT";
+            identityUser.Email = "TTT@mail.ru";
+            var password = "TTT";
+            await userManager.CreateAsync(identityUser, password);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+}

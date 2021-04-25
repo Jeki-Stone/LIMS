@@ -1,0 +1,114 @@
+﻿@using LIMSBlazor.Data
+@page "/samplelog/sample/resultlist/{SampleId:int}"
+@inject IResultService ResultService
+@inject IAnalyticalServService AnalyticalServService
+@inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
+
+<DataView PageTitle="Список результатов испытания" UrlAdd=@UrlSampleId UrlBack="samplelog/samplelist" UrlAddText="Добавить новый результат испытания" UrlBackText="Вернуться к списку испытаний">
+    <Filtr>
+        <li class="nav-item">
+            <select @bind="changsort" id="sort" required class="form-control">
+                @if (analyticalservs != null)
+                {
+                    <option value="0">Выберите значение</option>
+                    foreach (var item in results.GroupBy(e => e.AnalyticalServiceId))
+                    {
+                        <option value="@item.Key">@analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name</option>
+                    }
+                }
+            </select>
+        </li>
+    </Filtr>
+    <Header>
+        <tr>
+            <th style="text-align:center">#</th>
+            <th>Id</th>
+            <td>Id испытания</td>
+            <td>Аналитический сервис</td>
+            <td>Испытательная машина</td>
+            <td>Номер пробы</td>
+            <td>Ед.изм.</td>
+            <td>Готовность</td>
+            <td>Записка</td>
+            <td>Время создания</td>
+            <td>Время последних изменений</td>
+            <td>Кем созданно</td>
+            <td>Кем изменено</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (results == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
+        }
+        else
+        {
+            @foreach (var result in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort))
+            {
+                <tr>
+                    <td style="text-align:center">
+                        <a href="/samplelog/sample/resultaddedit/@SampleId/@result.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="/samplelog/sample/resultdelete/@SampleId/@result.Id">
+                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@result.Id</td>
+                    <td>@result.SampleId</td>
+                    <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
+                    <td>@result.ValueNo</td>
+                    <td>@units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
+                    <td style="text-align:center">
+                        @if (result.IsFinal == true)
+                        {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                        else
+                        {<img src="../images/iRedX.png" width="25" height="25" />}
+                    </td>
+                    <td>@result.Note</td>
+                    <td>@result.CreateTime</td>
+                    <td>@result.UpdateTime</td>
+                    <td>@result.CreateUser</td>
+                    <td>@result.UpdateUser</td>
+                </tr>
+            }
+        }
+    </Rows>
+</DataView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<Result> results;
+    IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
+
+    [Parameter]
+    public int SampleId { get; set; }
+    [Parameter]
+    public string UrlSampleId { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public int changsort = 0;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        results = await ResultService.ResultList(SampleId);
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
+        UrlSampleId = "/samplelog/sample/resultaddedit/" + SampleId;
+    }
+}

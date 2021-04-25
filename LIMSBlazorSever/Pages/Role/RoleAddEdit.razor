@@ -1,0 +1,72 @@
+﻿@using LIMSBlazor.Data
+@page "/config/roleaddedit"
+@page "/config/roleaddedit/{id:int}"
+@inject IRoleService RoleService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@role" BtnSaveText="@buttontext" OnValidSubmit="@RoleSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Название:</td>
+            <td><input type="text" @bind="role.Name" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="role.Description"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Role role = new Role();
+
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новую роль";
+    public string buttontext = "Добавить";
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        /// Если Id ноль то будет добавлено новое значение
+        if (id != 0)
+        {
+            role = await RoleService.Role_GetOne(id);
+            pagetitle = "Изменить данные роли";
+            buttontext = "Изменить";
+        }
+    }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task RoleSave()
+    {
+        if (role.Id == 0)
+        {
+            await RoleService.RoleInsert(role);
+        }
+        else
+        {
+            await RoleService.RoleUpdate(role);
+        }
+        NavigationManager.NavigateTo("/config/rolelist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/config/rolelist");
+    }
+}

@@ -1,0 +1,95 @@
+﻿@using LIMSBlazor.Data
+@page "/config/labaddedit"
+@page "/config/labaddedit/{id:int}"
+@inject ILabService LabService
+@inject ILocService LocService
+@inject NavigationManager NavigationManager
+
+<DataEdit PageTitle="@pagetitle" Model="@lab" BtnSaveText="@buttontext" OnValidSubmit="@LabSave" OnClickCancel="@Cancel">
+    <table>
+        <tr>
+            <td>Код лаборатории:</td>
+            <td><input type="text" @bind="lab.Code" required class="form-control"></td>
+        </tr>
+        <tr>
+            <td>Наименование:</td>
+            <td><input type="text" @bind="lab.Name" required class="form-control"></td>
+        </tr>
+        <tr>
+            <td>Местоположение:</td>
+            <td>
+                <select @bind="lab.LocId" required class="form-control">
+                    @if (locs != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in locs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Описание:</td>
+            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="lab.Description"></textarea></td>
+        </tr>
+    </table>
+</DataEdit>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    Lab lab = new Lab();
+
+    IEnumerable<Loc> locs;
+
+    [Parameter]
+    public int id { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public string pagetitle = "Добавить новую лабораторию";
+    public string buttontext = "Добавить";
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        locs = await LocService.LocList();
+        /// Если Id ноль то будет добавлено новое значение
+        if (id != 0)
+        {
+            lab = await LabService.Lab_GetOne(id);
+            pagetitle = "Изменить данные лаборатории";
+            buttontext = "Изменить";
+        }
+    }
+
+    /// <summary>
+    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// </summary>
+    protected async Task LabSave()
+    {
+        if (lab.Id == 0)
+        {
+            await LabService.LabInsert(lab);
+        }
+        else
+        {
+            await LabService.LabUpdate(lab);
+        }
+        NavigationManager.NavigateTo("config/lablist");
+    }
+
+    /// <summary>
+    /// Отмена изменений и возвращение на прошлую страницу
+    /// </summary>
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("config/lablist");
+    }
+}

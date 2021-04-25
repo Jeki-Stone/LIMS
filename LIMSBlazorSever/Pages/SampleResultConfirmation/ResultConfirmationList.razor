@@ -1,0 +1,149 @@
+﻿@using LIMSBlazor.Data
+@page "/confirmation/sample/resultlist/{SampleId:int}"
+@inject IResultService ResultService
+@inject ISampleService SampleService
+@inject IAnalyticalServService AnalyticalServService
+@inject IUnitService UnitServiceService
+@inject IInstrumentService InstrumentService
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="/confirmation/sample/finalresultlist/@SampleId">Финальные результаты</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="/confirmation/sample/resultlist/@SampleId">Результаты</a>
+    </li>
+</ul>
+
+<DataView PageTitle="Список результатов испытания" UrlBack="confirmation/samplelist" UrlBackText="Вернуться к списку испытаний">
+    <Filtr>
+        <select @bind="changsort" id="sort" required class="form-control">
+            @if (analyticalservs != null)
+            {
+                <option value="0">Выберите значение</option>
+                foreach (var item in results.GroupBy(e => e.AnalyticalServiceId))
+                {
+                    <option value="@item.Key">@analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name</option>
+                }
+            }
+        </select>
+    </Filtr>
+    <Header>
+        <tr>
+            <th style="text-align:center">#</th>
+            <th>Id</th>
+            <td>Id испытания</td>
+            <td>Аналитический сервис</td>
+            <td>Испытательная машина</td>
+            <td>Номер пробы</td>
+            <td>Результат</td>
+            <td>Ед.изм.</td>
+            <td>В оценке</td>
+            <td>Записка</td>
+            <td>Время создания</td>
+            <td>Время последних изменений</td>
+            <td>Кем созданно</td>
+            <td>Кем изменено</td>
+        </tr>
+    </Header>
+    <Rows>
+        @if (results == null)
+        {
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
+        }
+        else
+        {
+            @foreach (var result in results.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort))
+            {
+                <tr>
+                    <td style="text-align:center">
+                        <a href="confirmation/sample/resultaddedit/@SampleId/@result.Id">
+                            <img src="../images/iEdit.png" width="20" height="20" />
+                        </a>
+                        &nbsp
+                        <a href="confirmation/sample/result/resultattrlist/@SampleId/@result.AnalyticalServiceId">
+                            <img src="../images/downArrow.png" title="Add attr" width="20" height="20" />
+                        </a>
+                    </td>
+                    <td>@result.Id</td>
+                    <td>@result.SampleId</td>
+                    <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
+                    <td>@result.ValueNo</td>
+                    <td>@result.Value</td>
+                    <td>@units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
+                    <td>
+                        @if (result.IsFinal == true)
+                        {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                        else
+                        {<img src="../images/iRedX.png" width="25" height="25" />}
+                    </td>
+                    <td>@result.Note</td>
+                    <td>@result.CreateTime</td>
+                    <td>@result.UpdateTime</td>
+                    <td>@result.CreateUser</td>
+                    <td>@result.UpdateUser</td>
+                </tr>
+            }
+        }
+    </Rows>
+    <ChartDiogramm>
+        @if (results != null)
+        {
+            <div class="container-fluid">
+                <div class="row">
+                    @foreach (var item in results.GroupBy(e => e.AnalyticalServiceId))
+                    {
+                        if (changsort == 0)
+                        {
+                            var title = analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name;
+                            <div style="min-width: 500px;">
+                                <ChartEdit Title=@title SampleId=@SampleId GrupItem=@item.Where(x => x.IsFinal == true).ToList() />
+                            </div>
+                        }
+                        else if (item.Key == changsort)
+                        {
+                            var title = analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name;
+                            <div style="min-width: 500px;">
+                                <ChartEdit Title=@title SampleId=@SampleId GrupItem=@item.Where(x => x.IsFinal == true).ToList() />
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </ChartDiogramm>
+</DataView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    IEnumerable<Result> results;
+    IEnumerable<Sample> samples;
+    IEnumerable<AnalyticalServ> analyticalservs;
+    IEnumerable<Unit> units;
+    IEnumerable<Instrument> instruments;
+
+    [Parameter]
+    public int SampleId { get; set; }
+
+    /// <summary>
+    /// Задаём базовые значения
+    /// </summary>
+    public int changsort = 0;
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        results = await ResultService.ResultList(SampleId);
+        samples = await SampleService.SampleList();
+        analyticalservs = await AnalyticalServService.AnalyticalServList();
+        units = await UnitServiceService.UnitList();
+        instruments = await InstrumentService.InstrumentList();
+    }
+}
