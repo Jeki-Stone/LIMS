@@ -1,18 +1,30 @@
 ﻿@using LIMSBlazor.Data
 @page "/config/roleaddedit"
-@page "/config/roleaddedit/{id:int}"
-@inject IRoleService RoleService
+@page "/config/roleaddedit/{id}"
+@inject IAspNetRoleService AspNetRoleService
+@inject ILabService LabService
 @inject NavigationManager NavigationManager
 
-<DataEdit PageTitle="@pagetitle" Model="@role" BtnSaveText="@buttontext" OnValidSubmit="@RoleSave" OnClickCancel="@Cancel">
+<DataEdit PageTitle="@pagetitle" Model="@aspNetRole" BtnSaveText="@buttontext" OnValidSubmit="@RoleSave" OnClickCancel="@Cancel">
     <table>
         <tr>
             <td>Название:</td>
-            <td><input type="text" @bind="role.Name" class="form-control" required></td>
+            <td><input type="text" @bind="aspNetRole.Name" class="form-control" required></td>
         </tr>
         <tr>
             <td>Описание:</td>
-            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="role.Description"></textarea></td>
+            <td>
+                <select @bind="aspNetRole.LabId" required class="form-control">
+                    @if (labs != null)
+                    {
+                        <option value="0">Выберите значение</option>
+                        foreach (var item in labs)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+            </td>
         </tr>
     </table>
 </DataEdit>
@@ -21,10 +33,12 @@
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    Role role = new Role();
+    AspNetRole aspNetRole = new AspNetRole();
+
+    IEnumerable<Lab> labs;
 
     [Parameter]
-    public int id { get; set; }
+    public string id { get; set; }
 
     /// <summary>
     /// Задаём базовые значения
@@ -37,10 +51,11 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
+        labs = await LabService.LabList();
         /// Если Id ноль то будет добавлено новое значение
-        if (id != 0)
+        if (id != null)
         {
-            role = await RoleService.Role_GetOne(id);
+            aspNetRole = await AspNetRoleService.AspNetRole_GetOne(id);
             pagetitle = "Изменить данные роли";
             buttontext = "Изменить";
         }
@@ -51,13 +66,13 @@
     /// </summary>
     protected async Task RoleSave()
     {
-        if (role.Id == 0)
+        if (aspNetRole.Id == null)
         {
-            await RoleService.RoleInsert(role);
+            await AspNetRoleService.AspNetRoleInsert(aspNetRole);
         }
         else
         {
-            await RoleService.RoleUpdate(role);
+            await AspNetRoleService.AspNetRoleUpdate(aspNetRole);
         }
         NavigationManager.NavigateTo("/config/rolelist");
     }

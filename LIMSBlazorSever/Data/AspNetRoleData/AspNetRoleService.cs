@@ -8,26 +8,26 @@ using System.Threading.Tasks;
 
 namespace LIMSBlazor.Data
 {
-    public class RoleService : IRoleService
+    public class AspNetRoleService : IAspNetRoleService
     {
         /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
-        public RoleService(SqlConnectionConfiguration configuration)
+        public AspNetRoleService(SqlConnectionConfiguration configuration)
         {
             _configuration = configuration;
         }
 
         /// Добавить (создать) данные в строке таблицы 
-        public async Task<bool> RoleInsert(Role role)
+        public async Task<bool> AspNetRoleInsert(AspNetRole aspNetRole)
         {
             try
             {
                 using (var conn = new SqlConnection(_configuration.Value))
                 {
                     var parametrs = new DynamicParameters();
-                    parametrs.Add("Name", role.Name, DbType.String);
-                    parametrs.Add("Description", role.Description, DbType.String);
-                    await conn.ExecuteAsync("spRoles_Insert", parametrs, commandType: CommandType.StoredProcedure);
+                    parametrs.Add("Name", aspNetRole.Name, DbType.String);
+                    parametrs.Add("LabId", aspNetRole.LabId, DbType.Int32);
+                    await conn.ExecuteAsync("spAspNetRoles_Insert", parametrs, commandType: CommandType.StoredProcedure);
                 }
                 
             }
@@ -39,41 +39,41 @@ namespace LIMSBlazor.Data
         }
 
         /// Запросить все денные из БД
-        public async Task<IEnumerable<Role>> RoleList()
+        public async Task<IEnumerable<AspNetRole>> AspNetRoleList()
         {
-            IEnumerable<Role> roles;
+            IEnumerable<AspNetRole> aspNetRoles;
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                roles = await conn.QueryAsync<Role>("spRoles_GetAll", commandType: CommandType.StoredProcedure);
+                aspNetRoles = await conn.QueryAsync<AspNetRole>("spAspNetRoles_GetAll", commandType: CommandType.StoredProcedure);
             }
-            return roles;
+            return aspNetRoles;
         }
 
         /// Получите одни данные на основе его идентификатора
-        public async Task<Role> Role_GetOne(int id)
+        public async Task<AspNetRole> AspNetRole_GetOne(string id)
         {
-            Role role = new Role();
+            AspNetRole aspNetRole = new AspNetRole();
             var parameters = new DynamicParameters();
-            parameters.Add("Id", id, DbType.Int32);
+            parameters.Add("Id", id, DbType.String);
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                role = await conn.QueryFirstOrDefaultAsync<Role>("spRoles_GetOne", parameters, commandType: CommandType.StoredProcedure);
+                aspNetRole = await conn.QueryFirstOrDefaultAsync<AspNetRole>("spAspNetRoles_GetOne", parameters, commandType: CommandType.StoredProcedure);
             }
-            return role;
+            return aspNetRole;
         }
 
         /// Обновить строку таблицы данных в БД
-        public async Task<bool> RoleUpdate(Role role)
+        public async Task<bool> AspNetRoleUpdate(AspNetRole aspNetRole)
         {
             try
             {
                 using (var conn = new SqlConnection(_configuration.Value))
                 {
                     var parametrs = new DynamicParameters();
-                    parametrs.Add("Id", role.Id, DbType.Int32);
-                    parametrs.Add("Name", role.Name, DbType.String);
-                    parametrs.Add("Description", role.Description, DbType.String);
-                    await conn.ExecuteAsync("spRoles_Update", parametrs, commandType: CommandType.StoredProcedure);
+                    parametrs.Add("Id", aspNetRole.Id, DbType.String);
+                    parametrs.Add("Name", aspNetRole.Name, DbType.String);
+                    parametrs.Add("LabId", aspNetRole.LabId, DbType.Int32);
+                    await conn.ExecuteAsync("spAspNetRoles_Update", parametrs, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (Exception e)
@@ -84,13 +84,13 @@ namespace LIMSBlazor.Data
         }
 
         /// Удалить строку таблицы данных из БД
-        public async Task<bool> RoleDelete(int id)
+        public async Task<bool> AspNetRoleDelete(string id)
         {
             var parameters = new DynamicParameters();
             parameters.Add("Id", id, DbType.Int32);
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                await conn.ExecuteAsync("spRoles_Delete", parameters, commandType: CommandType.StoredProcedure);
+                await conn.ExecuteAsync("spAspNetRoles_Delete", parameters, commandType: CommandType.StoredProcedure);
             }
             return true;
         }

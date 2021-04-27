@@ -1,18 +1,19 @@
 ﻿@using LIMSBlazor.Data
-@page "/config/rolelist"
-@inject IRoleService RoleService
 
-<DataView PageTitle="Список ролей" UrlAdd="/config/roleaddedit" UrlAddText="Добавить новую роль">
+@page "/config/userlist"
+@inject IAspNetUserService AspNetUserService
+
+<DataView PageTitle="Список пользователей" UrlAdd="config/useraddedit" UrlAddText="Добавить нового пользователя">
     <Header>
         <tr>
             <td style="text-align:center">#</td>
-            <td>Id</td>
-            <td>Название</td>
-            <td>Описание</td>
+            <td>Имя пользователя</td>
+            <td>E-mail</td>
+            <td>Телефон</td>
         </tr>
     </Header>
     <Rows>
-        @if (roles == null)
+        @if (aspNetUsers == null)
         {
             <p style="text-align:center">
                 <img src="../images/loader.gif" width="50" height="50" />
@@ -20,21 +21,25 @@
         }
         else
         {
-            @foreach (var role in roles)
+            @foreach (var aspNetUser in aspNetUsers)
             {
                 <tr>
                     <td style="text-align:center">
-                        <a href="/config/roleaddedit/@role.Id">
+                        <a href="/config/useraddedit/@aspNetUser.Id">
                             <img src="../images/iEdit.png" width="20" height="20" />
                         </a>
                         &nbsp
-                        <a href="/config/roledelete/@role.Id">
+                        <a href="/config/userdelete/@aspNetUser.Id">
                             <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                         </a>
+                        &nbsp
+                        <a href="/config/userlist/userrolelist/@aspNetUser.Id">
+                            <img src="../images/downArrow.png" title="Add" width="20" height="20" />
+                        </a>
                     </td>
-                    <td>@role.Id</td>
-                    <td>@role.Name</td>
-                    <td>@role.Description</td>
+                    <td>@aspNetUser.UserName</td>
+                    <td>@aspNetUser.Email</td>
+                    <td>@aspNetUser.PhoneNumber</td>
                 </tr>
             }
         }
@@ -45,13 +50,13 @@
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    IEnumerable<Role> roles;
+    IEnumerable<AspNetUser> aspNetUsers;
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        roles = await RoleService.RoleList();
+        aspNetUsers = await AspNetUserService.AspNetUserList();
     }
 }

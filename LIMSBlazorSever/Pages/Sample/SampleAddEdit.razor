@@ -1,8 +1,8 @@
 ﻿@using LIMSBlazor.Data
 @page "/samplelog/sampleaddedit"
-@page "/samplelog/sampleaddedit/{Id:int}"
+@page "/samplelog/sampleaddedit/{id}"
 @inject ISampleService SampleService
-@inject ICliService CliService
+@inject IAspNetUserService AspNetUserService
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
 @inject ISampleAnalyticalService SampleAnalyticalService
@@ -24,13 +24,13 @@
         <tr>
             <td>Клиент:</td>
             <td>
-                <select @bind="sample.ClientId" required class="form-control">
-                    @if (clis != null)
+                <select @bind="sample.UserId" required class="form-control">
+                    @if (aspNetUsers != null)
                     {
                         <option value="0">Выберите значение</option>
-                        foreach (var item in clis)
+                        foreach (var item in aspNetUsers)
                         {
-                            <option value="@item.Id">@item.Name</option>
+                            <option value="@item.Id">@item.UserName</option>
                         }
                     }
                 </select>
@@ -118,7 +118,7 @@
     Sample sample = new Sample();
     SampleAnalytical sampleanalytical = new SampleAnalytical();
 
-    IEnumerable<Cli> clis;
+    IEnumerable<AspNetUser> aspNetUsers;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
     IEnumerable<Lab> labs;
@@ -138,7 +138,7 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        clis = await CliService.CliList();
+        aspNetUsers = await AspNetUserService.AspNetUserList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         labs = await LabService.LabList();

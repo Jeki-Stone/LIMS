@@ -1,7 +1,7 @@
 ﻿@using LIMSBlazor.Data
 @page "/analysis/samplelist"
 @inject ISampleService SampleService
-@inject ICliService CliService
+@inject IAspNetUserService AspNetUserService
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
 @inject ILabService LabService
@@ -56,7 +56,7 @@
                         <td>@sample.Id</td>
                         <td>@sample.RecieveTime</td>
                         <td>@sample.TestTime</td>
-                        <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
+                        <td>@aspNetUsers?.Where(x => x.Id == sample.UserId).FirstOrDefault()?.UserName</td>
                         <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
                         <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
                         <td>@sample.NumSamples</td>
@@ -88,7 +88,7 @@
     /// Создаём необходимые компоненты
     /// </summary>
     IEnumerable<Sample> samples;
-    IEnumerable<Cli> clis;
+    IEnumerable<AspNetUser> aspNetUsers;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
     IEnumerable<Lab> labs;
@@ -99,7 +99,7 @@
     protected override async Task OnInitializedAsync()
     {
         samples = await SampleService.SampleList();
-        clis = await CliService.CliList();
+        aspNetUsers = await AspNetUserService.AspNetUserList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         labs = await LabService.LabList();

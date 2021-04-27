@@ -1,40 +1,34 @@
 ﻿@using LIMSBlazor.Data
 @page "/config/useraddedit"
-@page "/config/useraddedit/{id:int}"
-@inject IUserService UserService
+@page "/config/useraddedit/{string:int}"
+@inject IAspNetUserService AspNetUserService
 @inject NavigationManager NavigationManager
 
-
-<DataEdit PageTitle="@pagetitle" Model="@user" BtnSaveText="@buttontext" OnValidSubmit="@UserSave" OnClickCancel="@Cancel">
+<DataEdit PageTitle="@pagetitle" Model="@aspNetUser" BtnSaveText="@buttontext" OnValidSubmit="@UserSave" OnClickCancel="@Cancel">
     <table>
         <tr>
             <td>Имя Пользователя:</td>
-            <td><input type="text" @bind="user.Name" class="form-control" required></td>
+            <td><input type="text" @bind="aspNetUser.UserName" class="form-control" required></td>
         </tr>
         <tr>
-            <td>Полное имя Пользователя:</td>
-            <td><input type="text" @bind="user.FullName" class="form-control" required></td>
+            <td>E-mail пользователя:</td>
+            <td><input type="text" @bind="aspNetUser.Email" class="form-control" required></td>
         </tr>
         <tr>
             <td>Номер телефона Пользователя:</td>
-            <td><input type="text" @bind="user.PhoneNumber" class="form-control" required></td>
-        </tr>
-        <tr>
-            <td>Пароль:</td>
-            <td><input type="text" @bind="user.Password" class="form-control" required></td>
+            <td><input type="text" @bind="aspNetUser.PhoneNumber" class="form-control" required></td>
         </tr>
     </table>
 </DataEdit>
-
 
 @code {
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    User user = new User();
+    AspNetUser aspNetUser = new AspNetUser();
 
     [Parameter]
-    public int? id { get; set; }
+    public string? id { get; set; }
 
     /// <summary>
     /// Задаём базовые значения
@@ -50,27 +44,19 @@
         /// Если Id ноль то будет добавлено новое значение
         if (id != null)
         {
-            user = await UserService.User_GetOne((int)id);
+            aspNetUser = await AspNetUserService.AspNetUser_GetOne((string)id);
             pagetitle = "Изменить данные пользователя";
             buttontext = "Изменить";
         }
     }
 
     /// <summary>
-    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+    /// Задача сохраняющая
     /// </summary>
     protected async Task UserSave()
     {
-        if (user.Id == 0)
-        {
-            // Insert if id is zero.
-            await UserService.UserInsert(user);
-        }
-        else
-        {
-            // Update is id > 0
-            await UserService.UserUpdate(user);
-        }
+        // Update is id > 0
+        await AspNetUserService.AspNetUserUpdate(aspNetUser);
         NavigationManager.NavigateTo("/config/userlist");
     }
 

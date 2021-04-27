@@ -1,4 +1,7 @@
-﻿<div class="top-row pl-4 navbar navbar-dark ">
+﻿@using Microsoft.AspNetCore.Identity;
+@inject UserManager<IdentityUser> userManager;
+
+<div class="top-row pl-4 navbar navbar-dark ">
     <a class="navbar-brand" href="/config/myusers">LIMSBlazor</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -12,9 +15,13 @@
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="config/" Match="NavLinkMatch.Prefix" @onclick="selectConfigMenu">
-                <span class="oi oi-grid-three-up" aria-hidden="true"></span> Конфигурация
-            </NavLink>
+            <AuthorizeView>
+                <Authorized>
+                    <NavLink class="nav-link" href="config/" Match="NavLinkMatch.Prefix" @onclick="selectConfigMenu">
+                        <span class="oi oi-grid-three-up" aria-hidden="true"></span> Конфигурация
+                    </NavLink>
+                </Authorized>
+            </AuthorizeView>
             @*<button class="btn btn-link" @onclick="selectConfigMenu">
                     <span class="oi oi-grid-three-up" aria-hidden="true"></span> Конфигурация
                 </button>*@

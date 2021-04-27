@@ -1,4 +1,4 @@
-﻿@using LIMSBlazor.Data
+﻿@*@using LIMSBlazor.Data
 @page "/config/userlist/userrolelist/{UserId:int}"
 @inject IUserRoleService UserRoleService
 @inject ILabService LabService
@@ -69,4 +69,4 @@
         roles = await RoleService.RoleList();
         UrlUserId = "/config/userlist/userroleaddedit/" + @UserId;
     }
-}
+}*@

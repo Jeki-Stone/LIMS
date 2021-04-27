@@ -1,37 +1,41 @@
 ﻿@using LIMSBlazor.Data
-@page "/config/roledelete/{id:int}"
-@inject IRoleService RoleService
+@page "/config/roledelete/{id}"
+@inject IAspNetRoleService AspNetRoleService
+@inject ILabService LabService
 @inject NavigationManager NavigationManager
 
-<DataEdit FormType="Delete" PageTitle="Удалить роль из базы данных" DeleteWarning="Вы уверены что хотите удалить эту роль? Данные нельзя будет вернуть!" Model="@role" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+<DataEdit FormType="Delete" PageTitle="Удалить роль из базы данных" DeleteWarning="Вы уверены что хотите удалить эту роль? Данные нельзя будет вернуть!" Model="@aspNetRole" OnClickDelete="@Delete" OnClickCancel="@Cancel">
     <table>
         <tr>
             <td>Название:</td>
-            <td>@role.Name</td>
+            <td>@aspNetRole.Name</td>
         </tr>
         <tr>
             <td>Описание:</td>
-            <td>@role.Description</td>
+            <td>@labs?.Where(x => x.Id == aspNetRole.LabId).FirstOrDefault()?.Name</td>
         </tr>
     </table>
 </DataEdit>
 
 
-@code {
+@code { 
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    Role role = new Role();
+    AspNetRole aspNetRole = new AspNetRole();
+
+    IEnumerable<Lab> labs;
 
     [Parameter]
-    public int id { get; set; }
+    public string id { get; set; }
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        role = await RoleService.Role_GetOne(id);
+        aspNetRole = await AspNetRoleService.AspNetRole_GetOne(id);
+        labs = await LabService.LabList();
     }
 
     /// <summary>
@@ -40,7 +44,7 @@
     protected async Task Delete()
     {
         // Insert if id is zero.
-        await RoleService.RoleDelete(id);
+        await AspNetRoleService.AspNetRoleDelete(id);
         NavigationManager.NavigateTo("/config/rolelist");
     }
 

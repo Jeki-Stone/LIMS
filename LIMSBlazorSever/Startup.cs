@@ -58,8 +58,8 @@ namespace LIMSBlazorSever
             services.AddScoped<IInstrumTypeService, InstrumTypeService>();
             services.AddScoped<IAttrService, AttrService>();
             services.AddScoped<ISampleTypeService, SampleTypeService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IAspNetUserService, AspNetUserService>();
+            services.AddScoped<IAspNetRoleService, AspNetRoleService>();
             services.AddScoped<IInstrumentService, InstrumentService>();
             services.AddScoped<IAnalyticalServService, AnalyticalServService>();
             services.AddScoped<ISampleSpecService, SampleSpecService>();

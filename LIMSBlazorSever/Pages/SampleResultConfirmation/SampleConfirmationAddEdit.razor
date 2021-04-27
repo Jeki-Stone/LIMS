@@ -1,7 +1,7 @@
 ﻿@using LIMSBlazor.Data
 @page "/confirmation/sampleaddedit/{Id:int}"
 @inject ISampleService SampleService
-@inject ICliService CliService
+@inject IAspNetUserService AspNetUserService
 @inject ISampleTypeService SampleTypeService
 @inject ILocService LocService
 @inject ISampleAnalyticalService SampleAnalyticalService
@@ -24,7 +24,7 @@
         </tr>
         <tr>
             <td>Клиент:</td>
-            <td>@clis?.Where(x => x.Id == sample.ClientId).FirstOrDefault()?.Name</td>
+            <td>@aspNetUsers?.Where(x => x.Id == sample.UserId).FirstOrDefault()?.UserName</td>
         </tr>
         <tr>
             <td>Лаборатория:</td>
@@ -81,7 +81,7 @@
     SampleAnalytical sampleanalytical = new SampleAnalytical();
     List<FinalResult> finres = new List<FinalResult>();
 
-    IEnumerable<Cli> clis;
+    IEnumerable<AspNetUser> aspNetUsers;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
     IEnumerable<FinalResult> finalresults;
@@ -103,7 +103,7 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        clis = await CliService.CliList();
+        aspNetUsers = await AspNetUserService.AspNetUserList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         finalresults = await FinalResultService.FinalResultList(Id);

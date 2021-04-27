@@ -1,44 +1,40 @@
 ﻿@using LIMSBlazor.Data
-@page "/config/userdelete/{id:int}"
-@inject IUserService UserService
+@page "/config/userdelete/{string:int}"
+@inject IAspNetUserService AspNetUserService
 @inject NavigationManager NavigationManager
 
-<DataEdit FormType="Delete" PageTitle="Удалить пользователя из базы данных" DeleteWarning="Вы уверены что хотите удалить этого пользователя? Данные нельзя будет вернуть!" Model="@user" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+<DataEdit FormType="Delete" PageTitle="Удалить пользователя из базы данных" DeleteWarning="Вы уверены что хотите удалить этого пользователя? Данные нельзя будет вернуть!" Model="@aspNetUser" OnClickDelete="@Delete" OnClickCancel="@Cancel">
     <table>
         <tr>
-            <td>Имя Пользователя:</td>
-            <td>@user.Name</td>
+            <td>Имя пользователя:</td>
+            <td>@aspNetUser.UserName</td>
         </tr>
         <tr>
-            <td>Полное имя Пользователя:</td>
-            <td>@user.FullName</td>
+            <td>E-mail пользователя:</td>
+            <td>@aspNetUser.Email</td>
         </tr>
         <tr>
             <td>Номер телефона Пользователя:</td>
-            <td>@user.PhoneNumber</td>
-        </tr>
-        <tr>
-            <td>Пароль:</td>
-            <td>@user.Password</td>
+            <td>@aspNetUser.PhoneNumber</td>
         </tr>
     </table>
 </DataEdit>
 
-@code { 
+@code {
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    User user = new User();
+    AspNetUser aspNetUser = new AspNetUser();
 
     [Parameter]
-    public int id { get; set; }
+    public string id { get; set; }
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        user = await UserService.User_GetOne(id);
+        aspNetUser = await AspNetUserService.AspNetUser_GetOne(id);
     }
 
     /// <summary>
@@ -46,7 +42,7 @@
     /// </summary>
     protected async Task Delete()
     {
-        await UserService.UserDelete(id);
+        await AspNetUserService.AspNetUserDelete(id);
         NavigationManager.NavigateTo("/config/userlist");
     }
 
@@ -56,5 +52,5 @@
     void Cancel()
     {
         NavigationManager.NavigateTo("/config/userlist");
-    }
+    } 
 }

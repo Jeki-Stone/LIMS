@@ -27,7 +27,7 @@ namespace LIMSBlazor.Data
                     var parametrs = new DynamicParameters();
                     parametrs.Add("RecieveTime", sample.RecieveTime, DbType.DateTime);
                     parametrs.Add("TestTime", sample.TestTime, DbType.DateTime);
-                    parametrs.Add("ClientId", sample.ClientId, DbType.Int32);
+                    parametrs.Add("UserId", sample.UserId, DbType.String);
                     parametrs.Add("LabId", sample.LabId, DbType.Int32);
                     parametrs.Add("SampleTypeId", sample.SampleTypeId, DbType.Int32);
                     parametrs.Add("NumSamples", sample.NumSamples, DbType.Int32);
@@ -90,7 +90,7 @@ namespace LIMSBlazor.Data
                     parametrs.Add("Id", sample.Id, DbType.Int32);
                     parametrs.Add("RecieveTime", sample.RecieveTime, DbType.DateTime);
                     parametrs.Add("TestTime", sample.TestTime, DbType.DateTime);
-                    parametrs.Add("ClientId", sample.ClientId, DbType.Int32);
+                    parametrs.Add("UserId", sample.UserId, DbType.String);
                     parametrs.Add("LabId", sample.LabId, DbType.Int32);
                     parametrs.Add("SampleTypeId", sample.SampleTypeId, DbType.Int32);
                     parametrs.Add("NumSamples", sample.NumSamples, DbType.Int32);

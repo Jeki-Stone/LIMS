@@ -1,4 +1,4 @@
-﻿@using LIMSBlazor.Data
+﻿@*@using LIMSBlazor.Data
 @page "/config/userlist/userroledelete/{UserId:int}/{LabId:int}/{RoleId:int}"
 @inject IUserRoleService UserRoleService
 @inject ILabService LabService
@@ -30,7 +30,7 @@
     /// </summary>
     UserRole userrole = new UserRole();
 
-    IEnumerable<User> users;
+    IEnumerable<AspNetUser> users;
     IEnumerable<Lab> labs;
     IEnumerable<Role> roles;
 
@@ -69,4 +69,4 @@
     {
         NavigationManager.NavigateTo("/config/userlist/userrolelist/" + UserId);
     }
-}
+}*@
