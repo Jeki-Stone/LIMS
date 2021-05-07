@@ -1,5 +1,5 @@
 ﻿@using LIMSBlazor.Data
-
+@using Microsoft.AspNetCore.Identity;
 @page "/config/userlist"
 @inject IAspNetUserService AspNetUserService
 
@@ -50,7 +50,7 @@
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    IEnumerable<AspNetUser> aspNetUsers;
+    List<IdentityUser> aspNetUsers;
 
     /// <summary>
     /// Исполняемая при запуске страницы задача

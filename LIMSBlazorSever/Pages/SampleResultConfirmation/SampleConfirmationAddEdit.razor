@@ -24,7 +24,7 @@
         </tr>
         <tr>
             <td>Клиент:</td>
-            <td>@aspNetUsers?.Where(x => x.Id == sample.UserId).FirstOrDefault()?.UserName</td>
+            @*<td>@aspNetUsers?.Where(x => x.Id == sample.UserId).FirstOrDefault()?.UserName</td>*@
         </tr>
         <tr>
             <td>Лаборатория:</td>
@@ -103,7 +103,7 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        aspNetUsers = await AspNetUserService.AspNetUserList();
+        //aspNetUsers = await AspNetUserService.AspNetUserList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         finalresults = await FinalResultService.FinalResultList(Id);

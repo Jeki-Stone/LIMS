@@ -1,6 +1,7 @@
 ﻿@using LIMSBlazor.Data
-@page "/config/useraddedit"
-@page "/config/useraddedit/{string:int}"
+@using Microsoft.AspNetCore.Identity;
+@page "/config/useraddedit/"
+@page "/config/useraddedit/{id}"
 @inject IAspNetUserService AspNetUserService
 @inject NavigationManager NavigationManager
 
@@ -8,24 +9,35 @@
     <table>
         <tr>
             <td>Имя Пользователя:</td>
-            <td><input type="text" @bind="aspNetUser.UserName" class="form-control" required></td>
+            <td><input type="text" @bind="userName" class="form-control" required></td>
         </tr>
         <tr>
             <td>E-mail пользователя:</td>
-            <td><input type="text" @bind="aspNetUser.Email" class="form-control" required></td>
+            <td><input type="text" @bind="email" class="form-control" required></td>
         </tr>
         <tr>
             <td>Номер телефона Пользователя:</td>
-            <td><input type="text" @bind="aspNetUser.PhoneNumber" class="form-control" required></td>
+            <td><input type="text" @bind="phoneNumber" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Пароль:</td>
+            <td><input type="text" @bind="password" class="form-control" required></td>
+        </tr>
+        <tr>
+            <td>Подтверждение пароля:</td>
+            <td><input type="text" @bind="passwordConfirm" class="form-control" required></td>
         </tr>
     </table>
+    <div class="alert alert-danger" style="display:@visibl" role="alert">
+        Пароль должен быть не меньше 6 букв, С как минимум 1 заглавной буквой, цифрой и занком ( например !+?/).
+    </div>
 </DataEdit>
 
 @code {
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    AspNetUser aspNetUser = new AspNetUser();
+    IdentityUser aspNetUser = new IdentityUser();
 
     [Parameter]
     public string? id { get; set; }
@@ -36,12 +48,18 @@
     public string pagetitle = "Добавить нового пользователя";
     public string buttontext = "Добавить";
 
+    public string userName;
+    public string email;
+    public string phoneNumber;
+    public string password;
+    public string passwordConfirm;
+    public string visibl = "none";
+
     /// <summary>
     /// Исполняемая при запуске страницы задача
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        /// Если Id ноль то будет добавлено новое значение
         if (id != null)
         {
             aspNetUser = await AspNetUserService.AspNetUser_GetOne((string)id);
@@ -55,9 +73,30 @@
     /// </summary>
     protected async Task UserSave()
     {
-        // Update is id > 0
-        await AspNetUserService.AspNetUserUpdate(aspNetUser);
-        NavigationManager.NavigateTo("/config/userlist");
+
+        if (id != null)
+        {
+            // обновить если id > 0
+            await AspNetUserService.AspNetUserUpdate(aspNetUser);
+            NavigationManager.NavigateTo("/config/userlist");
+        }
+        else
+        {
+            if (password == passwordConfirm)
+            {
+                if (password.Length >= 6 && password.Any(e => char.IsUpper(e)) && password.Any(e => char.IsDigit(e)) && password.Any(e => char.IsPunctuation(e)))
+                {
+                    visibl = "none";
+                    aspNetUser = new IdentityUser { UserName = userName, Email = email, PhoneNumber = phoneNumber };
+                    await AspNetUserService.AspNetUserInsert(aspNetUser, password);
+                    NavigationManager.NavigateTo("/config/userlist");
+                }
+                else
+                {
+                    visibl = "block";
+                }
+            }
+        }
     }
 
     /// <summary>

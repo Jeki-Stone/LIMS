@@ -1,6 +1,7 @@
 ﻿@using LIMSBlazor.Data
+@using Microsoft.AspNetCore.Identity;
 @page "/samplelog/sampleaddedit"
-@page "/samplelog/sampleaddedit/{id}"
+@page "/samplelog/sampleaddedit/{Id:int}"
 @inject ISampleService SampleService
 @inject IAspNetUserService AspNetUserService
 @inject ISampleTypeService SampleTypeService
@@ -9,12 +10,12 @@
 @inject ILabService LabService
 @inject NavigationManager NavigationManager
 
-<DataEdit PageTitle="@pagetitle" Model="@sample" BtnSaveText="@buttontext" OnValidSubmit="@SampleSave" OnClickCancel="@Cancel">
+<DataEdit PageTitle="@pagetitle" Model="@sample" BtnSaveText="@buttontext" OnValidSubmit="@SampleSave" OnClickCancel="Cancel">
     <table>
         <tr>
             <td>Время получения:</td>
             <td>
-                <InputDate @bind-Value="sample.RecieveTime" />
+                <InputDate @bind-Value="sample.RecieveTime" @bind-Value:event="oninput" />
             </td>
         </tr>
         <tr>
@@ -118,7 +119,7 @@
     Sample sample = new Sample();
     SampleAnalytical sampleanalytical = new SampleAnalytical();
 
-    IEnumerable<AspNetUser> aspNetUsers;
+    List<IdentityUser> aspNetUsers;
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
     IEnumerable<Lab> labs;
@@ -138,7 +139,7 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        aspNetUsers = await AspNetUserService.AspNetUserList();
+        aspNetUsers = await AspNetUserService.AspNetUserClientList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         labs = await LabService.LabList();
@@ -148,10 +149,10 @@
             sample = await SampleService.Sample_GetOne((int)Id);
             pagetitle = "Изменить данные пробы";
             buttontext = "Изменить";
-        }
-        if (sample.Status > 1)
-        {
-            Type = true;
+            if (sample.Status > 1)
+            {
+                Type = true;
+            }
         }
     }
 
@@ -190,6 +191,6 @@
     /// </summary>
     void Cancel()
     {
-        NavigationManager.NavigateTo("samplelog/samplelist");
+        NavigationManager.NavigateTo("samplelog/samplelist", true);
     }
 }

@@ -1,41 +1,33 @@
 ﻿@using LIMSBlazor.Data
+@using Microsoft.AspNetCore.Identity;
 @page "/config/roleaddedit"
 @page "/config/roleaddedit/{id}"
 @inject IAspNetRoleService AspNetRoleService
-@inject ILabService LabService
 @inject NavigationManager NavigationManager
 
-<DataEdit PageTitle="@pagetitle" Model="@aspNetRole" BtnSaveText="@buttontext" OnValidSubmit="@RoleSave" OnClickCancel="@Cancel">
-    <table>
-        <tr>
-            <td>Название:</td>
-            <td><input type="text" @bind="aspNetRole.Name" class="form-control" required></td>
-        </tr>
-        <tr>
-            <td>Описание:</td>
-            <td>
-                <select @bind="aspNetRole.LabId" required class="form-control">
-                    @if (labs != null)
-                    {
-                        <option value="0">Выберите значение</option>
-                        foreach (var item in labs)
-                        {
-                            <option value="@item.Id">@item.Name</option>
-                        }
-                    }
-                </select>
-            </td>
-        </tr>
-    </table>
-</DataEdit>
+@if (aspNetRole == null)
+{
+    <p style="text-align:center">
+        <img src="../images/loader.gif" />
+    </p>
+}
+else
+{
+    <DataEdit PageTitle="@pagetitle" Model="@aspNetRole" BtnSaveText="@buttontext" OnValidSubmit="@RoleSave" OnClickCancel="@Cancel">
+        <table>
+            <tr>
+                <td>Название:</td>
+                <td><input type="text" @bind="aspNetRole.Name" class="form-control" required></td>
+            </tr>
+        </table>
+    </DataEdit>
+}
 
 @code {
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    AspNetRole aspNetRole = new AspNetRole();
-
-    IEnumerable<Lab> labs;
+    IdentityRole aspNetRole;
 
     [Parameter]
     public string id { get; set; }
@@ -51,13 +43,16 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        labs = await LabService.LabList();
         /// Если Id ноль то будет добавлено новое значение
         if (id != null)
         {
             aspNetRole = await AspNetRoleService.AspNetRole_GetOne(id);
             pagetitle = "Изменить данные роли";
             buttontext = "Изменить";
+        }
+        else
+        {
+            aspNetRole = new IdentityRole();
         }
     }
 
@@ -66,7 +61,7 @@
     /// </summary>
     protected async Task RoleSave()
     {
-        if (aspNetRole.Id == null)
+        if (id == null)
         {
             await AspNetRoleService.AspNetRoleInsert(aspNetRole);
         }

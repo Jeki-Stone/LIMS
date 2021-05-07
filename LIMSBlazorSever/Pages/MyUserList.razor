@@ -1,50 +1,48 @@
 ﻿@page "/config/myusers"
 @using System.Linq;
-@using Microsoft.AspNetCore.Mvc;
 @using Microsoft.AspNetCore.Identity;
 @using System.Threading.Tasks;
-@using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-@using Microsoft.AspNetCore.Identity;
-@using System.Threading.Tasks;
-@inject RoleManager<IdentityRole> roleManager;
-@*@inject UserManager<IdentityUser> userManager;*@
+@inject UserManager<IdentityUser> userManager;
 
 <h3>MyUserList</h3>
 <button type="submit" @onclick="AddUser" class="btn btn-primary">Add user</button>
 <table>
-    @*@if (userList == null)
+    @if (userList == null)
+    {
+        <p style="text-align:center">
+            <img src="../images/loader.gif" />
+        </p>
+    }
+    else
+    {
+        @foreach (var item in userList)
         {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" />
-            </p>
+            <tr>
+                <td>@item.UserName</td>
+                <td>@item.Email</td>
+                <td>@item.PasswordHash</td>
+            </tr>
         }
-        else
-        {
-            @foreach (var item in userList)
-            {
-                <tr>
-                    <td>@item.UserName</td>
-                    <td>@item.Email</td>
-                    <td>@item.PasswordHash</td>
-                </tr>
-            }
-        }*@
+    }
 </table>
 
 @code {
-    //List<IdentityUser> userList;
+    List<IdentityUser> userList;
 
     protected override async Task OnInitializedAsync()
     {
-        //userList = userManager.Users.ToList();
+        userList = userManager.Users.ToList();
     }
 
     async void AddUser()
     {
         try
         {
-            //IdentityUser identityUser = new IdentityUser();
-            await roleManager.CreateAsync(new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" });
+            IdentityUser identityUser = new IdentityUser();
+            identityUser.UserName = "Паша";
+            identityUser.Email = "admin@mail.ru";
+            string Password = "Admin12!";
+            await userManager.CreateAsync(identityUser, Password);
         }
         catch (Exception e)
         {

@@ -1,7 +1,7 @@
 ﻿@using LIMSBlazor.Data
+@using Microsoft.AspNetCore.Identity;
 @page "/config/roledelete/{id}"
 @inject IAspNetRoleService AspNetRoleService
-@inject ILabService LabService
 @inject NavigationManager NavigationManager
 
 <DataEdit FormType="Delete" PageTitle="Удалить роль из базы данных" DeleteWarning="Вы уверены что хотите удалить эту роль? Данные нельзя будет вернуть!" Model="@aspNetRole" OnClickDelete="@Delete" OnClickCancel="@Cancel">
@@ -10,21 +10,15 @@
             <td>Название:</td>
             <td>@aspNetRole.Name</td>
         </tr>
-        <tr>
-            <td>Описание:</td>
-            <td>@labs?.Where(x => x.Id == aspNetRole.LabId).FirstOrDefault()?.Name</td>
-        </tr>
     </table>
 </DataEdit>
 
 
-@code { 
+@code {
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    AspNetRole aspNetRole = new AspNetRole();
-
-    IEnumerable<Lab> labs;
+    IdentityRole aspNetRole;
 
     [Parameter]
     public string id { get; set; }
@@ -35,7 +29,6 @@
     protected override async Task OnInitializedAsync()
     {
         aspNetRole = await AspNetRoleService.AspNetRole_GetOne(id);
-        labs = await LabService.LabList();
     }
 
     /// <summary>
@@ -43,7 +36,6 @@
     /// </summary>
     protected async Task Delete()
     {
-        // Insert if id is zero.
         await AspNetRoleService.AspNetRoleDelete(id);
         NavigationManager.NavigateTo("/config/rolelist");
     }
@@ -54,5 +46,5 @@
     void Cancel()
     {
         NavigationManager.NavigateTo("/config/rolelist");
-    }
+    } 
 }

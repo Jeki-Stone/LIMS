@@ -56,7 +56,7 @@
                         <td>@sample.Id</td>
                         <td>@sample.RecieveTime</td>
                         <td>@sample.TestTime</td>
-                        <td>@aspNetUsers?.Where(x => x.Id == sample.UserId).FirstOrDefault()?.UserName</td>
+                        @*<td>@aspNetUsers?.Where(x => x.Id == sample.UserId).FirstOrDefault()?.UserName</td>*@
                         <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
                         <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
                         <td>@sample.NumSamples</td>
@@ -99,7 +99,7 @@
     protected override async Task OnInitializedAsync()
     {
         samples = await SampleService.SampleList();
-        aspNetUsers = await AspNetUserService.AspNetUserList();
+        //aspNetUsers = await AspNetUserService.AspNetUserList();
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         labs = await LabService.LabList();

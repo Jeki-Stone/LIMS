@@ -1,7 +1,7 @@
 ﻿@using LIMSBlazor.Data
+@using Microsoft.AspNetCore.Identity;
 @page "/config/rolelist"
 @inject IAspNetRoleService AspNetRoleService
-@inject ILabService LabService
 
 <DataView PageTitle="Список ролей" UrlAdd="/config/roleaddedit" UrlAddText="Добавить новую роль">
     <Header>
@@ -9,7 +9,6 @@
             <td style="text-align:center">#</td>
             <td>Id</td>
             <td>Название</td>
-            <td>Лаборатория</td>
         </tr>
     </Header>
     <Rows>
@@ -35,7 +34,6 @@
                     </td>
                     <td>@aspNetRole.Id</td>
                     <td>@aspNetRole.Name</td>
-                    <td>@labs?.Where(x => x.Id == aspNetRole.LabId).FirstOrDefault()?.Name</td>
                 </tr>
             }
         }
@@ -46,8 +44,7 @@
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    IEnumerable<AspNetRole> aspNetRoles;
-    IEnumerable<Lab> labs;
+    List<IdentityRole> aspNetRoles;
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
@@ -55,6 +52,5 @@
     protected override async Task OnInitializedAsync()
     {
         aspNetRoles = await AspNetRoleService.AspNetRoleList();
-        labs = await LabService.LabList();
     }
 }

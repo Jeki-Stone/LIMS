@@ -1,5 +1,6 @@
 ﻿@using LIMSBlazor.Data
-@page "/config/userdelete/{string:int}"
+@using Microsoft.AspNetCore.Identity;
+@page "/config/userdelete/{id}"
 @inject IAspNetUserService AspNetUserService
 @inject NavigationManager NavigationManager
 
@@ -20,11 +21,11 @@
     </table>
 </DataEdit>
 
-@code {
+@code { 
     /// <summary>
     /// Создаём необходимые компоненты
     /// </summary>
-    AspNetUser aspNetUser = new AspNetUser();
+    IdentityUser aspNetUser;
 
     [Parameter]
     public string id { get; set; }
@@ -52,5 +53,5 @@
     void Cancel()
     {
         NavigationManager.NavigateTo("/config/userlist");
-    } 
+    }
 }

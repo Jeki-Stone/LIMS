@@ -36,22 +36,20 @@ namespace LIMSBlazorSever
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddSingleton<WeatherForecastService>();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<ILabService, LabService>();
             services.AddScoped<ISampleService, SampleService>();
-            services.AddScoped<ICliService, CliService>();
             services.AddScoped<ILocService, LocService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IUnitService, UnitService>();
@@ -65,7 +63,7 @@ namespace LIMSBlazorSever
             services.AddScoped<ISampleSpecService, SampleSpecService>();
             services.AddScoped<ISampleSpecAnalyticalService, SampleSpecAnalyticalService>();
             services.AddScoped<IInstrumTypeAnalyticService, InstrumTypeAnalyticService>();
-            services.AddScoped<IUserRoleService, UserRoleService>();
+            services.AddScoped<IAspNetUserRoleService, AspNetUserRoleService>();
             services.AddScoped<ISampleTypeAttrService, SampleTypeAttrService>();
             services.AddScoped<IResultService, ResultService>();
             services.AddScoped<IFinalResultService, FinalResultService>();
@@ -74,7 +72,6 @@ namespace LIMSBlazorSever
             services.AddScoped<IInstrumAnalyticService, InstrumAnalyticService>();
             services.AddScoped<IAnalyticalServiceAttrService, AnalyticalServiceAttrService>();
             services.AddScoped<IResultAttrService, ResultAttrService>();
-            services.AddSingleton<WeatherForecastService>();
 
             // SQL database connection (name  defined in appsettings. json).
             var SqlConnectionConfiguration = new SqlConnectionConfiguration(Configuration.GetConnectionString("DefaultConnection"));
@@ -82,8 +79,6 @@ namespace LIMSBlazorSever
 
             //Optional for debugging
             services.AddServerSideBlazor(o => o.DetailedErrors = true);
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

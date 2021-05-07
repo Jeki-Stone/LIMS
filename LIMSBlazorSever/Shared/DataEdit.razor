@@ -27,12 +27,11 @@
     }
     &nbsp;
     &nbsp;
-    <button type="button" class="btn btn-secondary" @onclick="@OnClickCancel">Отменить</button>
+    <button type="button" class="btn btn-secondary" @onclick="OnClickCancel">Отменить</button>
 
 </EditForm>
 
 @code {
-
     [Parameter]
     public string PageTitle { get; set; }
     [Parameter]
@@ -55,7 +54,5 @@
     public EventCallback OnClickDelete { get; set; }
     [Parameter]
     public string DeleteWarning { get; set; }
-
-
 }
 
