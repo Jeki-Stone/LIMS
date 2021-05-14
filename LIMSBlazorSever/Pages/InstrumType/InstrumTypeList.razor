@@ -1,61 +1,68 @@
-﻿@using LIMSBlazor.Data
-@page "/config/instrumtypelist"
-@inject IInstrumTypeService InstrumTypeService
+﻿<AuthorizeView Roles="ADMIN">
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/config/instrumtypelist"
+        @inject IInstrumTypeService InstrumTypeService
 
-<DataView PageTitle="Список типов оборудования" UrlAdd="/config/instrumtypeaddedit" UrlAddText="Добавить новый тип оборудования">
-    <Header>
-        <tr>
-            <td style="text-align:center">#</td>
-            <td>Id типа</td>
-            <td>Наименование</td>
-            <td>Описание</td>
-        </tr>
-    </Header>
-    <Rows>
-        @if (instrumtypes == null)
-        {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" width="50" height="50" />
-            </p>
-        }
-        else
-        {
-            @foreach (var instrumtype in instrumtypes)
-            {
+        <DataView PageTitle="Список типов оборудования" UrlAdd="/config/instrumtypeaddedit" UrlAddText="Добавить новый тип оборудования">
+            <Header>
                 <tr>
-                    <td style="text-align:center">
-                        <a href="/config/instrumtypeaddedit/@instrumtype.Id">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="/config/instrumtypedelete/@instrumtype.Id">
-                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="/config/instrumtype/instrumtypeanalyticlist/@instrumtype.Id">
-                            <img src="../images/downArrow.png" title="Add" width="20" height="20" />
-                        </a>
-                    </td>
-                    <td>@instrumtype.Id</td>
-                    <td>@instrumtype.Name</td>
-                    <td>@instrumtype.Description</td>
+                    <td style="text-align:center">#</td>
+                    <td>Id типа</td>
+                    <td>Наименование</td>
+                    <td>Описание</td>
                 </tr>
+            </Header>
+            <Rows>
+                @if (instrumtypes == null)
+                {
+                    <p style="text-align:center">
+                        <img src="../images/loader.gif" width="50" height="50" />
+                    </p>
+                }
+                else
+                {
+                    @foreach (var instrumtype in instrumtypes)
+                    {
+                        <tr>
+                            <td style="text-align:center">
+                                <a href="/config/instrumtypeaddedit/@instrumtype.Id">
+                                    <img src="../images/iEdit.png" width="20" height="20" />
+                                </a>
+                                &nbsp
+                                <a href="/config/instrumtypedelete/@instrumtype.Id">
+                                    <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                                </a>
+                                &nbsp
+                                <a href="/config/instrumtype/instrumtypeanalyticlist/@instrumtype.Id">
+                                    <img src="../images/downArrow.png" title="Add" width="20" height="20" />
+                                </a>
+                            </td>
+                            <td>@instrumtype.Id</td>
+                            <td>@instrumtype.Name</td>
+                            <td>@instrumtype.Description</td>
+                        </tr>
+                    }
+                }
+            </Rows>
+        </DataView>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            IEnumerable<InstrumType> instrumtypes;
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                instrumtypes = await InstrumTypeService.InstrumTypeList();
             }
         }
-    </Rows>
-</DataView>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    IEnumerable<InstrumType> instrumtypes;
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        instrumtypes = await InstrumTypeService.InstrumTypeList();
-    }
-}
+    </Authorized>
+</AuthorizeView>

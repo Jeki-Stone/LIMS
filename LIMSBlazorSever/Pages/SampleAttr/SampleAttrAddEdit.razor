@@ -1,78 +1,87 @@
-﻿@using LIMSBlazor.Data
-@page "/samplelog/sample/sampleattraddedit/{SampleId:int}"
-@inject ISampleAttrService SampleAttrService
-@inject ISampleService SampleService
-@inject IAttrService AttrService
-@inject NavigationManager NavigationManager
+﻿<AuthorizeView Roles=@(GlobalConstant.GlobalLab + "--Лаборант, ADMIN")>
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/samplelog/sample/sampleattraddedit/{SampleId:int}"
+        @inject ISampleAttrService SampleAttrService
+        @inject IAspNetUserService AspNetUserService
+        @inject ISampleService SampleService
+        @inject IAttrService AttrService
+        @inject NavigationManager NavigationManager
 
-<DataEdit PageTitle="@pagetitle" Model="@sampleattr" BtnSaveText="@buttontext" OnValidSubmit="@SampleAttrSave" OnClickCancel="@Cancel">
-    <table>
-        <tr>
-            <td>Id испытания:</td>
-            <td>@SampleId</td>
-        </tr>
-        <tr>
-            <td>Атрибут:</td>
-            <td>
-                <select @bind="sampleattr.AttrId" class="form-control" required disabled="@(sampleattr.SampleId != 0)">
-                    @if (attrs != null)
-                    {
-                        <option value="0">Выберите значение</option>
-                        foreach (var item in attrs)
-                        {
-                            <option value="@item.Id">@item.Name</option>
-                        }
-                    }
-                </select>
-            </td>
-        </tr>
-    </table>
-</DataEdit>
+        <DataEdit PageTitle="@pagetitle" Model="@sampleattr" BtnSaveText="@buttontext" OnValidSubmit="@SampleAttrSave" OnClickCancel="@Cancel">
+            <table>
+                <tr>
+                    <td>Id испытания:</td>
+                    <td>@SampleId</td>
+                </tr>
+                <tr>
+                    <td>Атрибут:</td>
+                    <td>
+                        <select @bind="sampleattr.AttrId" class="form-control" required disabled="@(sampleattr.SampleId != 0)">
+                            @if (attrs != null)
+                            {
+                                <option value="0">Выберите значение</option>
+                                foreach (var item in attrs)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </DataEdit>
 
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    SampleAttr sampleattr = new SampleAttr();
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            SampleAttr sampleattr = new SampleAttr();
 
-    IEnumerable<Sample> samples;
-    IEnumerable<Attr> attrs;
+            IEnumerable<Sample> samples;
+            IEnumerable<Attr> attrs;
 
-    [Parameter]
-    public int SampleId { get; set; }
-    [Parameter]
-    public int AttrId { get; set; }
+            [Parameter]
+            public int SampleId { get; set; }
+            [Parameter]
+            public int AttrId { get; set; }
 
-    /// <summary>
-    /// Задаём базовые значения
-    /// </summary>
-    public string pagetitle = "Добавить новый атрибут испытания";
-    public string buttontext = "Добавить";
+            /// <summary>
+            /// Задаём базовые значения
+            /// </summary>
+            public string pagetitle = "Добавить новый атрибут испытания";
+            public string buttontext = "Добавить";
 
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        samples = await SampleService.SampleList();
-        attrs = await AttrService.AttrList();
-    }
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                samples = await SampleService.SampleList();
+                attrs = await AttrService.AttrList();
+            }
 
-    /// <summary>
-    /// Задача сохраняющая в БД
-    /// </summary>
-    protected async Task SampleAttrSave()
-    {
-        sampleattr.UpdateUser = "Создавший пользователь";
-        await SampleAttrService.SampleAttrInsert(sampleattr, SampleId);
-        NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
-    }
+            /// <summary>
+            /// Задача сохраняющая в БД
+            /// </summary>
+            protected async Task SampleAttrSave()
+            {
+                var user = await AspNetUserService.AspNetAuthorizedUser();
+                sampleattr.CreateUser = user.UserName;
+                await SampleAttrService.SampleAttrInsert(sampleattr, SampleId);
+                NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
+            }
 
-    /// <summary>
-    /// Отмена изменений и возвращение на прошлую страницу
-    /// </summary>
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
-    }
-}
+            /// <summary>
+            /// Отмена изменений и возвращение на прошлую страницу
+            /// </summary>
+            void Cancel()
+            {
+                NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
+            }
+        }
+</Authorized>
+</AuthorizeView>

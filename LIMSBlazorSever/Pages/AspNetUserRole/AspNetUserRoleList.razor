@@ -1,98 +1,105 @@
-﻿@using LIMSBlazor.Data
-@using Microsoft.AspNetCore.Identity;
-@using System.Collections.Generic;
-@page "/config/userlist/userrolelist/{UserId}"
-@inject IAspNetUserService AspNetUserService
-@inject IAspNetRoleService AspNetRoleService
-@inject IAspNetUserRoleService AspNetUserRoleService
+﻿<AuthorizeView Roles="ADMIN">
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @using Microsoft.AspNetCore.Identity;
+        @using System.Collections.Generic;
+        @page "/config/userlist/userrolelist/{UserId}"
+        @inject IAspNetUserService AspNetUserService
+        @inject IAspNetRoleService AspNetRoleService
+        @inject IAspNetUserRoleService AspNetUserRoleService
 
-<DataView PageTitle="Список ролей пользователя" UrlAdd=@UrlUserId UrlBack="/config/userlist" UrlAddText="Добавить новую роль для пользователя" UrlBackText="Вернуться к списку Пользователей">
-    <Header>
-        <tr>
-            <th>Имя</th>
-            <th>Есть</th>
-        </tr>
-    </Header>
-    <Rows>
-        @if (aspNetRoles == null || userRoles == null)
-        {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" />
-            </p>
-        }
-        else
-        {
-            @foreach (var role in aspNetRoles)
-            {
+        <DataView PageTitle="Список ролей пользователя" UrlAdd=@UrlUserId UrlBack="/config/userlist" UrlAddText="Добавить новую роль для пользователя" UrlBackText="Вернуться к списку Пользователей">
+            <Header>
                 <tr>
-                    <td>@role.Name</td>
-                    <td style="text-align:center">
-                        @if (userRoles.Count != 0)
-                        {
-                            @foreach (var item in userRoles)
-                            {
-                                if (item == role.Name)
+                    <th>Имя</th>
+                    <th>Есть</th>
+                </tr>
+            </Header>
+            <Rows>
+                @if (aspNetRoles == null || userRoles == null)
+                {
+                    <p style="text-align:center">
+                        <img src="../images/loader.gif" />
+                    </p>
+                }
+                else
+                {
+                    @foreach (var role in aspNetRoles)
+                    {
+                        <tr>
+                            <td>@role.Name</td>
+                            <td style="text-align:center">
+                                @if (userRoles.Count != 0)
                                 {
-                                    <input type="checkbox" checked @onchange="(() => SaveData(role.Name))">
-                                    break;
+                                    @foreach (var item in userRoles)
+                                    {
+                                        if (item == role.Name)
+                                        {
+                                            <input type="checkbox" checked @onchange="(() => SaveData(role.Name))">
+                                            break;
+                                        }
+                                        else if (userRoles.Last() == item)
+                                        {
+                                            <input type="checkbox" @onchange="(() => SaveData(role.Name))">
+                                            break;
+                                        }
+                                    }
                                 }
-                                else if (userRoles.Last() == item)
+                                else
                                 {
                                     <input type="checkbox" @onchange="(() => SaveData(role.Name))">
-                                    break;
                                 }
-                            }
-                        }
-                        else
-                        {
-                            <input type="checkbox" @onchange="(() => SaveData(role.Name))">
-                        }
-                    </td>
-                </tr>
+                            </td>
+                        </tr>
+                    }
+                }
+            </Rows>
+        </DataView>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            List<IdentityRole> aspNetRoles;
+
+            IList<string> userRoles;
+
+            [Parameter]
+            public string UserId { get; set; }
+            [Parameter]
+            public string UrlUserId { get; set; }
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                aspNetRoles = await AspNetRoleService.AspNetRoleList();
+                userRoles = await AspNetUserRoleService.UserRoleList(UserId);
+                UrlUserId = "/config/userlist/userroleaddedit/" + @UserId;
+            }
+
+            /// <summary>
+            /// Сохраняет изменения
+            /// </summary>
+            /// <param name="userRole"></param>
+            /// <returns></returns>
+            protected async Task SaveData(string userRole)
+            {
+                var status = await AspNetUserRoleService.UserHaveRole(UserId, userRole);
+
+                if (status)
+                {
+                    await AspNetUserRoleService.UserRoleDelete(UserId, userRole);
+                }
+                else
+                {
+                    await AspNetUserRoleService.UserRoleInsert(UserId, userRole);
+                }
             }
         }
-    </Rows>
-</DataView>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    List<IdentityRole> aspNetRoles;
-
-    IList<string> userRoles;
-
-    [Parameter]
-    public string UserId { get; set; }
-    [Parameter]
-    public string UrlUserId { get; set; }
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        aspNetRoles = await AspNetRoleService.AspNetRoleList();
-        userRoles = await AspNetUserRoleService.UserRoleList(UserId);
-        UrlUserId = "/config/userlist/userroleaddedit/" + @UserId;
-    }
-
-    /// <summary>
-    /// Сохраняет изменения
-    /// </summary>
-    /// <param name="userRole"></param>
-    /// <returns></returns>
-    protected async Task SaveData(string userRole)
-    {
-        var status = await AspNetUserRoleService.UserHaveRole(UserId, userRole);
-
-        if (status)
-        {
-            await AspNetUserRoleService.UserRoleDelete(UserId, userRole);
-        }
-        else
-        {
-            await AspNetUserRoleService.UserRoleInsert(UserId, userRole);
-        }
-    }
-}
+    </Authorized>
+</AuthorizeView>

@@ -1,12 +1,85 @@
-﻿<AuthorizeView>
+﻿@using LIMSBlazor.Data
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity;
+@inject ILabService LabService
+@inject IAspNetUserService AspNetUserService
+@inject IAspNetUserRoleService AspNetUserRoleService
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
+@inject SignInManager<IdentityUser> _signInManager
+@inherits LayoutComponentBase
+
+<AuthorizeView>
     <Authorized>
-        <a href="Identity/Account/Manage">Hello, @context.User?.Identity?.Name!</a>
-        <form method="post" action="Identity/Account/LogOut">
-            <button type="submit" class="nav-link btn btn-link">Log out</button>
-        </form>
+        <div style="width:500px; position:absolute; left:20px">
+            <select @onchange="GlobalLabChange" class="form-control" required>
+                @if (labs != null)
+                {
+                    foreach (var lab in labs)
+                    {
+                        @if (lab != null)
+                        {
+                            <option value="@lab.Code">@lab.Name</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        &nbsp
+        <p style="margin-top:auto; margin-bottom:auto;">Hello, @context.User?.Identity?.Name!</p>
+        <button @onclick="LogOut" class="nav-link btn btn-link text-dark">Logout</button>
     </Authorized>
     <NotAuthorized>
-        <a href="Identity/Account/Register">Register</a>
+        @*<a href="Identity/Account/Register">Register</a>*@
         <a href="Identity/Account/Login">Log in</a>
     </NotAuthorized>
 </AuthorizeView>
+
+@code {
+    /// <summary>
+    /// Создаём необходимые компоненты
+    /// </summary>
+    List<Lab> labs;
+
+    int Labaratory;
+
+
+
+    /// <summary>
+    /// Исполняемая при запуске страницы задача
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userAuth = authState.User;
+
+        if (userAuth.Identity.IsAuthenticated)
+        {
+            var userName = userAuth.Identity.Name;
+            labs = await AspNetUserRoleService.UserByNameLab(userName);
+            if (labs[0] != null)
+                GlobalConstant.GlobalLab = labs[0].Code;
+        }
+    }
+
+    /// <summary>
+    /// Выбор лабаротории
+    /// </summary>
+    /// <param name="e"></param>
+    /// <returns></returns>
+    protected async Task GlobalLabChange(ChangeEventArgs e)
+    {
+        GlobalConstant.GlobalLab = Convert.ToString(e.Value);
+        NavigationManager.NavigateTo("");
+    }
+
+    protected async Task LogOut()
+    {
+        await _signInManager.SignOutAsync();
+        NavigationManager.NavigateTo("Identity/Account/Login");
+    }
+}

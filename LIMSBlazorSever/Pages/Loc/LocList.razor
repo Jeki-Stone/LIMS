@@ -1,57 +1,64 @@
-﻿@using LIMSBlazor.Data
-@page "/config/loclist"
-@inject ILocService LocService
+﻿<AuthorizeView Roles="ADMIN">
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/config/loclist"
+        @inject ILocService LocService
 
-<DataView PageTitle="Список места взятия пробы" UrlAdd="config/locaddedit" UrlAddText="Добавить новое место взятия пробы" >
-    <Header>
-        <tr>
-            <td style="text-align:center">#</td>
-            <td>Id</td>
-            <td>Наименование</td>
-            <td>Описание</td>
-        </tr>
-    </Header>
-    <Rows>
-        @if (locs == null)
-        {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" width="50" height="50" />
-            </p>
-        }
-        else
-        {
-            @foreach (var loc in locs)
-            {
+        <DataView PageTitle="Список места взятия пробы" UrlAdd="config/locaddedit" UrlAddText="Добавить новое место взятия пробы">
+            <Header>
                 <tr>
-                    <td style="text-align:center">
-                        <a href="config/locaddedit/@loc.Id">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="config/locdelete/@loc.Id">
-                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                        </a>
-                    </td>
-                    <td>@loc.Id</td>
-                    <td>@loc.Name</td>
-                    <td>@loc.Description</td>
+                    <td style="text-align:center">#</td>
+                    <td>Id</td>
+                    <td>Наименование</td>
+                    <td>Описание</td>
                 </tr>
+            </Header>
+            <Rows>
+                @if (locs == null)
+                {
+                    <p style="text-align:center">
+                        <img src="../images/loader.gif" width="50" height="50" />
+                    </p>
+                }
+                else
+                {
+                    @foreach (var loc in locs)
+                    {
+                        <tr>
+                            <td style="text-align:center">
+                                <a href="config/locaddedit/@loc.Id">
+                                    <img src="../images/iEdit.png" width="20" height="20" />
+                                </a>
+                                &nbsp
+                                <a href="config/locdelete/@loc.Id">
+                                    <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                                </a>
+                            </td>
+                            <td>@loc.Id</td>
+                            <td>@loc.Name</td>
+                            <td>@loc.Description</td>
+                        </tr>
+                    }
+                }
+            </Rows>
+        </DataView>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            IEnumerable<Loc> locs;
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                locs = await LocService.LocList();
             }
         }
-    </Rows>
-</DataView>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    IEnumerable<Loc> locs;
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        locs = await LocService.LocList();
-    }
-}
+    </Authorized>
+</AuthorizeView>

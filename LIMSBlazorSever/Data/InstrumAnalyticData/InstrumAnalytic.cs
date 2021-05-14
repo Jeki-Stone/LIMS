@@ -13,6 +13,5 @@ namespace LIMSBlazor.Data
         public int InstrumentId { get; set; }
         public int OldAnalyticalServiceId { get; set; }
         public int AnalyticalServiceId { get; set; }
-        public int LabId { get; set; }
     }
 }

@@ -12,5 +12,6 @@ namespace LIMSBlazor.Data
         Task<IdentityUser> AspNetUser_GetOne(string id);
         Task<bool> AspNetUserUpdate(IdentityUser _identityUser);
         Task<bool> AspNetUserDelete(string id);
+        Task<IdentityUser> AspNetAuthorizedUser();
     }
 }

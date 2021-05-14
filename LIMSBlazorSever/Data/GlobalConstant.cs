@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace LIMSBlazor.Data
 {
     public class GlobalConstant
-    {
+    {       
+        public static string GlobalLab { get; set; }
+
         public const string DATE_FORMAT = "dd.MM.yyyy";
         public const string DATETIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
 

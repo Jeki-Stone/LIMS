@@ -1,82 +1,89 @@
-﻿@using LIMSBlazor.Data
-@using Microsoft.AspNetCore.Identity;
-@page "/config/roleaddedit"
-@page "/config/roleaddedit/{id}"
-@inject IAspNetRoleService AspNetRoleService
-@inject NavigationManager NavigationManager
+﻿<AuthorizeView Roles="ADMIN">
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @using Microsoft.AspNetCore.Identity;
+        @page "/config/roleaddedit"
+        @page "/config/roleaddedit/{id}"
+        @inject IAspNetRoleService AspNetRoleService
+        @inject NavigationManager NavigationManager
 
-@if (aspNetRole == null)
-{
-    <p style="text-align:center">
-        <img src="../images/loader.gif" />
-    </p>
-}
-else
-{
-    <DataEdit PageTitle="@pagetitle" Model="@aspNetRole" BtnSaveText="@buttontext" OnValidSubmit="@RoleSave" OnClickCancel="@Cancel">
-        <table>
-            <tr>
-                <td>Название:</td>
-                <td><input type="text" @bind="aspNetRole.Name" class="form-control" required></td>
-            </tr>
-        </table>
-    </DataEdit>
-}
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    IdentityRole aspNetRole;
-
-    [Parameter]
-    public string id { get; set; }
-
-    /// <summary>
-    /// Задаём базовые значения
-    /// </summary>
-    public string pagetitle = "Добавить новую роль";
-    public string buttontext = "Добавить";
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        /// Если Id ноль то будет добавлено новое значение
-        if (id != null)
+        @if (aspNetRole == null)
         {
-            aspNetRole = await AspNetRoleService.AspNetRole_GetOne(id);
-            pagetitle = "Изменить данные роли";
-            buttontext = "Изменить";
+            <p style="text-align:center">
+                <img src="../images/loader.gif" />
+            </p>
         }
         else
         {
-            aspNetRole = new IdentityRole();
+            <DataEdit PageTitle="@pagetitle" Model="@aspNetRole" BtnSaveText="@buttontext" OnValidSubmit="@RoleSave" OnClickCancel="@Cancel">
+                <table>
+                    <tr>
+                        <td>Название:</td>
+                        <td><input type="text" @bind="aspNetRole.Name" class="form-control" required></td>
+                    </tr>
+                </table>
+            </DataEdit>
         }
-    }
 
-    /// <summary>
-    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
-    /// </summary>
-    protected async Task RoleSave()
-    {
-        if (id == null)
-        {
-            await AspNetRoleService.AspNetRoleInsert(aspNetRole);
-        }
-        else
-        {
-            await AspNetRoleService.AspNetRoleUpdate(aspNetRole);
-        }
-        NavigationManager.NavigateTo("/config/rolelist");
-    }
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            IdentityRole aspNetRole;
 
-    /// <summary>
-    /// Отмена изменений и возвращение на прошлую страницу
-    /// </summary>
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("/config/rolelist");
-    }
-}
+            [Parameter]
+            public string id { get; set; }
+
+            /// <summary>
+            /// Задаём базовые значения
+            /// </summary>
+            public string pagetitle = "Добавить новую роль";
+            public string buttontext = "Добавить";
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                /// Если Id ноль то будет добавлено новое значение
+                if (id != null)
+                {
+                    aspNetRole = await AspNetRoleService.AspNetRole_GetOne(id);
+                    pagetitle = "Изменить данные роли";
+                    buttontext = "Изменить";
+                }
+                else
+                {
+                    aspNetRole = new IdentityRole();
+                }
+            }
+
+            /// <summary>
+            /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+            /// </summary>
+            protected async Task RoleSave()
+            {
+                if (id == null)
+                {
+                    await AspNetRoleService.AspNetRoleInsert(aspNetRole);
+                }
+                else
+                {
+                    await AspNetRoleService.AspNetRoleUpdate(aspNetRole);
+                }
+                NavigationManager.NavigateTo("/config/rolelist");
+            }
+
+            /// <summary>
+            /// Отмена изменений и возвращение на прошлую страницу
+            /// </summary>
+            void Cancel()
+            {
+                NavigationManager.NavigateTo("/config/rolelist");
+            }
+        }
+    </Authorized>
+</AuthorizeView>

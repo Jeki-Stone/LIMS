@@ -77,7 +77,7 @@ namespace LIMSBlazor.Data
         {
             try
             {
-                using (var conn = new SqlConnection(_configuration.Value))
+                await using (var conn = new SqlConnection(_configuration.Value))
                 {
                     var parametrs = new DynamicParameters();
                     parametrs.Add("Id", result.Id, DbType.Int32);

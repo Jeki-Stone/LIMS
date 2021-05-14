@@ -1,62 +1,69 @@
-﻿@using LIMSBlazor.Data
-@page "/config/instrumtype/instrumtypeanalyticdelete/{InstrumentTypeId:int}/{AnalyticalServiceId:int}"
-@inject IInstrumTypeAnalyticService InstrumTypeAnalyticService
-@inject IInstrumTypeService InstrumTypeService
-@inject IAnalyticalServService AnalyticalServService
-@inject NavigationManager NavigationManager
+﻿<AuthorizeView Roles="ADMIN">
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/config/instrumtype/instrumtypeanalyticdelete/{InstrumentTypeId:int}/{AnalyticalServiceId:int}"
+        @inject IInstrumTypeAnalyticService InstrumTypeAnalyticService
+        @inject IInstrumTypeService InstrumTypeService
+        @inject IAnalyticalServService AnalyticalServService
+        @inject NavigationManager NavigationManager
 
-<DataEdit FormType="Delete" PageTitle="Удалить аналитический сервис типа" DeleteWarning="Вы уверены что хотите удалить этот аналитический сервис типа? Данные нельзя будет вернуть!" Model="@instrumtypeanalitic" OnClickDelete="@Delete" OnClickCancel="@Cancel">
-    <table class="editform">
-        <tr>
-            <td>Тип оборудования:</td>
-            <td>@instrumtypes?.Where(x => x.Id == instrumtypeanalitic.InstrumentTypeId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>Аналитический сервис:</td>
-            <td>@analyticalservs?.Where(x => x.Id == instrumtypeanalitic.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-        </tr>
-    </table>
-</DataEdit>
+        <DataEdit FormType="Delete" PageTitle="Удалить аналитический сервис типа" DeleteWarning="Вы уверены что хотите удалить этот аналитический сервис типа? Данные нельзя будет вернуть!" Model="@instrumtypeanalitic" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+            <table class="editform">
+                <tr>
+                    <td>Тип оборудования:</td>
+                    <td>@instrumtypes?.Where(x => x.Id == instrumtypeanalitic.InstrumentTypeId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>Аналитический сервис:</td>
+                    <td>@analyticalservs?.Where(x => x.Id == instrumtypeanalitic.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                </tr>
+            </table>
+        </DataEdit>
 
 
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    InstrumTypeAnalytic instrumtypeanalitic = new InstrumTypeAnalytic();
+        @code { 
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            InstrumTypeAnalytic instrumtypeanalitic = new InstrumTypeAnalytic();
 
-    [Parameter]
-    public int InstrumentTypeId { get; set; }
-    [Parameter]
-    public int AnalyticalServiceId { get; set; }
+            [Parameter]
+            public int InstrumentTypeId { get; set; }
+            [Parameter]
+            public int AnalyticalServiceId { get; set; }
 
-    IEnumerable<InstrumType> instrumtypes;
-    IEnumerable<AnalyticalServ> analyticalservs;
+            IEnumerable<InstrumType> instrumtypes;
+            IEnumerable<AnalyticalServ> analyticalservs;
 
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        instrumtypeanalitic = await InstrumTypeAnalyticService.InstrumTypeAnalytic_GetOne(InstrumentTypeId, AnalyticalServiceId);
-        instrumtypes = await InstrumTypeService.InstrumTypeList();
-        analyticalservs = await AnalyticalServService.AnalyticalServList();
-    }
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                instrumtypeanalitic = await InstrumTypeAnalyticService.InstrumTypeAnalytic_GetOne(InstrumentTypeId, AnalyticalServiceId);
+                instrumtypes = await InstrumTypeService.InstrumTypeList();
+                analyticalservs = await AnalyticalServService.AnalyticalServList();
+            }
 
-    /// <summary>
-    /// Задача удаляющая запись из БД
-    /// </summary>
-    protected async Task Delete()
-    {
-        await InstrumTypeAnalyticService.InstrumTypeAnalyticDelete(InstrumentTypeId, AnalyticalServiceId);
-        NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
-    }
+            /// <summary>
+            /// Задача удаляющая запись из БД
+            /// </summary>
+            protected async Task Delete()
+            {
+                await InstrumTypeAnalyticService.InstrumTypeAnalyticDelete(InstrumentTypeId, AnalyticalServiceId);
+                NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+            }
 
-    /// <summary>
-    /// Отмена изменений и возвращение на прошлую страницу
-    /// </summary>
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
-    }
-}
+            /// <summary>
+            /// Отмена изменений и возвращение на прошлую страницу
+            /// </summary>
+            void Cancel()
+            {
+                NavigationManager.NavigateTo("config/instrumtype/instrumtypeanalyticlist/" + InstrumentTypeId);
+            } 
+            }
+    </Authorized>
+</AuthorizeView>

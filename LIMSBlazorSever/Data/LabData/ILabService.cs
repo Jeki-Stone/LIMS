@@ -10,6 +10,7 @@ namespace LIMSBlazor.Data
         Task<IEnumerable<Lab>> LabList();
         Task<Lab> Lab_GetOne(int Id);
         Task<bool> LabUpdate(Lab lab);
-        Task<bool> LabDelete(int id);
+        Task<bool> LabDelete(int id, string code);
+        Task<Lab> LabByCod(string Cod);
     }
 }

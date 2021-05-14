@@ -14,13 +14,16 @@ namespace LIMSBlazor.Data
         UserManager<IdentityUser> _userManager;
         RoleManager<IdentityRole> _roleManager;
 
+        ILabService LabService;
+
         /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
-        public AspNetUserRoleService(SqlConnectionConfiguration configuration, UserManager<IdentityUser> manager, RoleManager<IdentityRole> manager1)
+        public AspNetUserRoleService(SqlConnectionConfiguration configuration, UserManager<IdentityUser> manager, RoleManager<IdentityRole> manager1, ILabService LabService1)
         {
             _configuration = configuration;
             _userManager = manager;
             _roleManager = manager1;
+            LabService = LabService1;
         }
 
         /// Добавить (создать) данные в строке таблицы 
@@ -71,6 +74,12 @@ namespace LIMSBlazor.Data
             return true;
         }
 
+        /// <summary>
+        /// Проверяет есть ли у пользователя такая роль
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
         public async Task<bool> UserHaveRole(string UserId, string roleName)
         {
             using (var conn = new SqlConnection(_configuration.Value))
@@ -78,6 +87,28 @@ namespace LIMSBlazor.Data
                 IdentityUser user = await _userManager.FindByIdAsync(UserId);
                 return await _userManager.IsInRoleAsync(user, roleName);
             }
+        }
+
+        public async Task<List<Lab>> UserByNameLab(string UserName)
+        {
+            List<Lab> labs = new List<Lab>();
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+                IdentityUser user = await _userManager.FindByNameAsync(UserName);
+                if (!await _userManager.IsInRoleAsync(user, "ADMIN") || !await _userManager.IsInRoleAsync(user, "Client"))
+                {
+                    IList<string> roles = await _userManager.GetRolesAsync(user);
+                    if (roles != null)
+                        foreach (var item in roles)
+                        {
+                            string[] sub = item.Split("--");
+                            var lab = await LabService.LabByCod(Convert.ToString(sub[0]));
+                            if (!labs.Any(e => e.Name == lab.Name))
+                                labs.Add(lab);
+                        }
+                }
+            }
+            return labs;
         }
     }
 }

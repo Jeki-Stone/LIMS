@@ -10,5 +10,6 @@ namespace LIMSBlazor.Data
         Task<IList<string>> UserRoleList(string UserId);
         Task<bool> UserRoleDelete(string UserId, string RoleName);
         Task<bool> UserHaveRole(string UserId, string roleName);
+        Task<List<Lab>> UserByNameLab(string UserName);
     }
 }

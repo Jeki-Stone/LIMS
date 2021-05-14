@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace LIMSBlazor.Data
 {
@@ -13,14 +14,16 @@ namespace LIMSBlazor.Data
     {
         UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
-        public AspNetUserService(SqlConnectionConfiguration configuration, UserManager<IdentityUser> manager, SignInManager<IdentityUser> signInManager)
+        public AspNetUserService(SqlConnectionConfiguration configuration, UserManager<IdentityUser> manager, SignInManager<IdentityUser> signInManager, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _userManager = manager;
             _signInManager = signInManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// Добавить (создать) данные в строке таблицы 
@@ -111,6 +114,16 @@ namespace LIMSBlazor.Data
                 await _userManager.DeleteAsync(user);
             }
             return true;
+        }
+
+        /// <summary>
+        /// Поиск пользователя по E-mail
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IdentityUser> AspNetAuthorizedUser()
+        {
+            IdentityUser user = await _userManager.FindByEmailAsync(_httpContextAccessor.HttpContext.User.Identity.Name);
+            return user;
         }
     }
 }

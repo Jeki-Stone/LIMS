@@ -1,93 +1,100 @@
-﻿@using LIMSBlazor.Data
-@page "/test/sample/resultdelete/{SampleId:int}/{id:int}"
-@inject IResultService ResultService
-@inject ISampleService SampleService
-@inject IAnalyticalServService AnalyticalServService
-@inject IUnitService UnitServiceService
-@inject IInstrumentService InstrumentService
-@inject NavigationManager NavigationManager
+﻿<AuthorizeView Roles=@(GlobalConstant.GlobalLab + "--Инженер, ADMIN")>
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/test/sample/resultdelete/{SampleId:int}/{id:int}"
+        @inject IResultService ResultService
+        @inject ISampleService SampleService
+        @inject IAnalyticalServService AnalyticalServService
+        @inject IUnitService UnitServiceService
+        @inject IInstrumentService InstrumentService
+        @inject NavigationManager NavigationManager
 
-<DataEdit FormType="Delete" PageTitle="Удалить результат испытания" DeleteWarning="Вы уверены что хотите удалить этот результат испытания? Данные нельзя будет вернуть!" Model="@result" OnClickDelete="@Delete" OnClickCancel="@Cancel">
-    <table>
-        <tr>
-            <td>Id испытания:</td>
-            <td>@result.SampleId</td>
-        </tr>
-        <tr>
-            <td>Аналитический сервис:</td>
-            <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>Наименование испытательного оборудования:</td>
-            <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>Номер пробы:</td>
-            <td>@result.ValueNo</td>
-        </tr>
-        <tr>
-            <td>Результат:</td>
-            <td>@result.Value @units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>В оценке:</td>
-            <td>
-                @if (result.IsFinal == true)
-                {<img src="../images/iGreenCheck.png" width="25" height="25" />}
-                else
-                {<img src="../images/iRedX.png" width="25" height="25" />}
-            </td>
-        </tr>
-        <tr>
-            <td>Записка:</td>
-            <td>@result.Note</td>
-        </tr>
-    </table>
-</DataEdit>
+        <DataEdit FormType="Delete" PageTitle="Удалить результат испытания" DeleteWarning="Вы уверены что хотите удалить этот результат испытания? Данные нельзя будет вернуть!" Model="@result" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+            <table>
+                <tr>
+                    <td>Id испытания:</td>
+                    <td>@result.SampleId</td>
+                </tr>
+                <tr>
+                    <td>Аналитический сервис:</td>
+                    <td>@analyticalservs?.Where(x => x.Id == result.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>Наименование испытательного оборудования:</td>
+                    <td>@instruments?.Where(x => x.Id == result.InstrumentId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>Номер пробы:</td>
+                    <td>@result.ValueNo</td>
+                </tr>
+                <tr>
+                    <td>Результат:</td>
+                    <td>@result.Value @units?.Where(x => x.Id == result.UnitId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>В оценке:</td>
+                    <td>
+                        @if (result.IsFinal == true)
+                        {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                        else
+                        {<img src="../images/iRedX.png" width="25" height="25" />}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Записка:</td>
+                    <td>@result.Note</td>
+                </tr>
+            </table>
+        </DataEdit>
 
 
-@code { 
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    Result result = new Result();
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            Result result = new Result();
 
-    IEnumerable<Sample> samples;
-    IEnumerable<AnalyticalServ> analyticalservs;
-    IEnumerable<Unit> units;
-    IEnumerable<Instrument> instruments;
+            IEnumerable<Sample> samples;
+            IEnumerable<AnalyticalServ> analyticalservs;
+            IEnumerable<Unit> units;
+            IEnumerable<Instrument> instruments;
 
-    [Parameter]
-    public int SampleId { get; set; }
-    [Parameter]
-    public int id { get; set; }
+            [Parameter]
+            public int SampleId { get; set; }
+            [Parameter]
+            public int id { get; set; }
 
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        samples = await SampleService.SampleList();
-        analyticalservs = await AnalyticalServService.AnalyticalServList();
-        result = await ResultService.Result_GetOne(id);
-        units = await UnitServiceService.UnitList();
-        instruments = await InstrumentService.InstrumentList();
-    }
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                samples = await SampleService.SampleList();
+                analyticalservs = await AnalyticalServService.AnalyticalServList();
+                result = await ResultService.Result_GetOne(id);
+                units = await UnitServiceService.UnitList();
+                instruments = await InstrumentService.InstrumentList();
+            }
 
-    /// <summary>
-    /// Задача удаляющая запись из БД
-    /// </summary>
-    protected async Task Delete()
-    {
-        await ResultService.ResultDelete(id);
-        NavigationManager.NavigateTo("/test/sample/resultlist/" + SampleId);
-    }
+            /// <summary>
+            /// Задача удаляющая запись из БД
+            /// </summary>
+            protected async Task Delete()
+            {
+                await ResultService.ResultDelete(id);
+                NavigationManager.NavigateTo("/test/sample/resultlist/" + SampleId);
+            }
 
-    /// <summary>
-    /// Отмена изменений и возвращение на прошлую страницу
-    /// </summary>
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("/test/sample/resultlist/" + SampleId);
-    }
-}
+            /// <summary>
+            /// Отмена изменений и возвращение на прошлую страницу
+            /// </summary>
+            void Cancel()
+            {
+                NavigationManager.NavigateTo("/test/sample/resultlist/" + SampleId);
+            } 
+         }
+    </Authorized>
+</AuthorizeView>

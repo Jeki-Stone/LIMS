@@ -1,164 +1,174 @@
-﻿@using LIMSBlazor.Data
-@page "/confirmation/sampleaddedit/{Id:int}"
-@inject ISampleService SampleService
-@inject IAspNetUserService AspNetUserService
-@inject ISampleTypeService SampleTypeService
-@inject ILocService LocService
-@inject ISampleAnalyticalService SampleAnalyticalService
-@inject IFinalResultService FinalResultService
-@inject ILabService LabService
-@inject NavigationManager NavigationManager
+﻿<AuthorizeView Roles=@(GlobalConstant.GlobalLab + "--Мастер, ADMIN")>
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/confirmation/sampleaddedit/{Id:int}"
+        @inject ISampleService SampleService
+        @inject IAspNetUserService AspNetUserService
+        @inject ISampleTypeService SampleTypeService
+        @inject ILocService LocService
+        @inject ISampleAnalyticalService SampleAnalyticalService
+        @inject IFinalResultService FinalResultService
+        @inject ILabService LabService
+        @inject NavigationManager NavigationManager
 
-<DataEdit PageTitle="@pagetitle" Model="@sample" BtnSaveText="@buttontext" OnValidSubmit="@SampleSave" OnClickCancel="@Cancel">
-    <div class="alert alert-danger" role="alert" style="display:@Visibl">
-        Не все результаты были одобрены
-    </div>
-    <table>
-        <tr>
-            <td>Время получения:</td>
-            <td>@sample.RecieveTime</td>
-        </tr>
-        <tr>
-            <td>Время начала тестов:</td>
-            <td>@sample.TestTime</td>
-        </tr>
-        <tr>
-            <td>Клиент:</td>
-            @*<td>@aspNetUsers?.Where(x => x.Id == sample.UserId).FirstOrDefault()?.UserName</td>*@
-        </tr>
-        <tr>
-            <td>Лаборатория:</td>
-            <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>Тип пробы:</td>
-            <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>Статус:</td>
-            <td>
-                <select @bind="sample.Status" required class="form-control">
-                    <option value="0">Выберите значение</option>
-                    @foreach (var item in GlobalConstant.SampleStatusModel)
+        <DataEdit PageTitle="@pagetitle" Model="@sample" BtnSaveText="@buttontext" OnValidSubmit="@SampleSave" OnClickCancel="@Cancel">
+            <div class="alert alert-danger" role="alert" style="display:@Visibl">
+                Не все результаты были одобрены
+            </div>
+            <table>
+                <tr>
+                    <td>Время получения:</td>
+                    <td>@sample.RecieveTime</td>
+                </tr>
+                <tr>
+                    <td>Время начала тестов:</td>
+                    <td>@sample.TestTime</td>
+                </tr>
+                <tr>
+                    <td>Клиент:</td>
+                    <td>@aspNetUsers?.Where(x => x.Id == sample.UserId).FirstOrDefault()?.UserName</td>
+                </tr>
+                <tr>
+                    <td>Лаборатория:</td>
+                    <td>@labs?.Where(x => x.Id == sample.LabId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>Тип пробы:</td>
+                    <td>@sampletypes?.Where(x => x.Id == sample.SampleTypeId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>Статус:</td>
+                    <td>
+                        <select @bind="sample.Status" required class="form-control">
+                            <option value="0">Выберите значение</option>
+                            @foreach (var item in GlobalConstant.SampleStatusModel)
+                            {
+                                if (item.Value != "1")
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Готовность:</td>
+                    <td>
+                        @if (sample.IsFinal == true)
+                        {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                        else
+                        {<img src="../images/iRedX.png" width="25" height="25" />}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Записка:</td>
+                    <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.Note"></textarea></td>
+                </tr>
+                <tr>
+                    <td>Место взятия пробы:</td>
+                    <td>@locs?.Where(x => x.Id == sample.LocationId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>Причины изменений:</td>
+                    <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.LastEditComment"></textarea></td>
+                </tr>
+            </table>
+        </DataEdit>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            Sample sample = new Sample();
+            SampleAnalytical sampleanalytical = new SampleAnalytical();
+            List<FinalResult> finres = new List<FinalResult>();
+
+            IEnumerable<AspNetUser> aspNetUsers;
+            IEnumerable<SampleType> sampletypes;
+            IEnumerable<Loc> locs;
+            IEnumerable<FinalResult> finalresults;
+            IEnumerable<Lab> labs;
+
+            [Parameter]
+            public int Id { get; set; }
+
+            /// <summary>
+            /// Задаём базовые значения
+            /// </summary>
+            public string pagetitle = "Изменить статус испытания";
+            public string buttontext = "Изменить";
+            public string Visibl = "none";
+            public int Status;
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                //aspNetUsers = await AspNetUserService.AspNetUserList();
+                sampletypes = await SampleTypeService.SampleTypeList();
+                locs = await LocService.LocList();
+                finalresults = await FinalResultService.FinalResultList(Id);
+                sample = await SampleService.Sample_GetOne((int)Id);
+                labs = await LabService.LabList();
+                Status = sample.Status;
+            }
+
+            /// <summary>
+            /// Задача обновляющая данные в БД
+            /// </summary>
+            protected async Task SampleSave()
+            {
+                if (sample.Status != (int)GlobalConstant.SampleStatus.Final)
+                {
+                    sample.UpdateTime = DateTime.Now;
+                    var user = await AspNetUserService.AspNetAuthorizedUser();
+                    sample.UpdateUser = user.UserName;
+                    if (sample.Status == (int)GlobalConstant.SampleStatus.Final)
                     {
-                        if (item.Value != "1")
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
+                        sample.IsFinal = true;
                     }
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Готовность:</td>
-            <td>
-                @if (sample.IsFinal == true)
-                {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                    else
+                    {
+                        sample.IsFinal = false;
+                    }
+                    await SampleService.SampleUpdate(sample);
+                    NavigationManager.NavigateTo("confirmation/samplelist");
+                }
+                else if (finalresults.Where(x => x.IsFinal != true).ToList().Count >= 1)
+                {
+                    Visibl = "block";
+                }
                 else
-                {<img src="../images/iRedX.png" width="25" height="25" />}
-            </td>
-        </tr>
-        <tr>
-            <td>Записка:</td>
-            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.Note"></textarea></td>
-        </tr>
-        <tr>
-            <td>Место взятия пробы:</td>
-            <td>@locs?.Where(x => x.Id == sample.LocationId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>Причины изменений:</td>
-            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="sample.LastEditComment"></textarea></td>
-        </tr>
-    </table>
-</DataEdit>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    Sample sample = new Sample();
-    SampleAnalytical sampleanalytical = new SampleAnalytical();
-    List<FinalResult> finres = new List<FinalResult>();
-
-    IEnumerable<AspNetUser> aspNetUsers;
-    IEnumerable<SampleType> sampletypes;
-    IEnumerable<Loc> locs;
-    IEnumerable<FinalResult> finalresults;
-    IEnumerable<Lab> labs;
-
-    [Parameter]
-    public int Id { get; set; }
-
-    /// <summary>
-    /// Задаём базовые значения
-    /// </summary>
-    public string pagetitle = "Изменить статус испытания";
-    public string buttontext = "Изменить";
-    public string Visibl = "none";
-    public int Status;
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        //aspNetUsers = await AspNetUserService.AspNetUserList();
-        sampletypes = await SampleTypeService.SampleTypeList();
-        locs = await LocService.LocList();
-        finalresults = await FinalResultService.FinalResultList(Id);
-        sample = await SampleService.Sample_GetOne((int)Id);
-        labs = await LabService.LabList();
-        Status = sample.Status;
-    }
-
-    /// <summary>
-    /// Задача обновляющая данные в БД
-    /// </summary>
-    protected async Task SampleSave()
-    {
-        if (sample.Status != (int)GlobalConstant.SampleStatus.Final)
-        {
-            sample.UpdateTime = DateTime.Now;
-            sample.UpdateUser = "Обновивший пользователь пользователь";
-            if (sample.Status == (int)GlobalConstant.SampleStatus.Final)
-            {
-                sample.IsFinal = true;
+                {
+                    sample.UpdateTime = DateTime.Now;
+                    var user = await AspNetUserService.AspNetAuthorizedUser();
+                    sample.UpdateUser = user.UserName;
+                    sample.FinalizeTime = DateTime.Now;
+                    sample.FinalizeUser = user.UserName;
+                    if (sample.Status == (int)GlobalConstant.SampleStatus.Final)
+                    {
+                        sample.IsFinal = true;
+                    }
+                    else
+                    {
+                        sample.IsFinal = false;
+                    }
+                    await SampleService.SampleUpdate(sample);
+                    NavigationManager.NavigateTo("confirmation/samplelist");
+                }
             }
-            else
+
+            /// <summary>
+            /// Отмена изменений и возвращение на прошлую страницу
+            /// </summary>
+            void Cancel()
             {
-                sample.IsFinal = false;
+                NavigationManager.NavigateTo("confirmation/samplelist");
             }
-            await SampleService.SampleUpdate(sample);
-            NavigationManager.NavigateTo("confirmation/samplelist");
         }
-        else if (finalresults.Where(x => x.IsFinal != true).ToList().Count >= 1)
-        {
-            Visibl = "block";
-        }
-        else
-        {
-            sample.UpdateTime = DateTime.Now;
-            sample.UpdateUser = "Обновивший пользователь пользователь";
-            sample.FinalizeTime = DateTime.Now;
-            if (sample.Status == (int)GlobalConstant.SampleStatus.Final)
-            {
-                sample.IsFinal = true;
-            }
-            else
-            {
-                sample.IsFinal = false;
-            }
-            await SampleService.SampleUpdate(sample);
-            NavigationManager.NavigateTo("confirmation/samplelist");
-        }
-    }
-
-    /// <summary>
-    /// Отмена изменений и возвращение на прошлую страницу
-    /// </summary>
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("confirmation/samplelist");
-    }
-}
+</Authorized>
+</AuthorizeView>

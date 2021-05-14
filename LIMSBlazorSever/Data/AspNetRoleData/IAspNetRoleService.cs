@@ -11,5 +11,6 @@ namespace LIMSBlazor.Data
         Task<IdentityRole> AspNetRole_GetOne(string id);
         Task<bool> AspNetRoleUpdate(IdentityRole _identityRole);
         Task<bool> AspNetRoleDelete(string id);
+        Task<bool> AspNetRoleClassic(string code);
     }
 }

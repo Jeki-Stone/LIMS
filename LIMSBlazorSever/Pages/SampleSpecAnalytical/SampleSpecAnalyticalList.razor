@@ -1,72 +1,79 @@
-﻿@using LIMSBlazor.Data
-@page "/config/samplespec/samplespecanalyticallist/{SampleSpecId:int}"
-@inject ISampleSpecAnalyticalService SampleSpecAnalyticalService
-@inject ISampleSpecService SampleSpecService
-@inject IAnalyticalServService AnalyticalServService
+﻿<AuthorizeView Roles="ADMIN" )>
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/config/samplespec/samplespecanalyticallist/{SampleSpecId:int}"
+        @inject ISampleSpecAnalyticalService SampleSpecAnalyticalService
+        @inject ISampleSpecService SampleSpecService
+        @inject IAnalyticalServService AnalyticalServService
 
-<DataView PageTitle="Список элементов спецификации" UrlAdd=@UrlAdd UrlBack="/config/samplespeclist" UrlAddText="Добавить новый элемент спецификации" UrlBackText="Вернуться к списоку спецификаций">
-    <Header>
-        <tr>
-            <th style="text-align:center">#</th>
-            <th>Спецификация</th>
-            <th>Аналитический сервис</th>
-            <th>Минимальное значение</th>
-            <th>Максимальное значение</th>
-        </tr>
-    </Header>
-    <Rows>
-        @if (samplespecanalyticals == null)
-        {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" />
-            </p>
-        }
-        else
-        {
-            @foreach (var samplespecanalytical in samplespecanalyticals)
-            {
+        <DataView PageTitle="Список элементов спецификации" UrlAdd=@UrlAdd UrlBack="/config/samplespeclist" UrlAddText="Добавить новый элемент спецификации" UrlBackText="Вернуться к списоку спецификаций">
+            <Header>
                 <tr>
-                    <td style="text-align:center">
-                        <a href="/config/samplespec/samplespecanalyticaladdedit/@SampleSpecId/@samplespecanalytical.AnalyticalServiceId">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="/config/samplespec/samplespecanalyticaldelete/@SampleSpecId/@samplespecanalytical.AnalyticalServiceId">
-                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                        </a>
-                    </td>
-                    <td>@samplespecs.Where(x => x.Id == samplespecanalytical.SampleSpecId).FirstOrDefault()?.Name</td>
-                    <td>@analyticalservs.Where(x => x.Id == samplespecanalytical.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                    <td>@samplespecanalytical.MinValue</td>
-                    <td>@samplespecanalytical.MaxValue</td>
+                    <th style="text-align:center">#</th>
+                    <th>Спецификация</th>
+                    <th>Аналитический сервис</th>
+                    <th>Минимальное значение</th>
+                    <th>Максимальное значение</th>
                 </tr>
+            </Header>
+            <Rows>
+                @if (samplespecanalyticals == null)
+                {
+                    <p style="text-align:center">
+                        <img src="../images/loader.gif" />
+                    </p>
+                }
+                else
+                {
+                    @foreach (var samplespecanalytical in samplespecanalyticals)
+                    {
+                        <tr>
+                            <td style="text-align:center">
+                                <a href="/config/samplespec/samplespecanalyticaladdedit/@SampleSpecId/@samplespecanalytical.AnalyticalServiceId">
+                                    <img src="../images/iEdit.png" width="20" height="20" />
+                                </a>
+                                &nbsp
+                                <a href="/config/samplespec/samplespecanalyticaldelete/@SampleSpecId/@samplespecanalytical.AnalyticalServiceId">
+                                    <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                                </a>
+                            </td>
+                            <td>@samplespecs.Where(x => x.Id == samplespecanalytical.SampleSpecId).FirstOrDefault()?.Name</td>
+                            <td>@analyticalservs.Where(x => x.Id == samplespecanalytical.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                            <td>@samplespecanalytical.MinValue</td>
+                            <td>@samplespecanalytical.MaxValue</td>
+                        </tr>
+                    }
+                }
+            </Rows>
+        </DataView>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+
+            [Parameter]
+            public int SampleSpecId { get; set; }
+            [Parameter]
+            public string UrlAdd { get; set; }
+
+            IEnumerable<SampleSpecAnalytical> samplespecanalyticals;
+            IEnumerable<SampleSpec> samplespecs;
+            IEnumerable<AnalyticalServ> analyticalservs;
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                samplespecanalyticals = await SampleSpecAnalyticalService.SampleSpecAnalyticalList(SampleSpecId);
+                samplespecs = await SampleSpecService.SampleSpecList();
+                analyticalservs = await AnalyticalServService.AnalyticalServList();
+                UrlAdd = "/config/samplespec/samplespecanalyticaladdedit/" + SampleSpecId;
             }
         }
-    </Rows>
-</DataView>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-
-    [Parameter]
-    public int SampleSpecId { get; set; }
-    [Parameter]
-    public string UrlAdd { get; set; }
-
-    IEnumerable<SampleSpecAnalytical> samplespecanalyticals;
-    IEnumerable<SampleSpec> samplespecs;
-    IEnumerable<AnalyticalServ> analyticalservs;
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        samplespecanalyticals = await SampleSpecAnalyticalService.SampleSpecAnalyticalList(SampleSpecId);
-        samplespecs = await SampleSpecService.SampleSpecList();
-        analyticalservs = await AnalyticalServService.AnalyticalServList();
-        UrlAdd = "/config/samplespec/samplespecanalyticaladdedit/" + SampleSpecId;
-    }
-}
+</Authorized>
+</AuthorizeView>

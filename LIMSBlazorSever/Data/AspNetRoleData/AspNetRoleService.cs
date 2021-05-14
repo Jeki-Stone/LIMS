@@ -29,8 +29,7 @@ namespace LIMSBlazor.Data
                 using (var conn = new SqlConnection(_configuration.Value))
                 {
                     await _roleManager.CreateAsync(_identityRole);
-                }
-                
+                }                
             }
             catch (Exception e)
             {
@@ -84,6 +83,69 @@ namespace LIMSBlazor.Data
             using (var conn = new SqlConnection(_configuration.Value))
             {
                 await _roleManager.DeleteAsync(await _roleManager.FindByIdAsync(id));
+            }
+            return true;
+        }
+
+        /// Создание класических ролей
+        public async Task<bool> AspNetRoleClassic(string code)
+        {
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+                var laborantName = code + "--Лаборант";
+                var ingenerName = code + "--Инженер";
+                var analitikName = code + "--Аналитик";
+                var masterName = code + "--Мастер";
+
+                var laborantTrue = await _roleManager.RoleExistsAsync(laborantName);
+                var ingenerTrue = await _roleManager.RoleExistsAsync(ingenerName);
+                var analitikTrue = await _roleManager.RoleExistsAsync(analitikName);
+                var masterTrue = await _roleManager.RoleExistsAsync(masterName);
+
+                // Лаборант
+                if (laborantTrue)
+                {
+                    var laborant = await _roleManager.FindByNameAsync(laborantName);
+                    await _roleManager.DeleteAsync(laborant);
+                }
+                else
+                {
+                    var laborant = new IdentityRole { Name = (laborantName) };
+                    await _roleManager.CreateAsync(laborant);
+                }
+                // Инженер
+                if (ingenerTrue)
+                {
+                    var ingener = await _roleManager.FindByNameAsync(ingenerName);
+                    await _roleManager.DeleteAsync(ingener);
+                }
+                else
+                {
+                    var laborant = new IdentityRole { Name = (ingenerName) };
+                    await _roleManager.CreateAsync(laborant);
+                }
+                // Аналитик
+                if (analitikTrue)
+                {
+                    var analitik = await _roleManager.FindByNameAsync(analitikName);
+                    await _roleManager.DeleteAsync(analitik);
+                }
+                else
+                {
+                    var laborant = new IdentityRole { Name = (analitikName) };
+                    await _roleManager.CreateAsync(laborant);
+                }
+                // Мастер
+                if (masterTrue)
+                {
+                    var master = await _roleManager.FindByNameAsync(masterName);
+                    await _roleManager.DeleteAsync(master);
+                }
+                else
+                {
+                    var laborant = new IdentityRole { Name = (masterName) };
+                    await _roleManager.CreateAsync(laborant);
+                }
             }
             return true;
         }

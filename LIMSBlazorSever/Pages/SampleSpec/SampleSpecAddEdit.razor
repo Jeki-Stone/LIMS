@@ -1,76 +1,83 @@
-﻿@using LIMSBlazor.Data
-@page "/config/samplespecaddedit"
-@page "/config/samplespecaddedit/{id:int}"
-@inject ISampleSpecService SampleSpecService
-@inject NavigationManager NavigationManager
+﻿<AuthorizeView Roles="ADMIN" )>
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/config/samplespecaddedit"
+        @page "/config/samplespecaddedit/{id:int}"
+        @inject ISampleSpecService SampleSpecService
+        @inject NavigationManager NavigationManager
 
-<DataEdit PageTitle="@pagetitle" Model="@samplespec" BtnSaveText="@buttontext" OnValidSubmit="@SampleSpecSave" OnClickCancel="@Cancel">
-    <table>
-        <tr>
-            <td>Наименование:</td>
-            <td><input type="text" @bind="samplespec.Name" class="form-control" required></td>
-        </tr>
-        <tr>
-            <td>Версия:</td>
-            <td><input type="text" @bind="samplespec.Version" class="form-control" required></td>
-        </tr>
-        <tr>
-            <td>Описание:</td>
-            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="samplespec.Description"></textarea></td>
-        </tr>
-    </table>
-</DataEdit>
+        <DataEdit PageTitle="@pagetitle" Model="@samplespec" BtnSaveText="@buttontext" OnValidSubmit="@SampleSpecSave" OnClickCancel="@Cancel">
+            <table>
+                <tr>
+                    <td>Наименование:</td>
+                    <td><input type="text" @bind="samplespec.Name" class="form-control" required></td>
+                </tr>
+                <tr>
+                    <td>Версия:</td>
+                    <td><input type="text" @bind="samplespec.Version" class="form-control" required></td>
+                </tr>
+                <tr>
+                    <td>Описание:</td>
+                    <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="samplespec.Description"></textarea></td>
+                </tr>
+            </table>
+        </DataEdit>
 
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    SampleSpec samplespec = new SampleSpec();
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            SampleSpec samplespec = new SampleSpec();
 
-    [Parameter]
-    public int id { get; set; }
+            [Parameter]
+            public int id { get; set; }
 
-    /// <summary>
-    /// Задаём базовые значения
-    /// </summary>
-    public string pagetitle = "Добавить новую спецификацию";
-    public string buttontext = "Добавить";
+            /// <summary>
+            /// Задаём базовые значения
+            /// </summary>
+            public string pagetitle = "Добавить новую спецификацию";
+            public string buttontext = "Добавить";
 
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        /// Если Id ноль то будет добавлено новое значение
-        if (id != 0)
-        {
-            samplespec = await SampleSpecService.SampleSpec_GetOne(id);
-            pagetitle = "Изменить данные спецификации";
-            buttontext = "Изменить";
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                /// Если Id ноль то будет добавлено новое значение
+                if (id != 0)
+                {
+                    samplespec = await SampleSpecService.SampleSpec_GetOne(id);
+                    pagetitle = "Изменить данные спецификации";
+                    buttontext = "Изменить";
+                }
+            }
+
+            /// <summary>
+            /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+            /// </summary>
+            protected async Task SampleSpecSave()
+            {
+                if (samplespec.Id == 0)
+                {
+                    await SampleSpecService.SampleSpecInsert(samplespec);
+                }
+                else
+                {
+                    await SampleSpecService.SampleSpecUpdate(samplespec);
+                }
+                NavigationManager.NavigateTo("config/samplespeclist");
+            }
+
+            /// <summary>
+            /// Отмена изменений и возвращение на прошлую страницу
+            /// </summary>
+            void Cancel()
+            {
+                NavigationManager.NavigateTo("config/samplespeclist");
+            }
         }
-    }
-
-    /// <summary>
-    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
-    /// </summary>
-    protected async Task SampleSpecSave()
-    {
-        if (samplespec.Id == 0)
-        {
-            await SampleSpecService.SampleSpecInsert(samplespec);
-        }
-        else
-        {
-            await SampleSpecService.SampleSpecUpdate(samplespec);
-        }
-        NavigationManager.NavigateTo("config/samplespeclist");
-    }
-
-    /// <summary>
-    /// Отмена изменений и возвращение на прошлую страницу
-    /// </summary>
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("config/samplespeclist");
-    }
-}
+    </Authorized>
+</AuthorizeView>

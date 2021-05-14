@@ -1,4 +1,5 @@
 ﻿@using LIMSBlazor.Data
+@using Microsoft.AspNetCore.Identity;
 @page "/samplelog/sampledelete/{Id:int}"
 @inject ISampleService SampleService
 @inject IAspNetUserService AspNetUserService
@@ -19,7 +20,7 @@
         </tr>
         <tr>
             <td>Клиент:</td>
-            @*<td>@aspNetUsers?.Where(x => x.Id == sample.UserId).FirstOrDefault()?.UserName</td>*@
+            <td>@aspNetUsers.UserName</td>
         </tr>
         <tr>
             <td>Лаборатория:</td>
@@ -66,7 +67,7 @@
     /// </summary>
     Sample sample = new Sample();
 
-    IEnumerable<AspNetUser> aspNetUsers;
+    IdentityUser aspNetUsers = new IdentityUser();
     IEnumerable<SampleType> sampletypes;
     IEnumerable<Loc> locs;
     IEnumerable<Lab> labs;
@@ -83,6 +84,7 @@
         sampletypes = await SampleTypeService.SampleTypeList();
         locs = await LocService.LocList();
         sample = await SampleService.Sample_GetOne(id);
+        aspNetUsers = await AspNetUserService.AspNetUser_GetOne(sample.UserId);
         labs = await LabService.LabList();
     }
 

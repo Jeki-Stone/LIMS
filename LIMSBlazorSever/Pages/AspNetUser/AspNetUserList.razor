@@ -1,62 +1,67 @@
-﻿@using LIMSBlazor.Data
-@using Microsoft.AspNetCore.Identity;
-@page "/config/userlist"
-@inject IAspNetUserService AspNetUserService
+﻿<AuthorizeView Roles="ADMIN">
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @using Microsoft.AspNetCore.Identity;
+        @page "/config/userlist"
+        @inject IAspNetUserService AspNetUserService
 
-<DataView PageTitle="Список пользователей" UrlAdd="config/useraddedit" UrlAddText="Добавить нового пользователя">
-    <Header>
-        <tr>
-            <td style="text-align:center">#</td>
-            <td>Имя пользователя</td>
-            <td>E-mail</td>
-            <td>Телефон</td>
-        </tr>
-    </Header>
-    <Rows>
-        @if (aspNetUsers == null)
-        {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" width="50" height="50" />
-            </p>
-        }
-        else
-        {
-            @foreach (var aspNetUser in aspNetUsers)
-            {
+        <DataView PageTitle="Список пользователей" UrlAdd="config/useraddedit" UrlAddText="Добавить нового пользователя">
+            <Header>
                 <tr>
-                    <td style="text-align:center">
-                        <a href="/config/useraddedit/@aspNetUser.Id">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="/config/userdelete/@aspNetUser.Id">
-                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="/config/userlist/userrolelist/@aspNetUser.Id">
-                            <img src="../images/downArrow.png" title="Add" width="20" height="20" />
-                        </a>
-                    </td>
-                    <td>@aspNetUser.UserName</td>
-                    <td>@aspNetUser.Email</td>
-                    <td>@aspNetUser.PhoneNumber</td>
+                    <td style="text-align:center">#</td>
+                    <td>Имя пользователя/E-mail</td>
+                    <td>Телефон</td>
                 </tr>
+            </Header>
+            <Rows>
+                @if (aspNetUsers == null)
+                {
+                    <p style="text-align:center">
+                        <img src="../images/loader.gif" width="50" height="50" />
+                    </p>
+                }
+                else
+                {
+                    @foreach (var aspNetUser in aspNetUsers.OrderBy(e => e.UserName))
+                    {
+                        <tr>
+                            <td style="text-align:center">
+                                <a href="/config/useraddedit/@aspNetUser.Id">
+                                    <img src="../images/iEdit.png" width="20" height="20" />
+                                </a>
+                                &nbsp
+                                <a href="/config/userdelete/@aspNetUser.Id">
+                                    <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                                </a>
+                                &nbsp
+                                <a href="/config/userlist/userrolelist/@aspNetUser.Id">
+                                    <img src="../images/downArrow.png" title="Add" width="20" height="20" />
+                                </a>
+                            </td>
+                            <td>@aspNetUser.Email</td>
+                            <td>@aspNetUser.PhoneNumber</td>
+                        </tr>
+                    }
+                }
+            </Rows>
+        </DataView>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            List<IdentityUser> aspNetUsers;
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                aspNetUsers = await AspNetUserService.AspNetUserList();
             }
         }
-    </Rows>
-</DataView>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    List<IdentityUser> aspNetUsers;
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        aspNetUsers = await AspNetUserService.AspNetUserList();
-    }
-}
+    </Authorized>
+</AuthorizeView>

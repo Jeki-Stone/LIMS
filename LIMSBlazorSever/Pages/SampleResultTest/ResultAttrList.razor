@@ -1,98 +1,107 @@
-﻿@using LIMSBlazor.Data
-@page "/test/sample/result/resultattrlist/{SampleId:int}/{AnalyticalServiceId:int}"
-@inject IResultAttrService ResultAttrService
-@inject IAttrService AttrService
-@inject IAnalyticalServService AnalyticalServService
+﻿<AuthorizeView Roles=@(GlobalConstant.GlobalLab + "--Инженер, ADMIN")>
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/test/sample/result/resultattrlist/{SampleId:int}/{AnalyticalServiceId:int}"
+        @inject IResultAttrService ResultAttrService
+        @inject IAttrService AttrService
+        @inject IAnalyticalServService AnalyticalServService
+        @inject IAspNetUserService AspNetUserService
 
-<DataView PageTitle="Список атрибутов испытания" UrlBack=@UrlBackSampleId UrlBackText="Вернуться к списку испытаний">
-    <Header>
-        <tr>
-            <th style="text-align:center">#</th>
-            <th>Испытание</th>
-            <td>Аналетический сервис</td>
-            <td>Атрибут</td>
-            <td>Значение</td>
-            <td>Время создания</td>
-            <td>Время последних изменений</td>
-            <td>Кем созданно</td>
-            <td>Кем изменено</td>
-        </tr>
-    </Header>
-    <Rows>
-        @if (resultattrs == null)
-        {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" />
-            </p>
-        }
-        else
-        {
-            @foreach (var resultattr in resultattrs)
-            {
+        <DataView PageTitle="Список атрибутов испытания" UrlBack=@UrlBackSampleId UrlBackText="Вернуться к списку испытаний">
+            <Header>
                 <tr>
-                    <td style="text-align:center">
-                        <img @onclick=@SaveData src="../images/Floppy.png" width="20" height="20" style="cursor: pointer;"/>
-                    </td>
-                    <td>@resultattr.SampleId</td>
-                    <td>@analyticalservs?.Where(x => x.Id == resultattr.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                    <td>@attrs?.Where(x => x.Id == resultattr.AttrId).FirstOrDefault()?.Name</td>
-                    <td><AttrEdit Attr="@resultattr" /></td>
-                    <td>@resultattr.CreateTime</td>
-                    <td>@resultattr.UpdateTime</td>
-                    <td>@resultattr.CreateUser</td>
-                    <td>@resultattr.UpdateUser</td>
+                    <th style="text-align:center">#</th>
+                    <th>Испытание</th>
+                    <td>Аналетический сервис</td>
+                    <td>Атрибут</td>
+                    <td>Значение</td>
+                    <td>Время создания</td>
+                    <td>Время последних изменений</td>
+                    <td>Кем созданно</td>
+                    <td>Кем изменено</td>
                 </tr>
-            }
-        }
-    </Rows>
-</DataView>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    IEnumerable<ResultAttr> resultattrs;
-    IEnumerable<ResultAttr> oldresultattrs;
-    IEnumerable<Attr> attrs;
-    IEnumerable<AnalyticalServ> analyticalservs;
-
-    [Parameter]
-    public int SampleId { get; set; }
-    [Parameter]
-    public int AnalyticalServiceId { get; set; }
-    [Parameter]
-    public string UrlAddSampleId { get; set; }
-    [Parameter]
-    public string UrlBackSampleId { get; set; }
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        resultattrs = await ResultAttrService.ResultAttrList(SampleId, AnalyticalServiceId);
-        oldresultattrs = await ResultAttrService.ResultAttrList(SampleId, AnalyticalServiceId);
-        attrs = await AttrService.AttrList();
-        analyticalservs = await AnalyticalServService.AnalyticalServList();
-        UrlBackSampleId = "/test/sample/resultlist/" + SampleId;
-    }
-
-    /// <summary>
-    /// Сохранает изменение значений в textbox в БД
-    /// </summary>
-    protected async Task SaveData()
-    {
-        foreach (var item in resultattrs)
-        {
-            foreach (var olditem in oldresultattrs)
-            {
-                if (item.SampleId == olditem.SampleId && item.AnalyticalServiceId == olditem.AnalyticalServiceId && item.AttrId == olditem.AttrId && item.Value != olditem.Value)
+            </Header>
+            <Rows>
+                @if (resultattrs == null)
                 {
-                    item.UpdateTime = DateTime.Now;
-                    item.UpdateUser = "Обновивший пользователь";
-                    await ResultAttrService.ResultAttrUpdate(item);
+                    <p style="text-align:center">
+                        <img src="../images/loader.gif" />
+                    </p>
+                }
+                else
+                {
+                    @foreach (var resultattr in resultattrs)
+                    {
+                        <tr>
+                            <td style="text-align:center">
+                                <img @onclick=@SaveData src="../images/Floppy.png" width="20" height="20" style="cursor: pointer;" />
+                            </td>
+                            <td>@resultattr.SampleId</td>
+                            <td>@analyticalservs?.Where(x => x.Id == resultattr.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                            <td>@attrs?.Where(x => x.Id == resultattr.AttrId).FirstOrDefault()?.Name</td>
+                            <td><AttrEdit Attr="@resultattr" /></td>
+                            <td>@resultattr.CreateTime</td>
+                            <td>@resultattr.UpdateTime</td>
+                            <td>@resultattr.CreateUser</td>
+                            <td>@resultattr.UpdateUser</td>
+                        </tr>
+                    }
+                }
+            </Rows>
+        </DataView>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            IEnumerable<ResultAttr> resultattrs;
+            IEnumerable<ResultAttr> oldresultattrs;
+            IEnumerable<Attr> attrs;
+            IEnumerable<AnalyticalServ> analyticalservs;
+
+            [Parameter]
+            public int SampleId { get; set; }
+            [Parameter]
+            public int AnalyticalServiceId { get; set; }
+            [Parameter]
+            public string UrlAddSampleId { get; set; }
+            [Parameter]
+            public string UrlBackSampleId { get; set; }
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                resultattrs = await ResultAttrService.ResultAttrList(SampleId, AnalyticalServiceId);
+                oldresultattrs = await ResultAttrService.ResultAttrList(SampleId, AnalyticalServiceId);
+                attrs = await AttrService.AttrList();
+                analyticalservs = await AnalyticalServService.AnalyticalServList();
+                UrlBackSampleId = "/test/sample/resultlist/" + SampleId;
+            }
+
+            /// <summary>
+            /// Сохранает изменение значений в textbox в БД
+            /// </summary>
+            protected async Task SaveData()
+            {
+                foreach (var item in resultattrs)
+                {
+                    foreach (var olditem in oldresultattrs)
+                    {
+                        if (item.SampleId == olditem.SampleId && item.AnalyticalServiceId == olditem.AnalyticalServiceId && item.AttrId == olditem.AttrId && item.Value != olditem.Value)
+                        {
+                            item.UpdateTime = DateTime.Now;
+                            var user = await AspNetUserService.AspNetAuthorizedUser();
+                            item.UpdateUser = user.UserName;
+                            await ResultAttrService.ResultAttrUpdate(item);
+                        }
+                    }
                 }
             }
         }
-    }
-}
+</Authorized>
+</AuthorizeView>

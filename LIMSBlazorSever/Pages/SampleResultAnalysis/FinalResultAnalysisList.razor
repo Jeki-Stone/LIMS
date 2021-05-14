@@ -1,121 +1,128 @@
-﻿@using LIMSBlazor.Data
-@page "/analysis/sample/finalresultlist/{SampleId:int}"
-@inject IFinalResultService FinalResultService
-@inject IAnalyticalServService AnalyticalServService
-@inject IUnitService UnitServiceService
-@inject IInstrumentService InstrumentService
+﻿<AuthorizeView Roles=@(GlobalConstant.GlobalLab + "--Аналитик, ADMIN")>
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/analysis/sample/finalresultlist/{SampleId:int}"
+        @inject IFinalResultService FinalResultService
+        @inject IAnalyticalServService AnalyticalServService
+        @inject IUnitService UnitServiceService
+        @inject IInstrumentService InstrumentService
 
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link active" href="/analysis/sample/finalresultlist/@SampleId">Финальные результаты</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/analysis/sample/resultlist/@SampleId">Результаты</a>
-    </li>
-</ul>
-<DataView PageTitle="Список финальных результатов испытания" UrlBack="analysis/samplelist" UrlBackText="Вернуться к списку испытаний">
-    <Filtr>
-        <li class="nav-item">
-            <select @bind="changsort" id="sort" required class="form-control">
-                @if (analyticalservs != null)
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="/analysis/sample/finalresultlist/@SampleId">Финальные результаты</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/analysis/sample/resultlist/@SampleId">Результаты</a>
+            </li>
+        </ul>
+        <DataView PageTitle="Список финальных результатов испытания" UrlBack="analysis/samplelist" UrlBackText="Вернуться к списку испытаний">
+            <Filtr>
+                <li class="nav-item">
+                    <select @bind="changsort" id="sort" required class="form-control">
+                        @if (analyticalservs != null)
+                        {
+                            <option value="0">Выберите значение</option>
+                            foreach (var item in finalresults.GroupBy(e => e.AnalyticalServiceId))
+                            {
+                                <option value="@item.Key">@analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name</option>
+                            }
+                        }
+                    </select>
+                </li>
+            </Filtr>
+            <Header>
+                <tr>
+                    <th style="text-align:center">#</th>
+                    <th>Id</th>
+                    <td>Id испытания</td>
+                    <td>Аналитический сервис</td>
+                    <td>Испытательная машина</td>
+                    <td>Номер пробы</td>
+                    <td>Результат</td>
+                    <td>Ед.изм.</td>
+                    <td>Подтвержден</td>
+                    <td>Записка</td>
+                    <td>Время создания</td>
+                    <td>Время последних изменений</td>
+                    <td>Кем созданно</td>
+                    <td>Кем изменено</td>
+                </tr>
+            </Header>
+            <Rows>
+                @if (finalresults == null)
                 {
-                    <option value="0">Выберите значение</option>
-                    foreach (var item in finalresults.GroupBy(e => e.AnalyticalServiceId))
+                    <p style="text-align:center">
+                        <img src="../images/loader.gif" />
+                    </p>
+                }
+                else
+                {
+                    @foreach (var finalresult in finalresults.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort))
                     {
-                        <option value="@item.Key">@analyticalservs?.Where(x => x.Id == item.Key).FirstOrDefault()?.Name</option>
+                        <tr>
+                            <td style="text-align:center">
+                                <a href="analysis/sample/finalresultaddedit/@SampleId/@finalresult.Id">
+                                    <img src="../images/iEdit.png" width="20" height="20" />
+                                </a>
+                                &nbsp
+                                <a href="analysis/sample/finalresultdelete/@SampleId/@finalresult.Id">
+                                    <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                                </a>
+                            </td>
+                            <td>@finalresult.Id</td>
+                            <td>@finalresult.SampleId</td>
+                            <td>@analyticalservs?.Where(x => x.Id == finalresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                            <td>@instruments?.Where(x => x.Id == finalresult.InstrumentId).FirstOrDefault()?.Name</td>
+                            <td>@finalresult.ValueNo</td>
+                            <td>@finalresult.Value</td>
+                            <td>@units?.Where(x => x.Id == finalresult.UnitId).FirstOrDefault()?.Name</td>
+                            <td>
+                                @if (finalresult.IsFinal == true)
+                                {<img src="../images/iGreenCheck.png" width="25" height="25" />}
+                                else
+                                {<img src="../images/iRedX.png" width="25" height="25" />}
+                            </td>
+                            <td>@finalresult.Note</td>
+                            <td>@finalresult.CreateTime</td>
+                            <td>@finalresult.UpdateTime</td>
+                            <td>@finalresult.CreateUser</td>
+                            <td>@finalresult.UpdateUser</td>
+                        </tr>
                     }
                 }
-            </select>
-        </li>
-    </Filtr>
-    <Header>
-        <tr>
-            <th style="text-align:center">#</th>
-            <th>Id</th>
-            <td>Id испытания</td>
-            <td>Аналитический сервис</td>
-            <td>Испытательная машина</td>
-            <td>Номер пробы</td>
-            <td>Результат</td>
-            <td>Ед.изм.</td>
-            <td>Подтвержден</td>
-            <td>Записка</td>
-            <td>Время создания</td>
-            <td>Время последних изменений</td>
-            <td>Кем созданно</td>
-            <td>Кем изменено</td>
-        </tr>
-    </Header>
-    <Rows>
-        @if (finalresults == null)
-        {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" />
-            </p>
-        }
-        else
-        {
-            @foreach (var finalresult in finalresults.Where(x => changsort == 0 || x.AnalyticalServiceId == changsort))
+            </Rows>
+        </DataView>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            IEnumerable<FinalResult> finalresults;
+            IEnumerable<AnalyticalServ> analyticalservs;
+            IEnumerable<Unit> units;
+            IEnumerable<Instrument> instruments;
+
+            [Parameter]
+            public int SampleId { get; set; }
+
+            /// <summary>
+            /// Задаём базовые значения
+            /// </summary>
+            public int changsort = 0;
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
             {
-                <tr>
-                    <td style="text-align:center">
-                        <a href="analysis/sample/finalresultaddedit/@SampleId/@finalresult.Id">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="analysis/sample/finalresultdelete/@SampleId/@finalresult.Id">
-                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                        </a>
-                    </td>
-                    <td>@finalresult.Id</td>
-                    <td>@finalresult.SampleId</td>
-                    <td>@analyticalservs?.Where(x => x.Id == finalresult.AnalyticalServiceId).FirstOrDefault()?.Name</td>
-                    <td>@instruments?.Where(x => x.Id == finalresult.InstrumentId).FirstOrDefault()?.Name</td>
-                    <td>@finalresult.ValueNo</td>
-                    <td>@finalresult.Value</td>
-                    <td>@units?.Where(x => x.Id == finalresult.UnitId).FirstOrDefault()?.Name</td>
-                    <td>
-                        @if (finalresult.IsFinal == true)
-                        {<img src="../images/iGreenCheck.png" width="25" height="25" />}
-                        else
-                        {<img src="../images/iRedX.png" width="25" height="25" />}
-                    </td>
-                    <td>@finalresult.Note</td>
-                    <td>@finalresult.CreateTime</td>
-                    <td>@finalresult.UpdateTime</td>
-                    <td>@finalresult.CreateUser</td>
-                    <td>@finalresult.UpdateUser</td>
-                </tr>
+                finalresults = await FinalResultService.FinalResultList(SampleId);
+                analyticalservs = await AnalyticalServService.AnalyticalServList();
+                units = await UnitServiceService.UnitList();
+                instruments = await InstrumentService.InstrumentList();
             }
         }
-    </Rows>
-</DataView>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    IEnumerable<FinalResult> finalresults;
-    IEnumerable<AnalyticalServ> analyticalservs;
-    IEnumerable<Unit> units;
-    IEnumerable<Instrument> instruments;
-
-    [Parameter]
-    public int SampleId { get; set; }
-
-    /// <summary>
-    /// Задаём базовые значения
-    /// </summary>
-    public int changsort = 0;
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        finalresults = await FinalResultService.FinalResultList(SampleId);
-        analyticalservs = await AnalyticalServService.AnalyticalServList();
-        units = await UnitServiceService.UnitList();
-        instruments = await InstrumentService.InstrumentList();
-    }
-}
+    </Authorized>
+</AuthorizeView>

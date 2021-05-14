@@ -1,72 +1,79 @@
-﻿@using LIMSBlazor.Data
-@page "/config/locaddedit"
-@page "/config/locaddedit/{id:int}"
-@inject ILocService LocService
-@inject NavigationManager NavigationManager
+﻿<AuthorizeView Roles="ADMIN">
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/config/locaddedit"
+        @page "/config/locaddedit/{id:int}"
+        @inject ILocService LocService
+        @inject NavigationManager NavigationManager
 
-<DataEdit PageTitle="@pagetitle" Model="@loc" BtnSaveText="@buttontext" OnValidSubmit="@LocSave" OnClickCancel="@Cancel">
-    <table>
-        <tr>
-            <td>Наименование:</td>
-            <td><input class="form-control" type="text" @bind="loc.Name" required></td>
-        </tr>
-        <tr>
-            <td>Описание:</td>
-            <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="loc.Description"></textarea></td>
-        </tr>
-    </table>
-</DataEdit>
+        <DataEdit PageTitle="@pagetitle" Model="@loc" BtnSaveText="@buttontext" OnValidSubmit="@LocSave" OnClickCancel="@Cancel">
+            <table>
+                <tr>
+                    <td>Наименование:</td>
+                    <td><input class="form-control" type="text" @bind="loc.Name" required></td>
+                </tr>
+                <tr>
+                    <td>Описание:</td>
+                    <td><textarea class="form-control" type="text" id="exampleFormControlTextarea1" rows="5" cols="100" @bind="loc.Description"></textarea></td>
+                </tr>
+            </table>
+        </DataEdit>
 
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    Loc loc = new Loc();
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            Loc loc = new Loc();
 
-    [Parameter]
-    public int id { get; set; }
+            [Parameter]
+            public int id { get; set; }
 
-    /// <summary>
-    /// Задаём базовые значения
-    /// </summary>
-    public string pagetitle = "Добавить новое место взятия пробы";
-    public string buttontext = "Добавить";
+            /// <summary>
+            /// Задаём базовые значения
+            /// </summary>
+            public string pagetitle = "Добавить новое место взятия пробы";
+            public string buttontext = "Добавить";
 
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        /// Если Id ноль то будет добавлено новое значение
-        if (id != 0)
-        {
-            loc = await LocService.Loc_GetOne(id);
-            pagetitle = "Изменить данные места взятия пробы";
-            buttontext = "Изменить";
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                /// Если Id ноль то будет добавлено новое значение
+                if (id != 0)
+                {
+                    loc = await LocService.Loc_GetOne(id);
+                    pagetitle = "Изменить данные места взятия пробы";
+                    buttontext = "Изменить";
+                }
+            }
+
+            /// <summary>
+            /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
+            /// </summary>
+            protected async Task LocSave()
+            {
+                if (loc.Id == 0)
+                {
+                    await LocService.LocInsert(loc);
+                }
+                else
+                {
+                    await LocService.LocUpdate(loc);
+                }
+                NavigationManager.NavigateTo("config/loclist");
+            }
+
+            /// <summary>
+            /// Отмена изменений и возвращение на прошлую страницу
+            /// </summary>
+            void Cancel()
+            {
+                NavigationManager.NavigateTo("config/loclist");
+            }
         }
-    }
-
-    /// <summary>
-    /// Задача сохраняющая при Id=0 или обновляющая данные если Id задан в БД
-    /// </summary>
-    protected async Task LocSave()
-    {
-        if (loc.Id == 0)
-        {
-            await LocService.LocInsert(loc);
-        }
-        else
-        {
-            await LocService.LocUpdate(loc);
-        }
-        NavigationManager.NavigateTo("config/loclist");
-    }
-
-    /// <summary>
-    /// Отмена изменений и возвращение на прошлую страницу
-    /// </summary>
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("config/loclist");
-    }
-}
+</Authorized>
+</AuthorizeView>

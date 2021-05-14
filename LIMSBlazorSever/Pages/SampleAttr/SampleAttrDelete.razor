@@ -1,66 +1,72 @@
-﻿@using LIMSBlazor.Data
-@page "/samplelog/sample/sampleattrdelete/{SampleId:int}/{AttrId:int}"
-@inject ISampleAttrService SampleAttrService
-@inject ISampleService SampleService
-@inject IAttrService AttrService
-@inject NavigationManager NavigationManager
+﻿<AuthorizeView Roles=@(GlobalConstant.GlobalLab + "--Лаборант, ADMIN")>
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/samplelog/sample/sampleattrdelete/{SampleId:int}/{AttrId:int}"
+        @inject ISampleAttrService SampleAttrService
+        @inject ISampleService SampleService
+        @inject IAttrService AttrService
+        @inject NavigationManager NavigationManager
 
-<DataEdit FormType="Delete" PageTitle="Удалить атрибут испытания из базы данных" DeleteWarning="Вы уверены что хотите удалить этот атрибут испытания? Данные нельзя будет вернуть!" Model="@sampleattr" OnClickDelete="@Delete" OnClickCancel="@Cancel">
-    <table class="editform">
-        <tr>
-            <td>Id испытания:</td>
-            <td>@sampleattr.SampleId</td>
-        </tr>
-        <tr>
-            <td>Атрибут:</td>
-            <td>@attrs?.Where(x => x.Id == sampleattr.AttrId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>Значение:</td>
-            <td>@sampleattr.Value</td>
-        </tr>
-    </table>
-</DataEdit>
+        <DataEdit FormType="Delete" PageTitle="Удалить атрибут испытания из базы данных" DeleteWarning="Вы уверены что хотите удалить этот атрибут испытания? Данные нельзя будет вернуть!" Model="@sampleattr" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+            <table class="editform">
+                <tr>
+                    <td>Id испытания:</td>
+                    <td>@sampleattr.SampleId</td>
+                </tr>
+                <tr>
+                    <td>Атрибут:</td>
+                    <td>@attrs?.Where(x => x.Id == sampleattr.AttrId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>Значение:</td>
+                    <td>@sampleattr.Value</td>
+                </tr>
+            </table>
+        </DataEdit>
 
 
-@code { 
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    SampleAttr sampleattr = new SampleAttr();
+        @code { /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            SampleAttr sampleattr = new SampleAttr();
 
-    IEnumerable<Sample> samples;
-    IEnumerable<Attr> attrs;
+            IEnumerable<Sample> samples;
+            IEnumerable<Attr> attrs;
 
-    [Parameter]
-    public int SampleId { get; set; }
-    [Parameter]
-    public int AttrId { get; set; }
+            [Parameter]
+            public int SampleId { get; set; }
+            [Parameter]
+            public int AttrId { get; set; }
 
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        sampleattr = await SampleAttrService.SampleAttr_GetOne(SampleId, AttrId);
-        samples = await SampleService.SampleList();
-        attrs = await AttrService.AttrList();
-    }
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                sampleattr = await SampleAttrService.SampleAttr_GetOne(SampleId, AttrId);
+                samples = await SampleService.SampleList();
+                attrs = await AttrService.AttrList();
+            }
 
-    /// <summary>
-    /// Задача удаляющая запись из БД
-    /// </summary>
-    protected async Task Delete()
-    {
-        await SampleAttrService.SampleAttrDelete(SampleId, AttrId);
-        NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
-    }
+            /// <summary>
+            /// Задача удаляющая запись из БД
+            /// </summary>
+            protected async Task Delete()
+            {
+                await SampleAttrService.SampleAttrDelete(SampleId, AttrId);
+                NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
+            }
 
-    /// <summary>
-    /// Отмена изменений и возвращение на прошлую страницу
-    /// </summary>
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
-    }
-}
+            /// <summary>
+            /// Отмена изменений и возвращение на прошлую страницу
+            /// </summary>
+            void Cancel()
+            {
+                NavigationManager.NavigateTo("samplelog/sample/sampleattrlist/" + SampleId);
+            }
+         }
+    </Authorized>
+</AuthorizeView>

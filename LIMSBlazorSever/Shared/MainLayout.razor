@@ -1,18 +1,31 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Identity;
+@inject NavigationManager NavigationManager
+@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
 
+
     <div class="main">
         <div class="top-row px-4 auth">
             <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
 
-        <div class="content px-4">
-            @Body
-        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="content px-4">
+                    @Body
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div>
+                    <p>
+                        Вы не авторизованы, пожалуйста авторизуйтесь для начала работы.
+                    </p>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
     </div>
 </div>

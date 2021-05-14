@@ -1,78 +1,85 @@
-﻿@using LIMSBlazor.Data
-@page "/config/instrumentdelete/{id:int}"
-@inject IInstrumentService InstrumentService
-@inject ILabService LabService
-@inject IInstrumTypeService InstrumTypeService
-@inject NavigationManager NavigationManager
+﻿<AuthorizeView Roles="ADMIN">
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/config/instrumentdelete/{id:int}"
+        @inject IInstrumentService InstrumentService
+        @inject ILabService LabService
+        @inject IInstrumTypeService InstrumTypeService
+        @inject NavigationManager NavigationManager
 
-<DataEdit FormType="Delete" PageTitle="Удалить оборудование" DeleteWarning="Вы уверены что хотите удалить это оборудование? Данные нельзя будет вернуть!" Model="@instrument" OnClickDelete="@Delete" OnClickCancel="@Cancel">
-    <table>
-        <tr>
-            <td>Название:</td>
-            <td>@instrument.Name</td>
-        </tr>
-        <tr>
-            <td>Тип оборудования:</td>
-            <td>@instrumtypes?.Where(x => x.Id == instrument.InstrumentTypeId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>Серийный номер:</td>
-            <td>@instrument.SerialNumber</td>
-        </tr>
-        <tr>
-            <td>Статус:</td>
-            <td>@instrument.Status</td>
-        </tr>
-        <tr>
-            <td>Лаборатория:</td>
-            <td>@labs?.Where(x => x.Id == instrument.LabId).FirstOrDefault()?.Name</td>
-        </tr>
-        <tr>
-            <td>Описание:</td>
-            <td>@instrument.Description</td>
-        </tr>
-    </table>
-</DataEdit>
-
-
-@code { 
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    Instrument instrument = new Instrument();
-
-    [Parameter]
-    public int id { get; set; }
+        <DataEdit FormType="Delete" PageTitle="Удалить оборудование" DeleteWarning="Вы уверены что хотите удалить это оборудование? Данные нельзя будет вернуть!" Model="@instrument" OnClickDelete="@Delete" OnClickCancel="@Cancel">
+            <table>
+                <tr>
+                    <td>Название:</td>
+                    <td>@instrument.Name</td>
+                </tr>
+                <tr>
+                    <td>Тип оборудования:</td>
+                    <td>@instrumtypes?.Where(x => x.Id == instrument.InstrumentTypeId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>Серийный номер:</td>
+                    <td>@instrument.SerialNumber</td>
+                </tr>
+                <tr>
+                    <td>Статус:</td>
+                    <td>@instrument.Status</td>
+                </tr>
+                <tr>
+                    <td>Лаборатория:</td>
+                    <td>@labs?.Where(x => x.Id == instrument.LabId).FirstOrDefault()?.Name</td>
+                </tr>
+                <tr>
+                    <td>Описание:</td>
+                    <td>@instrument.Description</td>
+                </tr>
+            </table>
+        </DataEdit>
 
 
-    IEnumerable<InstrumType> instrumtypes;
-    IEnumerable<Lab> labs;
+        @code { 
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            Instrument instrument = new Instrument();
 
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        instrument = await InstrumentService.Instrument_GetOne(id);
-        instrumtypes = await InstrumTypeService.InstrumTypeList();
-        labs = await LabService.LabList();
-    }
+            [Parameter]
+            public int id { get; set; }
 
-    /// <summary>
-    /// Задача удаляющая запись из БД
-    /// </summary>
-    protected async Task Delete()
-    {
-        // Insert if id is zero.
-        await InstrumentService.InstrumentDelete(id);
-        NavigationManager.NavigateTo("/config/instrumentlist");
-    }
 
-    /// <summary>
-    /// Отмена изменений и возвращение на прошлую страницу
-    /// </summary>
-    void Cancel()
-    {
-        NavigationManager.NavigateTo("/config/instrumentlist");
-    }
-}
+            IEnumerable<InstrumType> instrumtypes;
+            IEnumerable<Lab> labs;
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                instrument = await InstrumentService.Instrument_GetOne(id);
+                instrumtypes = await InstrumTypeService.InstrumTypeList();
+                labs = await LabService.LabList();
+            }
+
+            /// <summary>
+            /// Задача удаляющая запись из БД
+            /// </summary>
+            protected async Task Delete()
+            {
+                // Insert if id is zero.
+                await InstrumentService.InstrumentDelete(id);
+                NavigationManager.NavigateTo("/config/instrumentlist");
+            }
+
+            /// <summary>
+            /// Отмена изменений и возвращение на прошлую страницу
+            /// </summary>
+            void Cancel()
+            {
+                NavigationManager.NavigateTo("/config/instrumentlist");
+            } 
+            }
+    </Authorized>
+</AuthorizeView>

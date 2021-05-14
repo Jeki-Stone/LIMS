@@ -1,67 +1,74 @@
-﻿@using LIMSBlazor.Data
-@page "/config/instrumtype/instrumtypeanalyticlist/{InstrumentTypeId:int}"
-@inject IInstrumTypeAnalyticService InstrumTypeAnalyticService
-@inject IInstrumTypeService InstrumTypeService
-@inject IAnalyticalServService AnalyticalServService
+﻿<AuthorizeView Roles="ADMIN">
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/config/instrumtype/instrumtypeanalyticlist/{InstrumentTypeId:int}"
+        @inject IInstrumTypeAnalyticService InstrumTypeAnalyticService
+        @inject IInstrumTypeService InstrumTypeService
+        @inject IAnalyticalServService AnalyticalServService
 
-<DataView PageTitle="Список элементов спецификации" UrlAdd=@UrlInstrumentTypeId UrlBack="config/instrumtypelist" UrlAddText="Добавить элемент спецификации" UrlBackText="Вернуться к списку типов оборудования">
-    <Header>
-        <tr>
-            <th style="text-align:center">#</th>
-            <th>Тип оборудования</th>
-            <th>Аналитический сервис</th>
-        </tr>
-    </Header>
-    <Rows>
-        @if (instrumtypeanalytics == null)
-        {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" />
-            </p>
-        }
-        else
-        {
-            @foreach (var instrumtypeanalytic in instrumtypeanalytics)
-            {
+        <DataView PageTitle="Список элементов спецификации" UrlAdd=@UrlInstrumentTypeId UrlBack="config/instrumtypelist" UrlAddText="Добавить элемент спецификации" UrlBackText="Вернуться к списку типов оборудования">
+            <Header>
                 <tr>
-                    <td style="text-align:center">
-                        <a href="config/instrumtype/instrumtypeanalyticaddedit/@instrumtypeanalytic.InstrumentTypeId/@instrumtypeanalytic.AnalyticalServiceId">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="config/instrumtype/instrumtypeanalyticdelete/@instrumtypeanalytic.InstrumentTypeId/@instrumtypeanalytic.AnalyticalServiceId">
-                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                        </a>
-                    </td>
-                    <td>@instrumtypes.Where(x => x.Id == instrumtypeanalytic.InstrumentTypeId).FirstOrDefault()?.Name</td>
-                    <td>@analyticalservs.Where(x => x.Id == instrumtypeanalytic.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                    <th style="text-align:center">#</th>
+                    <th>Тип оборудования</th>
+                    <th>Аналитический сервис</th>
                 </tr>
+            </Header>
+            <Rows>
+                @if (instrumtypeanalytics == null)
+                {
+                    <p style="text-align:center">
+                        <img src="../images/loader.gif" />
+                    </p>
+                }
+                else
+                {
+                    @foreach (var instrumtypeanalytic in instrumtypeanalytics)
+                    {
+                        <tr>
+                            <td style="text-align:center">
+                                <a href="config/instrumtype/instrumtypeanalyticaddedit/@instrumtypeanalytic.InstrumentTypeId/@instrumtypeanalytic.AnalyticalServiceId">
+                                    <img src="../images/iEdit.png" width="20" height="20" />
+                                </a>
+                                &nbsp
+                                <a href="config/instrumtype/instrumtypeanalyticdelete/@instrumtypeanalytic.InstrumentTypeId/@instrumtypeanalytic.AnalyticalServiceId">
+                                    <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                                </a>
+                            </td>
+                            <td>@instrumtypes.Where(x => x.Id == instrumtypeanalytic.InstrumentTypeId).FirstOrDefault()?.Name</td>
+                            <td>@analyticalservs.Where(x => x.Id == instrumtypeanalytic.AnalyticalServiceId).FirstOrDefault()?.Name</td>
+                        </tr>
+                    }
+                }
+            </Rows>
+        </DataView>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            IEnumerable<InstrumTypeAnalytic> instrumtypeanalytics;
+            IEnumerable<InstrumType> instrumtypes;
+            IEnumerable<AnalyticalServ> analyticalservs;
+
+            [Parameter]
+            public int InstrumentTypeId { get; set; }
+            [Parameter]
+            public string UrlInstrumentTypeId { get; set; }
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                instrumtypeanalytics = await InstrumTypeAnalyticService.InstrumTypeAnalyticList(InstrumentTypeId);
+                instrumtypes = await InstrumTypeService.InstrumTypeList();
+                analyticalservs = await AnalyticalServService.AnalyticalServList();
+                UrlInstrumentTypeId = "config/instrumtype/instrumtypeanalyticaddedit/" + @InstrumentTypeId;
             }
         }
-    </Rows>
-</DataView>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    IEnumerable<InstrumTypeAnalytic> instrumtypeanalytics;
-    IEnumerable<InstrumType> instrumtypes;
-    IEnumerable<AnalyticalServ> analyticalservs;
-
-    [Parameter]
-    public int InstrumentTypeId { get; set; }
-    [Parameter]
-    public string UrlInstrumentTypeId { get; set; }
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        instrumtypeanalytics = await InstrumTypeAnalyticService.InstrumTypeAnalyticList(InstrumentTypeId);
-        instrumtypes = await InstrumTypeService.InstrumTypeList();
-        analyticalservs = await AnalyticalServService.AnalyticalServList();
-        UrlInstrumentTypeId = "config/instrumtype/instrumtypeanalyticaddedit/" + @InstrumentTypeId;
-    }
-}
+    </Authorized>
+</AuthorizeView>

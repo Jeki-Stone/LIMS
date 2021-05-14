@@ -1,67 +1,74 @@
-﻿@using LIMSBlazor.Data
-@page "/config/sampletype/sampletypeattrlist/{SampleTypeId:int}"
-@inject ISampleTypeAttrService SampleTypeAttrService
-@inject ISampleTypeService SampleTypeService
-@inject IAttrService AttrService
+﻿<AuthorizeView Roles="ADMIN" )>
+    <NotAuthorized>
+        <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
+    </NotAuthorized>
+    <Authorized>
+        @using LIMSBlazor.Data
+        @page "/config/sampletype/sampletypeattrlist/{SampleTypeId:int}"
+        @inject ISampleTypeAttrService SampleTypeAttrService
+        @inject ISampleTypeService SampleTypeService
+        @inject IAttrService AttrService
 
-<DataView PageTitle="Список атрибутов типа испытаний" UrlAdd=@UrlSampleTypeId UrlBack="config/sampletypelist" UrlAddText="Добавить атрибут типу испытаний" UrlBackText="Вернуться к списку типов испытаний">
-    <Header>
-        <tr>
-            <th style="text-align:center">#</th>
-            <th>Тип пробы</th>
-            <th>Атрибут</th>
-        </tr>
-    </Header>
-    <Rows>
-        @if (sampletypeattrs == null)
-        {
-            <p style="text-align:center">
-                <img src="../images/loader.gif" />
-            </p>
-        }
-        else
-        {
-            @foreach (var sampletypeattr in sampletypeattrs)
-            {
+        <DataView PageTitle="Список атрибутов типа испытаний" UrlAdd=@UrlSampleTypeId UrlBack="config/sampletypelist" UrlAddText="Добавить атрибут типу испытаний" UrlBackText="Вернуться к списку типов испытаний">
+            <Header>
                 <tr>
-                    <td style="text-align:center">
-                        <a href="/config/sampletype/sampletypeattraddedit/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
-                            <img src="../images/iEdit.png" width="20" height="20" />
-                        </a>
-                        &nbsp
-                        <a href="/config/sampletype/sampletypeattrdelete/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
-                            <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                        </a>
-                    </td>
-                    <td>@sampletypes.Where(x => x.Id == sampletypeattr.SampleTypeId).FirstOrDefault()?.Name</td>
-                    <td>@attrs.Where(x => x.Id == sampletypeattr.AttrId).FirstOrDefault()?.Name</td>
+                    <th style="text-align:center">#</th>
+                    <th>Тип пробы</th>
+                    <th>Атрибут</th>
                 </tr>
+            </Header>
+            <Rows>
+                @if (sampletypeattrs == null)
+                {
+                    <p style="text-align:center">
+                        <img src="../images/loader.gif" />
+                    </p>
+                }
+                else
+                {
+                    @foreach (var sampletypeattr in sampletypeattrs)
+                    {
+                        <tr>
+                            <td style="text-align:center">
+                                <a href="/config/sampletype/sampletypeattraddedit/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
+                                    <img src="../images/iEdit.png" width="20" height="20" />
+                                </a>
+                                &nbsp
+                                <a href="/config/sampletype/sampletypeattrdelete/@sampletypeattr.SampleTypeId/@sampletypeattr.AttrId">
+                                    <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
+                                </a>
+                            </td>
+                            <td>@sampletypes.Where(x => x.Id == sampletypeattr.SampleTypeId).FirstOrDefault()?.Name</td>
+                            <td>@attrs.Where(x => x.Id == sampletypeattr.AttrId).FirstOrDefault()?.Name</td>
+                        </tr>
+                    }
+                }
+            </Rows>
+        </DataView>
+
+        @code {
+            /// <summary>
+            /// Создаём необходимые компоненты
+            /// </summary>
+            IEnumerable<SampleTypeAttr> sampletypeattrs;
+            IEnumerable<SampleType> sampletypes;
+            IEnumerable<Attr> attrs;
+
+            [Parameter]
+            public int SampleTypeId { get; set; }
+            [Parameter]
+            public string UrlSampleTypeId { get; set; }
+
+            /// <summary>
+            /// Исполняемая при запуске страницы задача
+            /// </summary>
+            protected override async Task OnInitializedAsync()
+            {
+                sampletypeattrs = await SampleTypeAttrService.SampleTypeAttrList(SampleTypeId);
+                sampletypes = await SampleTypeService.SampleTypeList();
+                attrs = await AttrService.AttrList();
+                UrlSampleTypeId = "/config/sampletype/sampletypeattraddedit/" + SampleTypeId;
             }
         }
-    </Rows>
-</DataView>
-
-@code {
-    /// <summary>
-    /// Создаём необходимые компоненты
-    /// </summary>
-    IEnumerable<SampleTypeAttr> sampletypeattrs;
-    IEnumerable<SampleType> sampletypes;
-    IEnumerable<Attr> attrs;
-
-    [Parameter]
-    public int SampleTypeId { get; set; }
-    [Parameter]
-    public string UrlSampleTypeId { get; set; }
-
-    /// <summary>
-    /// Исполняемая при запуске страницы задача
-    /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        sampletypeattrs = await SampleTypeAttrService.SampleTypeAttrList(SampleTypeId);
-        sampletypes = await SampleTypeService.SampleTypeList();
-        attrs = await AttrService.AttrList();
-        UrlSampleTypeId = "/config/sampletype/sampletypeattraddedit/" + SampleTypeId;
-    }
-}
+</Authorized>
+</AuthorizeView>

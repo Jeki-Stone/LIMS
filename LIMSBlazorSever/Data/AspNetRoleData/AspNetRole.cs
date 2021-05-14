@@ -12,6 +12,5 @@ namespace LIMSBlazor.Data
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public int LabId { get; set; }
     }
 }

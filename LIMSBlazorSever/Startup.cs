@@ -37,9 +37,22 @@ namespace LIMSBlazorSever
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<IdentityUser>(options => {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+                options.User.RequireUniqueEmail = true;
+
+            }).AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddHttpContextAccessor();
+
+            /// Для работы Balzorise
+            services.AddBlazorise(options =>
+            {
+                options.ChangeTextOnKeyPress = true; // optional
+            }).AddBootstrapProviders().AddFontAwesomeIcons();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
@@ -72,6 +85,7 @@ namespace LIMSBlazorSever
             services.AddScoped<IInstrumAnalyticService, InstrumAnalyticService>();
             services.AddScoped<IAnalyticalServiceAttrService, AnalyticalServiceAttrService>();
             services.AddScoped<IResultAttrService, ResultAttrService>();
+            services.AddSingleton<WeatherForecastService>();
 
             // SQL database connection (name  defined in appsettings. json).
             var SqlConnectionConfiguration = new SqlConnectionConfiguration(Configuration.GetConnectionString("DefaultConnection"));
@@ -79,6 +93,7 @@ namespace LIMSBlazorSever
 
             //Optional for debugging
             services.AddServerSideBlazor(o => o.DetailedErrors = true);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,7 +107,6 @@ namespace LIMSBlazorSever
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

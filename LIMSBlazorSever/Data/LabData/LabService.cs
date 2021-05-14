@@ -12,9 +12,11 @@ namespace LIMSBlazor.Data
     {
         /// Подключение к базе данных
         private readonly SqlConnectionConfiguration _configuration;
-        public LabService(SqlConnectionConfiguration configuration)
+        private readonly IAspNetRoleService _AspNetRoleService;
+        public LabService(SqlConnectionConfiguration configuration, IAspNetRoleService AspNetRoleService)
         {
             _configuration = configuration;
+            _AspNetRoleService = AspNetRoleService;
         }
 
         /// Добавить (создать) данные в строке таблицы 
@@ -30,6 +32,8 @@ namespace LIMSBlazor.Data
                     parametrs.Add("LocId", lab.LocId, DbType.Int32);
                     parametrs.Add("Description", lab.Description, DbType.String);
                     await conn.ExecuteAsync("spLabs_Insert", parametrs, commandType: CommandType.StoredProcedure);
+                    // Добавление класических ролей
+                    await _AspNetRoleService.AspNetRoleClassic(lab.Code);
                 }
             }
             catch (Exception e)
@@ -87,15 +91,30 @@ namespace LIMSBlazor.Data
         }
 
         /// Удалить строку таблицы данных из БД
-        public async Task<bool> LabDelete(int id)
+        public async Task<bool> LabDelete(int id, string code)
         {
             var parameters = new DynamicParameters();
             parameters.Add("Id", id, DbType.Int32);
             using (var conn = new SqlConnection(_configuration.Value))
             {
                 await conn.ExecuteAsync("spLabs_Delete", parameters, commandType: CommandType.StoredProcedure);
+                // Удаление класических ролей
+                await _AspNetRoleService.AspNetRoleClassic(code);
             }
             return true;
+        }
+
+        /// Запросить данные из БД по коду лабаротории
+        public async Task<Lab>LabByCod(string Cod)
+        {
+            Lab lab = new Lab();
+            using (var conn = new SqlConnection(_configuration.Value))
+            {
+                var parametrs = new DynamicParameters();
+                parametrs.Add("Cod", Cod, DbType.String);
+                lab = await conn.QueryFirstOrDefaultAsync<Lab>("spLabs_GetAllByCod", parametrs, commandType: CommandType.StoredProcedure);
+            }
+            return lab;
         }
     }
 }

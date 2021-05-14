@@ -164,7 +164,8 @@
         if (Id == null)
         {
             sample.CreateTime = DateTime.Now;
-            sample.CreateUser = "Создавший пользователь";
+            var user = await AspNetUserService.AspNetAuthorizedUser();
+            sample.CreateUser = user.UserName;
             // После вставки Insert возвращает новый обьект
             sample.IsFinal = false;
             sample = await SampleService.SampleInsert(sample);
@@ -172,7 +173,8 @@
         else
         {
             sample.UpdateTime = DateTime.Now;
-            sample.UpdateUser = "Обновивший пользователь пользователь";
+            var user = await AspNetUserService.AspNetAuthorizedUser();
+            sample.UpdateUser = user.UserName;
             if (sample.Status == 5)
             {
                 sample.IsFinal = true;
