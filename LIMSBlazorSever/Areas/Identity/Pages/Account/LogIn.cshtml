@@ -1,0 +1,13 @@
+﻿@page
+@attribute [IgnoreAntiforgeryToken]
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> _SignInManager
+
+@functions {
+    public async Task<IActionResult> OnPost(string userName, string password)
+    {
+        await _SignInManager.PasswordSignInAsync(userName, password, true, true);
+        return Redirect("/");
+    }
+}
+

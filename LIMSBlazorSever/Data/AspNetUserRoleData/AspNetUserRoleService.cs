@@ -89,13 +89,18 @@ namespace LIMSBlazor.Data
             }
         }
 
+        /// <summary>
+        /// Список лабораторий на основе доступных ролей.
+        /// </summary>
+        /// <param name="UserName"></param>
+        /// <returns></returns>
         public async Task<List<Lab>> UserByNameLab(string UserName)
         {
             List<Lab> labs = new List<Lab>();
             using (var conn = new SqlConnection(_configuration.Value))
             {
                 IdentityUser user = await _userManager.FindByNameAsync(UserName);
-                if (!await _userManager.IsInRoleAsync(user, "ADMIN") || !await _userManager.IsInRoleAsync(user, "Client"))
+                if (!await _userManager.IsInRoleAsync(user, "ADMIN") && !await _userManager.IsInRoleAsync(user, "Client"))
                 {
                     IList<string> roles = await _userManager.GetRolesAsync(user);
                     if (roles != null)
@@ -106,6 +111,12 @@ namespace LIMSBlazor.Data
                             if (!labs.Any(e => e.Name == lab.Name))
                                 labs.Add(lab);
                         }
+                }
+                else
+                {
+                    var labList = await LabService.LabList();
+                    foreach (var item in labList)
+                        labs.Add(item);
                 }
             }
             return labs;

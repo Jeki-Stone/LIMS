@@ -31,12 +31,11 @@
         </div>
         &nbsp
         <p style="margin-top:auto; margin-bottom:auto;">Hello, @context.User?.Identity?.Name!</p>
-        <button @onclick="LogOut" class="nav-link btn btn-link text-dark">Logout</button>
+        <form method="post" action="Identity/Account/LogOut">
+            <button type="submit" class="nav-link btn btn-link">Log out</button>
+        </form>
     </Authorized>
-    <NotAuthorized>
-        @*<a href="Identity/Account/Register">Register</a>*@
-        <a href="Identity/Account/Login">Log in</a>
-    </NotAuthorized>
+
 </AuthorizeView>
 
 @code {
@@ -46,8 +45,6 @@
     List<Lab> labs;
 
     int Labaratory;
-
-
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
@@ -60,8 +57,9 @@
         if (userAuth.Identity.IsAuthenticated)
         {
             var userName = userAuth.Identity.Name;
+            GlobalConstant.UserName = userName;
             labs = await AspNetUserRoleService.UserByNameLab(userName);
-            if (labs[0] != null)
+            if (labs.Count > 0 && labs[0] != null)
                 GlobalConstant.GlobalLab = labs[0].Code;
         }
     }
@@ -77,9 +75,14 @@
         NavigationManager.NavigateTo("");
     }
 
-    protected async Task LogOut()
+    void Login()
     {
-        await _signInManager.SignOutAsync();
-        NavigationManager.NavigateTo("Identity/Account/Login");
+        NavigationManager.NavigateTo("/LoginForm");
     }
+
+    //protected async Task LogOut()
+    //{
+    //    await _signInManager.SignOutAsync();
+    //    NavigationManager.NavigateTo("Identity/Account/Login");
+    //}
 }

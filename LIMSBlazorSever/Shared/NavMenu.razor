@@ -121,6 +121,21 @@
                 </li>
             </Authorized>
         </AuthorizeView>
+        <AuthorizeView Roles=@("Client, ADMIN")>
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="client/" Match="NavLinkMatch.Prefix" @onclick="selectClient">
+                        <span class="oi oi-grid-three-up" aria-hidden="true"></span> Заявки
+                    </NavLink>
+                    @if (clientVisibl)
+                    {
+                        <NavLink class="nav-link" href="client/samplelist">
+                            <span class="oi oi-media-play" aria-hidden="true"></span> Результаты
+                        </NavLink>
+                    }
+                </li>
+            </Authorized>
+        </AuthorizeView>
         @*////////////////////////////////////////////////////////////////////////////////////*@
     </ul>
 </div>
@@ -136,6 +151,7 @@
     public bool testVisibl = false;
     public bool analysisVisibl = false;
     public bool confirmationVisibl = false;
+    public bool clientVisibl = false;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
@@ -151,6 +167,7 @@
         testVisibl = false;
         analysisVisibl = false;
         confirmationVisibl = false;
+        clientVisibl = false;
     }
 
     void closeAllMenu(ref bool data)
@@ -192,6 +209,13 @@
     {
         closeAllMenu(ref confirmationVisibl);
         if (!confirmationVisibl)
+            NavigationManager.NavigateTo("/");
+    }
+
+    void selectClient()
+    {
+        closeAllMenu(ref clientVisibl);
+        if (!clientVisibl)
             NavigationManager.NavigateTo("/");
     }
 
