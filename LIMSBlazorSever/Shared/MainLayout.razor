@@ -4,13 +4,13 @@
 
 <div class="page">
     <div class="sidebar">
-        <NavMenu />
+        <NavMenu LabName="@LabName"/>
     </div>
 
 
     <div class="main">
         <div class="top-row px-4 auth">
-            <LoginDisplay />
+            <LoginDisplay @bind-LabName="@LabName" />
         </div>
 
         <AuthorizeView>
@@ -30,3 +30,7 @@
         </AuthorizeView>
     </div>
 </div>
+
+@code {
+    public string LabName { set; get; }
+}

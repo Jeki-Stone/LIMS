@@ -16,14 +16,14 @@
 <AuthorizeView>
     <Authorized>
         <div style="width:500px; position:absolute; left:20px">
-            <select @onchange="GlobalLabChange" class="form-control" required>
+            <select @bind="@LabName" @bind:event="oninput" @onchange="GlobalLabChange" class="form-control" required>
                 @if (labs != null)
                 {
                     foreach (var lab in labs)
                     {
                         @if (lab != null)
                         {
-                            <option value="@lab.Code">@lab.Name</option>
+                            <option @key="@lab.Code" value="@lab.Code">@lab.Name</option>
                         }
                     }
                 }
@@ -44,7 +44,11 @@
     /// </summary>
     List<Lab> labs;
 
-    int Labaratory;
+    [Parameter]
+    public string LabName { get; set; }
+
+    [Parameter]
+    public EventCallback<string> LabNameChanged { get; set; }
 
     /// <summary>
     /// Исполняемая при запуске страницы задача
@@ -60,7 +64,11 @@
             GlobalConstant.UserName = userName;
             labs = await AspNetUserRoleService.UserByNameLab(userName);
             if (labs.Count > 0 && labs[0] != null)
+            {
                 GlobalConstant.GlobalLab = labs[0].Code;
+                LabName = GlobalConstant.GlobalLab;
+                await LabNameChanged.InvokeAsync(LabName);
+            }
         }
     }
 
@@ -71,7 +79,8 @@
     /// <returns></returns>
     protected async Task GlobalLabChange(ChangeEventArgs e)
     {
-        GlobalConstant.GlobalLab = Convert.ToString(e.Value);
+        GlobalConstant.GlobalLab = LabName;
+        await LabNameChanged.InvokeAsync(LabName);
         NavigationManager.NavigateTo("");
     }
 
@@ -79,10 +88,4 @@
     {
         NavigationManager.NavigateTo("/LoginForm");
     }
-
-    //protected async Task LogOut()
-    //{
-    //    await _signInManager.SignOutAsync();
-    //    NavigationManager.NavigateTo("Identity/Account/Login");
-    //}
 }
