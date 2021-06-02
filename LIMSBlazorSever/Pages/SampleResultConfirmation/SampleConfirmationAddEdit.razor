@@ -98,7 +98,7 @@
             /// <summary>
             /// Задаём базовые значения
             /// </summary>
-            public string pagetitle = "Изменить статус испытания";
+            public string pagetitle = "Изменить статус пробы";
             public string buttontext = "Изменить";
             public string Visibl = "none";
             public int Status;
@@ -108,7 +108,6 @@
             /// </summary>
             protected override async Task OnInitializedAsync()
             {
-                //aspNetUsers = await AspNetUserService.AspNetUserList();
                 sampletypes = await SampleTypeService.SampleTypeList();
                 locs = await LocService.LocList();
                 finalresults = await FinalResultService.FinalResultList(Id);

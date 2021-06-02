@@ -11,7 +11,7 @@
         @inject IAspNetRoleService AspNetRoleService
         @inject IAspNetUserRoleService AspNetUserRoleService
 
-        <DataView PageTitle="Список ролей пользователя" UrlAdd=@UrlUserId UrlBack="/config/userlist" UrlAddText="Добавить новую роль для пользователя" UrlBackText="Вернуться к списку Пользователей">
+        <DataView PageTitle="Список ролей пользователя" UrlBack="/config/userlist" UrlBackText="Вернуться к списку Пользователей">
             <Header>
                 <tr>
                     <th>Имя</th>
@@ -27,7 +27,7 @@
                 }
                 else
                 {
-                    @foreach (var role in aspNetRoles)
+                    @foreach (var role in aspNetRoles.OrderBy(e => e.Name))
                     {
                         <tr>
                             <td>@role.Name</td>

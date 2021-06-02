@@ -89,13 +89,15 @@ namespace LIMSBlazor.Data
         }
 
         /// Обновить строку таблицы данных в БД
-        public async Task<bool> AspNetUserUpdate(IdentityUser _identityUser)
+        public async Task<bool> AspNetUserUpdate(IdentityUser _identityUser, string newPassword)
         {
             try
             {
                 using (var conn = new SqlConnection(_configuration.Value))
                 {
                     await _userManager.UpdateAsync(_identityUser);
+                    await _userManager.RemovePasswordAsync(_identityUser);
+                    await _userManager.AddPasswordAsync(_identityUser, newPassword);
                 }
             }
             catch (Exception e)

@@ -14,7 +14,7 @@
             <table>
                 <tr>
                     <td>Имя/E-mail пользователя:</td>
-                    <td><input type="text" @bind="aspNetUser.Email" class="form-control" required></td>
+                    <td><input type="text" @bind="aspNetUser.UserName" class="form-control" required></td>
                 </tr>
                 <tr>
                     <td>Номер телефона Пользователя:</td>
@@ -74,7 +74,8 @@
                 if (id != null)
                 {
                     // обновить если id > 0
-                    await AspNetUserService.AspNetUserUpdate(aspNetUser);
+                    aspNetUser.Email = aspNetUser.UserName;
+                    await AspNetUserService.AspNetUserUpdate(aspNetUser, password);
                     NavigationManager.NavigateTo("/config/userlist");
                 }
                 else
@@ -84,7 +85,7 @@
                         if (password.Length >= 6 && password.Any(e => char.IsUpper(e)) && password.Any(e => char.IsDigit(e)) && password.Any(e => char.IsPunctuation(e)))
                         {
                             visibl = "none";
-                            aspNetUser = new IdentityUser { UserName = aspNetUser.Email, Email = aspNetUser.Email, PhoneNumber = aspNetUser.PhoneNumber, EmailConfirmed = true };
+                            aspNetUser = new IdentityUser { UserName = aspNetUser.UserName, Email = aspNetUser.UserName, PhoneNumber = aspNetUser.PhoneNumber, EmailConfirmed = true };
                             await AspNetUserService.AspNetUserInsert(aspNetUser, password);
                             NavigationManager.NavigateTo("/config/userlist");
                         }

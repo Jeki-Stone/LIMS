@@ -12,7 +12,7 @@
         @inject IInstrumentService InstrumentService
         @inject NavigationManager NavigationManager
 
-        <DataView PageTitle="Список результатов испытания" UrlAdd=@UrlSampleId UrlBack="/test/samplelist" UrlAddText="Добавить новый результат испытания" UrlBackText="Вернуться к списку испытаний">
+        <DataView PageTitle="Список результатов испытания пробы" UrlAdd=@UrlSampleId UrlBack="/test/samplelist" UrlAddText="Добавить новый результат испытания пробы" UrlBackText="Вернуться к списку проб">
             <Filtr>
                 <li class="nav-item">
                     <select @bind="changsort" id="sort" required class="form-control">

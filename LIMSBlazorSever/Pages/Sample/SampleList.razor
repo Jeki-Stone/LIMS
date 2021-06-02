@@ -55,18 +55,23 @@
                                 <a href="samplelog/sampleaddedit/@sample.Id">
                                     <img src="../images/iEdit.png" width="20" height="20" />
                                 </a>
-                                &nbsp
+                                &nbsp;
                                 <a href="samplelog/sampledelete/@sample.Id">
                                     <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
                                 </a>
-                                &nbsp
-                                <a href="samplelog/sample/sampleattrlist/@sample.Id">
-                                    <img src="../images/downArrow.png" title="Add attribute" width="20" height="20" />
-                                </a>
-                                &nbsp
-                                <a href="/samplelog/sample/resultlist/@sample.Id">
-                                    <img src="../images/downArrow.png" title="Add analitical" width="20" height="20" />
-                                </a>
+                                @if (sample.Status == 1)
+                                {
+                                    <p>
+                                        &nbsp;
+                                        <a href="samplelog/sample/sampleattrlist/@sample.Id">
+                                            <img src="../images/downArrow.png" title="Add attribute" width="20" height="20" />
+                                        </a>
+                                        &nbsp;
+                                        <a href="/samplelog/sample/resultlist/@sample.Id">
+                                            <img src="../images/downArrow.png" title="Add analitical" width="20" height="20" />
+                                        </a>
+                                    </p>
+                                }
                             </td>
                             <td>@sample.Id</td>
                             <td>@sample.RecieveTime</td>

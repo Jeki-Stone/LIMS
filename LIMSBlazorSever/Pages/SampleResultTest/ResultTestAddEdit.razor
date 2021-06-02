@@ -114,7 +114,7 @@
             /// <summary>
             /// Задаём базовые значения
             /// </summary>
-            public string pagetitle = "Добавить новый результат испытания";
+            public string pagetitle = "Добавить новый результат испытания пробы";
             public string buttontext = "Добавить";
 
             /// <summary>
@@ -130,7 +130,7 @@
                 if (id != 0)
                 {
                     result = await ResultService.Result_GetOne(id);
-                    pagetitle = "Изменить данные результата испытания";
+                    pagetitle = "Изменить данные результата испытания пробы";
                     buttontext = "Изменить";
 
                     foreach (var item in instrumanalytics)

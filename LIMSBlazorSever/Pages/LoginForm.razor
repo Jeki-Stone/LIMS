@@ -2,8 +2,22 @@
 
 <h3>Форма авторизации</h3>
 <form method="post" action="Identity/Account/LogIn">
-    <input type="text" name="userName" >
-    <input type="password" name="password">
-    <button type="submit">Login</button>
- </form>
+    <table>
+        <tr>
+            <td>Почта:</td>
+            <td>
+                <input type="text" name="userName">
+            </td>
+        </tr>
+        <tr>
+            <td>Пароль:</td>
+            <td>
+                <input type="password" name="password">
+            </td>
+        </tr>
+    </table>
+    <br>
+    <button type="submit" class="btn btn-success">Вход</button>
+</form>
+
 

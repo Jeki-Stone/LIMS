@@ -1,4 +1,4 @@
-﻿<AuthorizeView Roles="ADMIN" )>
+﻿<AuthorizeView Roles="ADMIN">
     <NotAuthorized>
         <p>Вы не обладаете необходимыми правами для доступа к этой странице.</p>
     </NotAuthorized>
@@ -21,7 +21,7 @@
             </table>
         </DataEdit>
 
-        @code { 
+        @code {
             /// <summary>
             /// Создаём необходимые компоненты
             /// </summary>
@@ -54,7 +54,7 @@
             void Cancel()
             {
                 NavigationManager.NavigateTo("config/sampletypelist");
-            } 
-       }
+            }
+        }
     </Authorized>
 </AuthorizeView>
