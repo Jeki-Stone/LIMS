@@ -4,16 +4,15 @@
     </NotAuthorized>
     <Authorized>
         @using LIMSBlazor.Data
-        @page "/samplelog/sample/sampleattrlist/{SampleId:int}"
+        @page "/confirmation/sample/sampleattrlist/{SampleId:int}"
         @inject ISampleAttrService SampleAttrService
         @inject ISampleService SampleService
         @inject IAttrService AttrService
         @inject IAspNetUserService AspNetUserService
 
-        <DataView PageTitle="Список атрибутов пробы" UrlAdd=@UrlSampleId UrlBack="samplelog/samplelist" UrlAddText="Добавить новый атрибут пробы" UrlBackText="Вернуться к списку проб">
+        <DataView PageTitle="Список атрибутов пробы" UrlBack="confirmation/samplelist" UrlBackText="Вернуться к списку проб">
             <Header>
                 <tr>
-                    <th style="text-align:center">#</th>
                     <th>Id испытания</th>
                     <th>Атрибут</th>
                     <th>Значение</th>
@@ -35,13 +34,6 @@
                     @foreach (var sampleattr in sampleattrs)
                     {
                         <tr>
-                            <td style="text-align:center">
-                                <img @onclick=@SaveData src="../images/Floppy.png" width="20" height="20" style="cursor: pointer;" />
-                                &nbsp
-                                <a href="samplelog/sample/sampleattrdelete/@sampleattr.SampleId/@sampleattr.AttrId">
-                                    <img src="../images/iTrash.png" alt="Delete" title="Delete" width="20" height="20" />
-                                </a>
-                            </td>
                             <td>@sampleattr.SampleId</td>
                             <td>@attrs.Where(x => x.Id == sampleattr.AttrId).FirstOrDefault()?.Name</td>
                             <td style="text-align:center"><AttrEdit Attr="@sampleattr" /></td>
