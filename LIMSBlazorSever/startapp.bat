@@ -1,0 +1,1 @@
+dotnet run bin\Debug\net5.0\LIMSBlazorSever.dll --urls=https://192.168.100.103:3000

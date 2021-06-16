@@ -35,9 +35,10 @@ namespace LIMSBlazorSever
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => {
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))/*, ServiceLifetime.Transient*/);
+
+            services.AddDefaultIdentity<IdentityUser>(options =>
+            {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.SignIn.RequireConfirmedEmail = false;
                 options.SignIn.RequireConfirmedPhoneNumber = false;
@@ -57,10 +58,11 @@ namespace LIMSBlazorSever
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+            //services.AddTransient<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
+            //services.AddRazorPages();
+            //services.AddServerSideBlazor();
             services.AddScoped<ILabService, LabService>();
             services.AddScoped<ISampleService, SampleService>();
             services.AddScoped<ILocService, LocService>();
@@ -69,8 +71,6 @@ namespace LIMSBlazorSever
             services.AddScoped<IInstrumTypeService, InstrumTypeService>();
             services.AddScoped<IAttrService, AttrService>();
             services.AddScoped<ISampleTypeService, SampleTypeService>();
-            services.AddScoped<IAspNetUserService, AspNetUserService>();
-            services.AddScoped<IAspNetRoleService, AspNetRoleService>();
             services.AddScoped<IInstrumentService, InstrumentService>();
             services.AddScoped<IAnalyticalServService, AnalyticalServService>();
             services.AddScoped<ISampleSpecService, SampleSpecService>();
@@ -85,7 +85,10 @@ namespace LIMSBlazorSever
             services.AddScoped<IInstrumAnalyticService, InstrumAnalyticService>();
             services.AddScoped<IAnalyticalServiceAttrService, AnalyticalServiceAttrService>();
             services.AddScoped<IResultAttrService, ResultAttrService>();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<IAspNetUserService, AspNetUserService>();
+            services.AddScoped<IAspNetRoleService, AspNetRoleService>();
+
+            //            services.AddSingleton<WeatherForecastService>();
 
             // SQL database connection (name  defined in appsettings. json).
             var SqlConnectionConfiguration = new SqlConnectionConfiguration(Configuration.GetConnectionString("DefaultConnection"));

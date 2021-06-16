@@ -31,7 +31,7 @@ namespace LIMSBlazor.Data
         {
             try
             {
-                using (var conn = new SqlConnection(_configuration.Value))
+                //using (var conn = new SqlConnection(_configuration.Value))
                 {
                     var result = await _userManager.CreateAsync(user, password);
 
@@ -52,18 +52,32 @@ namespace LIMSBlazor.Data
         /// Запросить все денные из БД
         public async Task<List<IdentityUser>> AspNetUserList()
         {
-            List<IdentityUser> userList;
-            await using (var conn = new SqlConnection(_configuration.Value))
+            List<IdentityUser> userList = null;
+            //await using (var conn = new SqlConnection(_configuration.Value))
             {
-                userList = _userManager.Users.ToList();
+                userList = _userManager.Users.ToList();               
             }
             return userList;
         }
 
+        //public List<IdentityUser> AspNetUserListSync()
+        //{
+        //    var userList = new List<IdentityUser>();
+        //    //await using (var conn = new SqlConnection(_configuration.Value))
+        //    {
+        //        var users = _userManager.Users;
+        //        foreach (var item in users)
+        //        {
+        //            userList.Add(item);
+        //        }
+        //    }
+        //    return userList;
+        //}
+
         public async Task<List<IdentityUser>> AspNetUserClientList()
         {
             List<IdentityUser> userClientList = new List<IdentityUser>();
-            await using (var conn = new SqlConnection(_configuration.Value))
+            //await using (var conn = new SqlConnection(_configuration.Value))
             {
                 List<IdentityUser> userList;
                 userList = _userManager.Users.ToList();
@@ -81,7 +95,7 @@ namespace LIMSBlazor.Data
         public async Task<IdentityUser> AspNetUser_GetOne(string id)
         {
             IdentityUser user;
-            await using (var conn = new SqlConnection(_configuration.Value))
+            //await using (var conn = new SqlConnection(_configuration.Value))
             {
                 user = await _userManager.FindByIdAsync(id);
             }
@@ -93,7 +107,7 @@ namespace LIMSBlazor.Data
         {
             try
             {
-                using (var conn = new SqlConnection(_configuration.Value))
+                //using (var conn = new SqlConnection(_configuration.Value))
                 {
                     await _userManager.UpdateAsync(_identityUser);
                     await _userManager.RemovePasswordAsync(_identityUser);
@@ -110,7 +124,7 @@ namespace LIMSBlazor.Data
         /// Удалить строку таблицы данных из БД
         public async Task<bool> AspNetUserDelete(string id)
         {
-            using (var conn = new SqlConnection(_configuration.Value))
+            //using (var conn = new SqlConnection(_configuration.Value))
             {
                 var user = await _userManager.FindByIdAsync(id);
                 await _userManager.DeleteAsync(user);
